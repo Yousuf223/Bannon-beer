@@ -68,7 +68,7 @@ const EditProfile = ({ navigation, user }) => {
                </View>
                <View style={{marginTop:"20%"}}>
                <View style={styles.btn}>
-                   <Text>Save Changes</Text>
+                   <Text style={{ color: "#fdf0ea",  fontSize: 16,fontFamily:"Oswald-Bold" }}>Save Changes</Text>
                </View>
                </View>
             </View>

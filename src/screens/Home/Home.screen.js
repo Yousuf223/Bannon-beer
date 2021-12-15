@@ -122,7 +122,7 @@ const Home = (props) => {
           <View style={{ paddingHorizontal: 20 }}>
             <View style={styles.row2}>
               <View>
-                <Text style={{fontFamily:"Western"}}>Popular Beers</Text>
+                <Text style={{fontFamily:'Oswald-Medium'}}>Popular Beers</Text>
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <View style={styles.btn}>
@@ -144,7 +144,7 @@ const Home = (props) => {
             </View>
             <View style={styles.row2}>
               <View>
-                <Text>All Beers</Text>
+                <Text style={{fontFamily:'Oswald-Medium'}}>All Beers</Text>
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <TORN

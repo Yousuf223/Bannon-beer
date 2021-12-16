@@ -27,7 +27,8 @@ const ForgotPassword = ({ navigation, user }) => {
                                 style={styles.email}
                                 labelStyle={styles.label}
                                 label="Email"
-                                placeholder='adwardg@gmail.com'
+                                placeholder='edwardd@gmail.com'
+                                placeholderTextColor="#000000"
                             />
                             </View>
                 <View>
@@ -91,7 +92,8 @@ const styles = StyleSheet.create({
         textAlign:"center",
         fontFamily:"Oswald-Medium",
         fontSize:32,
-        bottom:25
+        bottom:25,
+        color:"#000000"
     },
     textDigit:{
         textAlign:"center",

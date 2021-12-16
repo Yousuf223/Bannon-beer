@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {
     SafeAreaView,
     View,
@@ -12,46 +12,56 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { connect, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
-
+import Feather from 'react-native-vector-icons/Feather'
 const Login = ({ navigation, user }) => {
     const dispatch = useDispatch()
+    const [hideEye, setHideEye] = useState()
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
-                <SafeAreaView style={styles.container} >
+            <SafeAreaView style={styles.container} >
                 <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
                     <View>
                         <Text style={styles.text1}>Login</Text>
                         <Text style={styles.text2}>Quiz ipsum suspendisses ultrices gravida.Risus commodo viverra maecenas accumsam lacus,facilisis</Text>
-                        <View style={{paddingHorizontal:20}}>
+                        <View style={{ paddingHorizontal: 20 }}>
                             <View>
-                            <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
-                            <Input
-                                inputContainerStyle={styles.borderdv}
-                                //  onFocus={()=>setToggleUser4(1)}
-                                //  onBlur={()=>setToggleUser4(0)}
-                                style={styles.email}
-                                labelStyle={styles.label}
-                                label="Email"
-                                placeholder='adwardg@gmail.com'
-                            />
+                                <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
+                                <Input
+                                    inputContainerStyle={styles.borderdv}
+                                    //  onFocus={()=>setToggleUser4(1)}
+                                    //  onBlur={()=>setToggleUser4(0)}
+                                    style={styles.email}
+                                    labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
+                                    label="Email"
+                                    placeholder='edwardd@gmail.com'
+                                />
                             </View>
                             <View>
-                            <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
-                            <Input
-                                inputContainerStyle={styles.borderdv}
-                                //  onFocus={()=>setToggleUser4(1)}
-                                //  onBlur={()=>setToggleUser4(0)}
-                                style={styles.email}
-                                labelStyle={styles.label}
-                                label="Password"
-                                placeholder='************'
-                            />
+                                <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
+                                <Input
+                                    inputContainerStyle={styles.borderdv}
+                                    //  onFocus={()=>setToggleUser4(1)}
+                                    //  onBlur={()=>setToggleUser4(0)}
+                                    style={styles.email}
+                                    labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
+                                    label="Password"
+                                    placeholder='************'
+                                    secureTextEntry={hideEye ? true : false}
+                                />
+                                <Feather
+                                    style={styles.eyeIcon}
+                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    size={18} color={'#c8bcb0'}
+                                    onPress={() => setHideEye(!hideEye)}
+                                />
                             </View>
                         </View>
                         <View style={styles.row}>
-                            <Text style={{color:"#ada097",fontWeight:"bold",fontSize:12,fontFamily:"Oswald-Regular"}}>Remember</Text>
-                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{color:"#ada097",fontWeight:"bold",fontSize:12,fontFamily:"Oswald-Regular"}}>Forgot Password</Text>
+                            {/* <Text style={{color:"#ada097",fontWeight:"bold",fontSize:12,fontFamily:"Oswald-Regular"}}>Remember</Text> */}
+                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{ color: "#ada097", fontWeight: "bold", fontSize: 12, fontFamily: "Oswald-Regular" }}>Forgot Password?</Text>
                         </View>
                         <View>
                             <TouchableOpacity
@@ -62,33 +72,33 @@ const Login = ({ navigation, user }) => {
                                         screen: 'Home',
                                     })
                                 }}>
-                                <Text style={{ color: "#fdf0ea",  fontSize: 18,fontFamily:"Oswald-Bold" }}>Login</Text>
+                                <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>
                             <View style={styles.linedv}></View>
-                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily:"Oswald-Regular" }}>Or Login with</Text>
+                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily: "Oswald-Regular" }}>Or Login with</Text>
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
                             <View style={styles.iconBg}>
-                            <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
+                                <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
                             </View>
                             <View style={styles.iconBg}>
-                            <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
+                                <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
                             </View>
                             <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
                             </View>
                         </View>
-                        <TouchableOpacity 
-                        activeOpacity={0.9}
-                        onPress={() => navigation.navigate('SignUp')}
-                        style={{marginVertical:"14%",alignItems:"center"}}>
-                        <Text style={styles.text3}>Not a member?<Text style={{color:"#e64902"}}>Sign Up</Text></Text>
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            onPress={() => navigation.navigate('SignUp')}
+                            style={{ marginVertical: "14%", alignItems: "center" }}>
+                            <Text style={styles.text3}>Not a member?  <Text style={{ color: "#e64902" }}>Sign Up</Text></Text>
                         </TouchableOpacity>
                     </View>
-            </ScrollView>
+                </ScrollView>
             </SafeAreaView >
         </>
     )
@@ -104,15 +114,15 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         backgroundColor: "#f8ece0",
-        justifyContent:"center",
-        paddingHorizontal:20
+        justifyContent: "center",
+        paddingHorizontal: 20
     },
     btn: {
         padding: 12,
         backgroundColor: "#e74a07",
         alignItems: "center",
         borderRadius: 10,
-        marginHorizontal:20
+        marginHorizontal: 20
     },
     text1: {
         color: "#000000",
@@ -121,7 +131,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         paddingVertical: "4%",
         marginTop: "6%",
-        fontFamily:'Oswald-Bold',
+        fontFamily: 'Oswald-Bold',
     },
     text2: {
         color: "#aca094",
@@ -129,24 +139,24 @@ const styles = StyleSheet.create({
         textAlign: "center",
         lineHeight: 18,
         paddingBottom: "12%",
-        fontFamily:'Oswald-Regular',
-        paddingHorizontal:20
+        fontFamily: 'Oswald-Regular',
+        paddingHorizontal: 20
     },
-    inputLogo:{
+    inputLogo: {
         position: "absolute",
         top: 20,
         left: 10,
         height: 15,
         width: 15,
         resizeMode: "contain",
-        
+
     },
     email: {
         paddingLeft: 1,
         fontSize: 12,
         color: "#000000",
-        top:10,
-        fontFamily:"Oswald-Regular"
+        top: 10,
+        fontFamily: "Oswald-Regular"
     },
     borderdv: {
         borderBottomColor: "#e1d5c9",
@@ -155,15 +165,15 @@ const styles = StyleSheet.create({
         color: "#e84a03",
         paddingLeft: 25,
         fontSize: 12,
-        top:20,
-        fontFamily:"Oswald-Medium"
+        top: 20,
+        fontFamily: "Oswald-Medium"
     },
     row: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         alignItems: "center",
         marginBottom: 20,
-        paddingHorizontal:20
+        paddingHorizontal: 20
     },
     iconBg: {
         backgroundColor: "#efe3d7",
@@ -175,21 +185,29 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginVertical:14
-      },
-      linedv: {
+        marginVertical: 14
+    },
+    linedv: {
         width: 25,
         backgroundColor: "#8895a3",
         height: 1,
-      },
-      text3:{
-          color:"#85786f",
-          fontFamily:"Oswald-Regular",
-          marginTop:14
-      },
-      googleLogo:{
-          width:25,
-          height:25
-      }
+    },
+    text3: {
+        color: "#85786f",
+        fontFamily: "Oswald-Regular",
+        marginTop: 14,
+    },
+    googleLogo: {
+        width: 25,
+        height: 25
+    },
+    eyeIcon:{
+        position:"absolute",
+        left: "83%",
+        bottom: "39%",
+        paddingHorizontal: "6%",
+        paddingVertical: "2%",
+      
+    }
 })
 export default connect(mapStateToProps, null)(Login)

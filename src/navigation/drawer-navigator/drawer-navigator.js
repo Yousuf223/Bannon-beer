@@ -66,7 +66,7 @@ const DrawerContent = props => {
           </View>
           <View style={{flexDirection:"row",justifyContent:"space-between"}}>
             <Text style={styles.textNum}>+1-202-555-0184</Text>
-            <Text style={styles.textNum}>adwardd@gmail.com</Text>
+            <Text style={styles.textNum}>edwardd@gmail.com</Text>
           </View>
         </View>
         <View style={{paddingLeft:15,paddingTop:"18%"}}>
@@ -95,11 +95,14 @@ const DrawerContent = props => {
           </TouchableOpacity> */}
         <TouchableOpacity 
         activeOpacity={0.8}
-        style={styles.row1}
+        style={styles.row2}
         onPress={() => setQuality(!quality)}
         >
            <Image style={styles.menuHome} source={require('../../assets/images/menuSettings.png')} />
+           <View style={{flexDirection:"row",}}>
           <Text style={styles.text1}>Settings</Text>
+          <AntDesign style={styles.arrowIcon} name='right' size={17} color={'#ffffff'} />
+          </View>
         </TouchableOpacity>
         {
           quality &&(
@@ -252,7 +255,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   top:{
-    paddingTop:"6%",
+    paddingTop:"10%",
     paddingLeft:15
   },
   textNum:{
@@ -263,6 +266,9 @@ const styles = StyleSheet.create({
   },
   row1:{
     paddingVertical:14,
+    flexDirection:"row"
+  },
+  row2:{
     flexDirection:"row"
   },
   text1:{
@@ -307,5 +313,12 @@ const styles = StyleSheet.create({
     color:"#b1aea5",
     fontWeight:"bold",
     fontSize:12
+  },
+  arrowIcon:{
+    transform: [
+      { rotateX: "45deg" },
+      { rotateZ: "90deg" }
+    ],
+    left:115
   }
 });

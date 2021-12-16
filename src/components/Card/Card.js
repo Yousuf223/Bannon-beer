@@ -22,7 +22,7 @@ onPress
     </View>   
     <Text style={styles.text0}>{decription}<Text style={{color:'#e74a07'}}>$6.00</Text ></Text>
     <View style={{marginVertical:6}}>
-        <View style={{backgroundColor:"#f3e7db",borderRadius:4,paddingHorizontal:4,paddingVertical:2,width:50,height:20,alignItems:"center"}}>
+        <View style={{backgroundColor:"#f3e7db",borderRadius:4,paddingHorizontal:4,paddingVertical:2,width:50,height:22,alignItems:"center"}}>
             <Text style={styles.text1}>Abv 4.2</Text>
         </View>
     </View>
@@ -33,13 +33,13 @@ onPress
 
 const styles = StyleSheet.create({
     card:{
-        backgroundColor:"#fcf2e8",
-        paddingHorizontal:24,
+        backgroundColor:"#ffffff",
+        paddingHorizontal:22,
         paddingVertical:10,
         borderRadius:10,
-        elevation:2,
-        shadowColor:"#fff",
-        shadowOpacity:0.9,
+        // elevation:2,
+        // shadowColor:"#000",
+        // shadowOpacity:0.9,
     },
     text1:{
         color:"#7f705d",

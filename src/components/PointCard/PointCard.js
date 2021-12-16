@@ -16,7 +16,7 @@ export default function PointCard({
                         </View>
                         <Text style={styles.title}> <Text style={styles.number}>{number}</Text> {title}</Text>
                         <View style={{ marginVertical: 6 }}>
-                            <View style={{ backgroundColor: "#f3e7db", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2,alignItems:"center",width:50,height:20 }}>
+                            <View style={{ backgroundColor: "#f3e7db", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2,alignItems:"center",width:50,height:22 }}>
                                 <Text style={styles.text1}>Alc 4.2</Text>
                             </View>
                         </View>
@@ -37,9 +37,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 10,
         borderRadius: 10,
-        elevation: 2,
-        shadowColor: "#fff",
-        shadowOpacity: 0.9,
+        // elevation: 2,
+        // shadowColor: "#fff",
+        // shadowOpacity: 0.9,
     },
     btn: {
         backgroundColor: "#e74a07",

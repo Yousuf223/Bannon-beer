@@ -34,12 +34,6 @@ const Notification = ({ navigation, user }) => {
         {
 
         },
-        {
-
-        },
-        {
-
-        },
     ]
     return (
         <>
@@ -92,7 +86,7 @@ const styles = StyleSheet.create({
     text:{
         color:"#000000",
         fontWeight:"bold",
-        fontSize:16,
+        fontSize:18,
         paddingLeft:15,
         paddingBottom:1
     },

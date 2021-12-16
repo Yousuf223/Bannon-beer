@@ -95,14 +95,16 @@ const styles = StyleSheet.create({
     },
     header:{
         flexDirection:"row",
-        paddingVertical:"13%",
-        paddingHorizontal:10
+        paddingTop:"13%",
+        paddingHorizontal:10,
+        paddingBottom:24
     },
     text1:{
         color:"#000000",
         paddingLeft:15,
-        fontSize:16,
-        fontFamily:"Oswald-Medium"
+        fontSize:18,
+        fontFamily:"Oswald-Medium",
+        bottom:4
     },
     footer:{
         borderTopLeftRadius:20,

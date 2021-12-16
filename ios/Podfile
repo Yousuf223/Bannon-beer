@@ -38,5 +38,10 @@ use_flipper!()
 
 post_install do |installer|
   react_native_post_install(installer)
+  installer.pods_project.targets.each do |target|
+    if target.name == "React-Core-AccessibilityResources"
+     target.remove_from_project
+    end
+   end
 end
 end

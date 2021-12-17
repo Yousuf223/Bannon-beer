@@ -52,8 +52,9 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end"
     },
     About: {
-        width: "55%",
+        width: "80%",
         height: "80%",
+        resizeMode:"contain"
     },
     row: {
         alignItems: "center",

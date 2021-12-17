@@ -18,12 +18,14 @@ const EditProfile = ({ navigation, user }) => {
     return (
         <>
             <View style={styles.container}>
+                <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{marginTop:"18%",flexDirection:"row"}}>    
                     <AntDesign onPress={() => navigation.goBack()} name='arrowleft' size={23} color={'#85786f'} />
                 <Text style={styles.textForgot}>Edit Profile</Text>
                 </View>
                <View style={styles.row}>
                <Image style={styles.profile} source={require('../../assets/images/profilePicture.png')} />
+               <Image style={styles.camera} source={require('../../assets/images/editCamera.png')} />
                </View>
                <View>
                <View>
@@ -35,8 +37,21 @@ const EditProfile = ({ navigation, user }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
-                                    label="Email Address"
-                                    placeholder='adwardg@gmail.com'
+                                    label="First Name"
+                                    placeholder='Edward'
+                                />
+                            </View>
+                            <View>
+                                
+                                <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
+                                <Input
+                                    inputContainerStyle={styles.borderdv}
+                                    //  onFocus={()=>setToggleUser4(1)}
+                                    //  onBlur={()=>setToggleUser4(0)}
+                                    style={styles.email}
+                                    labelStyle={styles.label}
+                                    label="Last Name"
+                                    placeholder='Davidson'
                                 />
                             </View>
                             <View>
@@ -52,25 +67,13 @@ const EditProfile = ({ navigation, user }) => {
                                     placeholder='adwardg@gmail.com'
                                 />
                             </View>
-                            <View>
-                                
-                                <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
-                                <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    //  onFocus={()=>setToggleUser4(1)}
-                                    //  onBlur={()=>setToggleUser4(0)}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    label="Email Address"
-                                    placeholder='adwardg@gmail.com'
-                                />
-                            </View>
                </View>
-               <View style={{marginTop:"20%"}}>
+               <View style={{marginVertical:"20%"}}>
                <View style={styles.btn}>
                    <Text style={{ color: "#fdf0ea",  fontSize: 16,fontFamily:"Oswald-Bold" }}>Save Changes</Text>
                </View>
                </View>
+               </ScrollView>
             </View>
         </>
     )
@@ -89,13 +92,14 @@ const styles = StyleSheet.create({
     },
     textForgot:{
         fontFamily:"Oswald-Medium",
-        fontSize:24,
+        fontSize:18,
         paddingLeft:10,
-        bottom:5
+        bottom:10,
+        color:"#000000"
     },
     profile:{
-        width:75,
-        height:75
+        width:85,
+        height:85
       },
       row:{
           alignItems:"center",
@@ -132,6 +136,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#e74a07",
         alignItems: "center",
         borderRadius: 10,
+    },
+    camera:{
+        width:25,
+        height:25,
+        position:"absolute",
+        top:"100%",
+        right:"34%"
     }
 })
 export default connect(mapStateToProps, null)(EditProfile)

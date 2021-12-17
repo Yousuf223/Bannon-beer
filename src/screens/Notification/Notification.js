@@ -37,18 +37,15 @@ const Notification = ({ navigation, user }) => {
         {
 
         },
-        {
-
-        },
     ]
     return (
         <>
             <View style={styles.container}>
             <View style={styles.header}>
                     <AntDesign onPress={() => navigation.goBack()} name='arrowleft' size={23} color={'#85786f'} />
-                    <Text style={styles.text}>Notification</Text>
+                    <Text style={styles.text}>Notifications</Text>
              </View>
-             <ScrollView style={{marginTop:"10%"}}>
+             <ScrollView style={{marginTop:"6%"}}>
                {
                    NotificatioCard.map((item) => {
                        return(
@@ -59,7 +56,7 @@ const Notification = ({ navigation, user }) => {
                         <View style={styles.btn}>
                             <Text style={styles.date}>23 May 2021</Text>
                         </View>
-                        <Text style={styles.text1}>You have scanned 21 Petrus Cherry Chocalate and received 321 points</Text>
+                        <Text style={styles.text1}>You have scanned 21 Petrus Cherry Chocalate</Text>
                         </View>
                         </View>
                     </View>
@@ -67,6 +64,7 @@ const Notification = ({ navigation, user }) => {
                    })
                }
              </ScrollView>
+             <View style={{paddingBottom:"10%"}}></View>
             </View>
         </>
     )
@@ -92,7 +90,7 @@ const styles = StyleSheet.create({
     text:{
         color:"#000000",
         fontWeight:"bold",
-        fontSize:16,
+        fontSize:18,
         paddingLeft:15,
         paddingBottom:1
     },

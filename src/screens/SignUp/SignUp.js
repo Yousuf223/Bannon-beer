@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import {
     SafeAreaView,
     View,
@@ -12,56 +12,76 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { connect, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
-
+import Feather from 'react-native-vector-icons/Feather'
 const SignUp = ({ navigation, user }) => {
     const dispatch = useDispatch()
+    const [hideEye, setHideEye] = useState()
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
-          
-                <View style={styles.container} >
+
+            <View style={styles.container} >
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View>
                         <Text style={styles.text1}>Sign up</Text>
-                        <Text style={styles.text2}>Quiz ipsum suspendisses ultrices gravida.Risus commodo viverra maecenas accumsam lacus,facilisis</Text>
                         <View>
-                            <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-                                <View style={{width:"50%"}}>
+                            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <View style={{ width: "50%" }}>
                                     <Image style={styles.inputLogo} source={require('../../assets/images/name.png')} />
                                     <Input
                                         inputContainerStyle={styles.borderdv}
                                         //  onFocus={()=>setToggleUser4(1)}
                                         //  onBlur={()=>setToggleUser4(0)}
                                         // style={styles.email}
-                                        style={{    paddingLeft: 1,
-                                        fontSize: 12,
-                                        color: "#000002",
-                                        top: 12,
-                                        fontFamily: "Oswald-Regular"}}
+                                        style={{
+                                            paddingLeft: 1,
+                                            fontSize: 12,
+                                            color: "#000002",
+                                            top: 12,
+                                            fontFamily: "Oswald-Regular"
+                                        }}
                                         labelStyle={styles.label}
-                                        label="Full Name"
-                                        placeholder='Edward Davidson'
+                                        label="First Name"
+                                        placeholder='Edward'
+                                        placeholderTextColor="#000000"
                                     />
                                 </View>
-                                <View style={{width:"50%"}}>
+                                <View style={{ width: "50%" }}>
                                     <Image style={styles.inputLogo} source={require('../../assets/images/name.png')} />
                                     <Input
                                         inputContainerStyle={styles.borderdv}
                                         //  onFocus={()=>setToggleUser4(1)}
                                         //  onBlur={()=>setToggleUser4(0)}
-                                        style={{flex:1,         paddingLeft: 1,
-                                        fontSize: 12,
-                                        color: "#000002",
-                                        top: 12,
-                                        fontFamily: "Oswald-Regular"}}
+                                        style={{
+                                            flex: 1, paddingLeft: 1,
+                                            fontSize: 12,
+                                            color: "#000002",
+                                            top: 12,
+                                            fontFamily: "Oswald-Regular"
+                                        }}
                                         labelStyle={styles.label}
                                         label="Last Name"
-                                        placeholder='Edward Davidson'
+                                        placeholder='Davidson'
+                                        placeholderTextColor="#000000"
                                     />
                                 </View>
-                                </View>
-                                <View>
-                                
+                            </View>
+                            <View>
+
+                                <Image style={styles.inputLogo} source={require('../../assets/images/date.png')} />
+                                <Input
+                                    inputContainerStyle={styles.borderdv}
+                                    //  onFocus={()=>setToggleUser4(1)}
+                                    //  onBlur={()=>setToggleUser4(0)}
+                                    style={styles.email}
+                                    labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
+                                    label="Date of Birth"
+                                    placeholder='25 Oct, 1985'
+                                />
+                            </View>
+                            <View>
+
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
                                 <Input
                                     inputContainerStyle={styles.borderdv}
@@ -69,8 +89,9 @@ const SignUp = ({ navigation, user }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
                                     label="Email Address"
-                                    placeholder='adwardg@gmail.com'
+                                    placeholder='edwardd@gmail.com'
                                 />
                             </View>
                             <View>
@@ -81,8 +102,17 @@ const SignUp = ({ navigation, user }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
                                     label="Password"
                                     placeholder='************'
+                                    secureTextEntry={hideEye ? true : false}
+
+                                />
+                                <Feather
+                                    style={styles.eyeIcon}
+                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    size={18} color={'#c8bcb0'}
+                                    onPress={() => setHideEye(!hideEye)}
                                 />
                             </View>
                             <View>
@@ -93,20 +123,24 @@ const SignUp = ({ navigation, user }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
+                                    placeholderTextColor="#000000"
                                     label="Confirm Password"
                                     placeholder='************'
+                                    secureTextEntry={hideEye ? true : false}
+                                />
+                                <Feather
+                                    style={styles.eyeIcon}
+                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    size={18} color={'#c8bcb0'}
+                                    onPress={() => setHideEye(!hideEye)}
                                 />
                             </View>
                         </View>
                         <View>
                             <TouchableOpacity
                                 style={styles.btn}
-                                //   activeOpacity={0.9}
-                                onPress={() => {
-                                    navigation.navigate('AppStackNavigator', {
-                                        screen: 'Home',
-                                    })
-                                }}>
+                                activeOpacity={0.9}
+                            >
                                 <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>
                             </TouchableOpacity>
                         </View>
@@ -126,11 +160,14 @@ const SignUp = ({ navigation, user }) => {
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
                             </View>
                         </View>
-                        <View style={{ marginVertical: "14%", alignItems: "center" }}>
-                            <Text style={styles.text3}>Already a member?<Text style={{ color: "#e64902" }}>Login</Text></Text>
-                        </View>
+                        <TouchableOpacity
+                            activeOpacity={0.9}
+                            onPress={() => navigation.navigate('Login')}
+                            style={{ marginVertical: "14%", alignItems: "center" }}>
+                            <Text style={styles.text3}>Already a member?  <Text style={{ color: "#e64902" }}>Login</Text></Text>
+                        </TouchableOpacity>
                     </View>
-            </ScrollView>
+                </ScrollView>
             </View>
         </>
     )
@@ -147,7 +184,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#f8ece0",
-       paddingHorizontal: 20,
+        paddingHorizontal: 20,
     },
     btn: {
         padding: 12,
@@ -162,7 +199,7 @@ const styles = StyleSheet.create({
         fontWeight: "900",
         textAlign: "center",
         paddingVertical: "4%",
-        marginTop: "18%",
+        marginTop: "12%",
         fontFamily: "Oswald-Bold"
     },
     text2: {
@@ -222,6 +259,14 @@ const styles = StyleSheet.create({
     text3: {
         color: "#85786f",
         fontFamily: "Oswald-Regular"
+    },
+    eyeIcon: {
+        position: "absolute",
+        left: "83%",
+        bottom: "39%",
+        paddingHorizontal: "6%",
+        paddingVertical: "2%",
+
     }
 })
 export default connect(mapStateToProps, null)(SignUp)

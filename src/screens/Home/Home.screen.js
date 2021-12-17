@@ -122,17 +122,20 @@ const Home = (props) => {
           <View style={{ paddingHorizontal: 20 }}>
             <View style={styles.row2}>
               <View>
-                <Text style={{fontFamily:'Oswald-Medium'}}>Popular Beers</Text>
+                <Text style={{fontFamily:'Oswald-Medium'}}>Top Beers</Text>
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
-              <View style={styles.btn}>
+              <TORN
+                onPress={() => navigation.navigate('BeerMenu')}
+                activeOpacity={0.9}
+                style={styles.btn}>
                 <Text style={styles.textView}>View All</Text>
-              </View>
+              </TORN>
             </View>
             {/* <Image style={styles.beer} source={require('../../assets/images/beerCard.png')} /> */}
 
 
-            <View style={{ flexDirection: "row", justifyContent: "space-between", position: "relative", zIndex: 10 }}>
+            <View style={{ flexDirection: "row", justifyContent: "space-around", position: "relative", zIndex: 10 }}>
               {/*              
              <Card/> */}
               <Card 
@@ -176,6 +179,7 @@ const Home = (props) => {
         </ScrollView>
 
         <TORN 
+        activeOpacity={0.9}
           onPress={() => setModalVisible(true)}
           style={styles.posi}>
           <Animated.View
@@ -222,7 +226,7 @@ const Home = (props) => {
                 <View style={styles.rowProgress}>
                   <Progress.Bar progress={select.length/100}
                     animated={true} width={260}
-                    height={22}
+                    height={24}
                     color={"#e74a07"}
                     borderRadius={12}
                     borderWidth={0}
@@ -243,7 +247,7 @@ const Home = (props) => {
                         }
                         style={styles.loop}>
                         {select.findIndex((e) => e == index) != -1 ? <Image
-                          style={styles.cross} source={require('../../assets/images/beerCardCross.png')} /> : <Text style={styles.textNum}>{jsx}</Text>}
+                          style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{jsx}</Text>}
                       </TORN>
                     )
                   }
@@ -274,7 +278,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "10%",
+    marginTop: "6%",
     marginHorizontal:20
   },
   menu: {
@@ -304,7 +308,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e74a07",
     width: "16%",
-    height: "90%",
+    height: "75%",
     borderRadius: 4,
     alignItems: "center",
 

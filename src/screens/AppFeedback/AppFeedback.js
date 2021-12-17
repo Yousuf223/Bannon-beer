@@ -30,7 +30,7 @@ const AppFeedback = ({ navigation, user }) => {
                         //  onBlur={()=>setToggleUser4(0)}
                         style={styles.email}
                         labelStyle={styles.label}
-                        label="Full Name"
+                        label="First Name"
                         placeholder='Edward Davidson'
                     />
                     <Input
@@ -40,7 +40,7 @@ const AppFeedback = ({ navigation, user }) => {
                         style={styles.email}
                         labelStyle={styles.label}
                         label="Subject"
-                        placeholder='adwardg@gmail.com'
+                        placeholder='edwardd@gmail.com'
                     />
                     <Input
                         inputContainerStyle={styles.borderdv}
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         color: "#000000",
         fontSize: 20,
         fontFamily:"Oswald-Medium",
-        bottom:6
+        bottom:5
     },
     email: {
         paddingLeft: 2,

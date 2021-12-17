@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
     SafeAreaView,
     View,
@@ -11,9 +11,10 @@ import {
 } from 'react-native'
 import { connect, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
+import Feather from 'react-native-vector-icons/Feather'
 const ChangePassword = ({ navigation, user }) => {
     const dispatch = useDispatch()
-
+    const [hideEye, setHideEye] = useState()
     return (
         <>
             <View style={styles.container}>
@@ -26,9 +27,17 @@ const ChangePassword = ({ navigation, user }) => {
                         //  onBlur={()=>setToggleUser4(0)}
                         style={styles.email}
                         labelStyle={styles.label}
+                        placeholderTextColor="#000000"
                         label="Password"
                         placeholder='************'
+                        secureTextEntry={hideEye ? true : false}
                     />
+                          <Feather
+                    style={styles.eyeIcon}
+                    name={hideEye ? 'eye-off' : 'eye'} 
+                    size={18} color={'#c8bcb0'}
+                    onPress={() => setHideEye(!hideEye)}
+                     />
                 </View>
                 <View>
                     <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
@@ -38,9 +47,17 @@ const ChangePassword = ({ navigation, user }) => {
                         //  onBlur={()=>setToggleUser4(0)}
                         style={styles.email}
                         labelStyle={styles.label}
+                        placeholderTextColor="#000000"
                         label="Confirm Password"
                         placeholder='************'
+                        secureTextEntry={hideEye ? true : false}
                     />
+                    <Feather
+                    style={styles.eyeIcon}
+                    name={hideEye ? 'eye-off' : 'eye'} 
+                    size={18} color={'#c8bcb0'}
+                    onPress={() => setHideEye(!hideEye)}
+                     />
                 </View>
                 <View>
                     <TouchableOpacity
@@ -103,7 +120,8 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontFamily: "Oswald-Medium",
         fontSize: 32,
-        bottom:25
+        bottom:25,
+        color:"#000000"
     },
     textDigit: {
         textAlign: "center",
@@ -112,6 +130,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginTop: 20,
         color: "#85796d",
+    },
+    eyeIcon:{
+        position:"absolute",
+        left: "83%",
+        bottom: "39%",
+        paddingHorizontal: "6%",
+        paddingVertical: "2%",
+      
     }
 })
 export default connect(mapStateToProps, null)(ChangePassword)

@@ -12,13 +12,13 @@ export default function CardDetail({
         <>
             <View style={styles.card}>
                 <View style={styles.row}>
-                    <View style={{ backgroundColor: "#fef2e6", paddingVertical: 4, paddingHorizontal: 20, elevation: 2, }}>
+                    <View style={{ backgroundColor: "#fef2e6", paddingVertical: 4, paddingHorizontal: 20, }}>
                     <Image style={{width:30,height:88,}} source={image} />
                     </View>
                     <View style={{paddingLeft:10,flex:1}}>
                         <Text style={styles.textD}><Text style={{ color: "#c5b9ab", fontWeight: "bold" }}>{number}</Text> {decription}</Text>
                         <View style={{ marginVertical: 6 }}>
-                            <View style={{ backgroundColor: "#f3e7db", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2,alignItems:"center",width:50,height:20 }}>
+                            <View style={{ backgroundColor: "#f3e7db", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2,alignItems:"center",width:50,height:22 }}>
                                 <Text style={styles.text1}>Abv 4.2</Text>
                             </View>
                         </View>
@@ -38,12 +38,10 @@ export default function CardDetail({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#fcf2e8",
+        backgroundColor: "#ffffff",
         paddingHorizontal: 10,
         paddingVertical: 10,
         borderRadius: 10,
-        elevation: 2,
-        shadowColor:"#fff"
     },
     row: {
         flexDirection: "row",

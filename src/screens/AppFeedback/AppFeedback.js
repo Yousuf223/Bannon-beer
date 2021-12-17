@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         color: "#e84a03",
         paddingLeft: 2,
         fontSize: 12,
-        top: 20,
+        top: 14,
         fontFamily:"Oswald-Regular"
     },
     footer:{

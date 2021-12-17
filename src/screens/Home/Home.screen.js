@@ -224,8 +224,8 @@ const Home = (props) => {
                   </View>
                 </View>
                 <View style={styles.rowProgress}>
-                  <Progress.Bar progress={select.length/100}
-                    animated={true} width={260}
+                  <Progress.Bar progress={select.length/75}
+                    animated={true} width={270}
                     height={24}
                     color={"#e74a07"}
                     borderRadius={12}

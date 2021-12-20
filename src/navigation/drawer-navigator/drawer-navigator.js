@@ -326,6 +326,6 @@ const styles = StyleSheet.create({
       { rotateX: "45deg" },
       { rotateZ: "90deg" }
     ],
-    left:130
+    left:120
   }
 });

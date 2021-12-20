@@ -139,6 +139,7 @@ const BeerMenu = ({navigation, user}) => {
                   number={item.number}
                   decription={item.description}
                   image={item.image}
+                  onPress={()=>navigation.navigate('QRScaner')}
                 />
               </View>
             );

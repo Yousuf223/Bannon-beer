@@ -32,6 +32,7 @@ const AppFeedback = ({ navigation, user }) => {
                         labelStyle={styles.label}
                         label="First Name"
                         placeholder='Edward Davidson'
+                        placeholderTextColor="#000000"
                     />
                     <Input
                         inputContainerStyle={styles.borderdv}
@@ -41,6 +42,7 @@ const AppFeedback = ({ navigation, user }) => {
                         labelStyle={styles.label}
                         label="Subject"
                         placeholder='edwardd@gmail.com'
+                        placeholderTextColor="#000000"
                     />
                     <Input
                         inputContainerStyle={styles.borderdv}
@@ -49,6 +51,7 @@ const AppFeedback = ({ navigation, user }) => {
                         style={styles.email}
                         labelStyle={styles.label}
                         label="Message"
+                        placeholderTextColor="#000000"
                         placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
                     />
                 </View>

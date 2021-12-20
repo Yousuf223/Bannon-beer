@@ -140,6 +140,11 @@ const SignUp = ({ navigation, user }) => {
                             <TouchableOpacity
                                 style={styles.btn}
                                 activeOpacity={0.9}
+                                onPress={() => {
+                                    navigation.navigate('AppStackNavigator', {
+                                        screen: 'Home',
+                                    })
+                                }}
                             >
                                 <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>
                             </TouchableOpacity>

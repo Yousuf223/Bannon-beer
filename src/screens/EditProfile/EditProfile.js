@@ -39,6 +39,7 @@ const EditProfile = ({ navigation, user }) => {
                                     labelStyle={styles.label}
                                     label="First Name"
                                     placeholder='Edward'
+                                    placeholderTextColor="#000000"
                                 />
                             </View>
                             <View>
@@ -52,6 +53,7 @@ const EditProfile = ({ navigation, user }) => {
                                     labelStyle={styles.label}
                                     label="Last Name"
                                     placeholder='Davidson'
+                                    placeholderTextColor="#000000"
                                 />
                             </View>
                             <View>
@@ -64,7 +66,8 @@ const EditProfile = ({ navigation, user }) => {
                                     style={styles.email}
                                     labelStyle={styles.label}
                                     label="Email Address"
-                                    placeholder='adwardg@gmail.com'
+                                    placeholder='edwardd@gmail.com'
+                                    placeholderTextColor="#000000"
                                 />
                             </View>
                </View>
@@ -94,7 +97,7 @@ const styles = StyleSheet.create({
         fontFamily:"Oswald-Medium",
         fontSize:18,
         paddingLeft:10,
-        bottom:10,
+        bottom:6,
         color:"#000000"
     },
     profile:{

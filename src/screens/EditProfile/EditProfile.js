@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         fontFamily:"Oswald-Medium",
         fontSize:18,
         paddingLeft:10,
-        bottom:6,
+        bottom:4,
         color:"#000000"
     },
     profile:{

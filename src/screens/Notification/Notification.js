@@ -56,7 +56,9 @@ const Notification = ({ navigation, user }) => {
                         <View style={styles.btn}>
                             <Text style={styles.date}>23 May 2021</Text>
                         </View>
+                        <View style={{width:"98%"}}>
                         <Text style={styles.text1}>You have scanned 21 Petrus Cherry Chocalate</Text>
+                        </View>
                         </View>
                         </View>
                     </View>

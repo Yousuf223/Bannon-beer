@@ -15,6 +15,7 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
+  Platform,
   StatusBar,
   // Animated
 } from 'react-native';
@@ -35,11 +36,11 @@ import ToggleSwich from '../../components/ToggleSwich/ToggleSwich';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 const DrawerContent = props => {
   const draweritem = [
-    {
-      // image: '',
-      title: 'Home',
-      navigateTo: 'Home',
-    },
+    // {
+    //   // image: '',
+    //   title: 'Home',
+    //   navigateTo: 'Home',
+    // },
 
   ];
   const [untilToday, setUntilToday] = useState(false)
@@ -71,7 +72,11 @@ const DrawerContent = props => {
         </View>
         <View style={{paddingLeft:15,paddingTop:"18%"}}>
           <TouchableOpacity 
-           onPress={() => navigation.navigate('Home')}
+                onPress={() => {
+                  navigation.navigate('AppStackNavigator', {
+                      screen: 'Home',
+                  })
+              }}
           activeOpacity={0.8}
           style={styles.row1}
           >
@@ -326,6 +331,6 @@ const styles = StyleSheet.create({
       { rotateX: "45deg" },
       { rotateZ: "90deg" }
     ],
-    left:120
+    left:Platform.OS == "android" ? 120:130
   }
 });

@@ -178,9 +178,7 @@ const Home = (props) => {
           </View>
         </ScrollView>
 
-        <TORN 
-        activeOpacity={0.9}
-          onPress={() => setModalVisible(true)}
+        <View
           style={styles.posi}>
           <Animated.View
             style={{
@@ -196,7 +194,7 @@ const Home = (props) => {
                 style={styles.beer} source={require('../../assets/images/beerCard.png')} />
             </TouchableOpacity>
           </Animated.View>
-        </TORN>
+        </View>
         <Modal
           animationIn="slideInRight"
           animationOut="slideOutLeft"

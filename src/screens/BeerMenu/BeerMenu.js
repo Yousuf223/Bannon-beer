@@ -16,8 +16,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {connect, useDispatch} from 'react-redux';
 import {SearchBar} from 'react-native-elements';
 import CardDetail from '../../components/CardDetail/CardDetail';
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import Entypo from 'react-native-vector-icons/Entypo'
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Modal from 'react-native-modal';
 import * as Progress from 'react-native-progress';
 const BeerMenu = ({navigation, user}) => {
@@ -74,27 +74,24 @@ const BeerMenu = ({navigation, user}) => {
   ).current;
   var jsx = [];
   for (var i = 1; i <= 75; i++) {
-    jsx.push(i)
+    jsx.push(i);
   }
-  
-  const [select, setSelect] = useState([])
-  const count = (index) => {
 
+  const [select, setSelect] = useState([]);
+  const count = index => {
     // setSelect(index)
 
-    var arr = []
-    const isSelected = select.findIndex((e) => e == index)
+    var arr = [];
+    const isSelected = select.findIndex(e => e == index);
     if (isSelected == -1) {
-      arr.push(index)
-      setSelect([...select, ...arr])
-
+      arr.push(index);
+      setSelect([...select, ...arr]);
     } else {
-      var newArr = select
-      newArr.splice(isSelected, 1)
-      setSelect(e => [...newArr])
+      var newArr = select;
+      newArr.splice(isSelected, 1);
+      setSelect(e => [...newArr]);
     }
-
-  }
+  };
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -139,7 +136,7 @@ const BeerMenu = ({navigation, user}) => {
                   number={item.number}
                   decription={item.description}
                   image={item.image}
-                  onPress={()=>navigation.navigate('QRScaner')}
+                  onPress={() => navigation.navigate('QRScaner')}
                 />
               </View>
             );
@@ -291,54 +288,59 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8ece0',
     borderRadius: 15,
     paddingVertical: 10,
-    marginTop: Platform.OS == "android" ? 0 : 30,
+    marginTop: Platform.OS == 'android' ? 0 : 30,
   },
   count: {
-    flexDirection: "row",
+    flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   loop: {
-    width: "12%", height: 38,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center", margin: 3, borderRadius: 10
+    width: '12%',
+    height: 38,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 3,
+    borderRadius: 10,
   },
   textNum: {
-    color: "#c5b9ab",
-    fontFamily: "Oswald-Medium"
+    color: '#c5b9ab',
+    fontFamily: 'Oswald-Medium',
   },
   rowModal: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
   rowProgress: {
-    flexDirection: "row",
+    flexDirection: 'row',
     paddingHorizontal: 10,
-    paddingBottom: 20
+    paddingBottom: 20,
   },
   reset: {
-    backgroundColor: "#d9cdc1",
+    backgroundColor: '#d9cdc1',
     width: 50,
     height: 26,
     borderRadius: 6,
-    alignItems: "center",
-    justifyContent: "center",
-    right: 12
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 12,
   },
   beerCard: {
-    color: "#000000", fontSize: 16, fontFamily: "Oswald-Medium"
+    color: '#000000',
+    fontSize: 16,
+    fontFamily: 'Oswald-Medium',
   },
   resetText: {
-    color: "#fcf2e9",
+    color: '#fcf2e9',
     fontSize: 12,
-    fontFamily: "Oswald-Regular"
+    fontFamily: 'Oswald-Regular',
   },
   cross: {
     width: 24,
-    height: 24
-  }
+    height: 24,
+  },
 });
 export default connect(mapStateToProps, null)(BeerMenu);

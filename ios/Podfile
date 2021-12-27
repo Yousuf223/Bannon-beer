@@ -7,7 +7,7 @@ permissions_path = '../node_modules/react-native-permissions/ios'
 pod 'Permission-Camera', :path => "../node_modules/react-native-permissions/ios/Camera.podspec"
 
 
-target 'wineApp' do
+target 'BannonsBeer' do
   config = use_native_modules!
 
   use_react_native!(
@@ -18,7 +18,7 @@ target 'wineApp' do
 
   pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
-  target 'wineAppTests' do
+  target 'BannonsBeerTests' do
     inherit! :complete
     # Pods for testing
   end

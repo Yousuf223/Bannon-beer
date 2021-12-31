@@ -16,13 +16,6 @@ export default function QRScaner({
                 onRead={onSuccess}
                 // onRead={onSuccess()}
                 flashMode={RNCamera.Constants.FlashMode.torch}
-                // topContent={
-                //   <Text style={styles.centerText}>
-                //     Go to
-                //     <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-                //     your computer and scan the QR code.
-                //   </Text>
-                // }
                 bottomContent={
                     <TouchableOpacity style={styles.buttonTouchable}>
                         <View style={{ flexDirection: "row",alignItems:"center" }}>

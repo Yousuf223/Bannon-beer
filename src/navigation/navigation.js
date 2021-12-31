@@ -1,4 +1,4 @@
-import React from 'react'
+
 import {
   Image,
   Text,
@@ -10,6 +10,10 @@ import {
   Linking,
   Platform,
 } from 'react-native';
+import React, {  useState, useEffect  } from 'react';
+import { userLogin } from '../stores/actions/user.action';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import Home from '../screens/Home/Home.screen'
 import Login from '../screens/Login/Login'
 import SignUp from '../screens/SignUp/SignUp'
@@ -126,26 +130,78 @@ function AppStackNavigator() {
     </AppStack.Navigator>
   )
 }
-const MainNavigation = () => {
+// const MainNavigation = () => {
+//   return (
+//     <NavigationContainer>
+//       <Stack.Navigator screenOptions={{ headerShown: false }}>
+//       <Stack.Screen
+//           name="AuthStackNavigator"
+//           options={{ headerShown: false }}
+//           component={AuthStackNavigator}
+//         />
+//         <Stack.Screen
+//           name="AppStackNavigator"
+//           options={{ headerShown: false }}
+//           component={AppStackNavigator}
+//         />
+//       </Stack.Navigator>
+//     </NavigationContainer>
+//   )
+// }
+function MainNavigation({ user,userLogin }) {
+  useEffect(() => {
+    // Fetch the token from storage then navigate to our appropriate place
+    const bootstrapAsync = async () => {
+      let token;
+
+      try {
+        token = await AsyncStorage.getItem("token");
+      } catch (e) {
+        // Restoring token failed
+      }
+
+      if (token !== null) {
+        setTimeout(() => {
+          userLogin(token);
+        }, 500);
+      } else {
+        
+      }
+    };
+    bootstrapAsync();
+  }, []);
+  // return (
+  //   <Stack.Navigator initialRouteName="Login"  screenOptions={{headerShown:false}} sdetachInactiveScreens={true}>
+  //     {user.loggedin ? <Stack.Screen name="MainDrawer" component={MainDrawer} /> : <Stack.Screen name="Login" component={LoginStack} />}
+  //   </Stack.Navigator>
+  // );
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-          name="AuthStackNavigator"
-          options={{ headerShown: false }}
-          component={AuthStackNavigator}
-        />
-        <Stack.Screen
-          name="AppStackNavigator"
-          options={{ headerShown: false }}
-          component={AppStackNavigator}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen
+              name="AuthStackNavigator"
+              options={{ headerShown: false }}
+              component={AuthStackNavigator}
+            />
+            <Stack.Screen
+              name="AppStackNavigator"
+              options={{ headerShown: false }}
+              component={AppStackNavigator}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      )
 }
 
-export default MainNavigation
+const mapStateToProps = state => {
+  return {
+      user: state.userReducer.users
+  }
+};
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ userLogin }, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps) (MainNavigation);
 
 
 const styles = StyleSheet.create({

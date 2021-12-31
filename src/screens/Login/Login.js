@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react'
 import {
     SafeAreaView,
     View,
@@ -6,6 +6,7 @@ import {
     StatusBar,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
     StyleSheet,
     ScrollView
 } from 'react-native'
@@ -13,9 +14,84 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { connect, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
-const Login = ({ navigation, user }) => {
+import { useForm, Controller } from "react-hook-form";
+import { userLogin } from '../../stores/actions/user.action';
+import { bindActionCreators } from 'redux';
+import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+const Login = ({ navigation, user,userLogin }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
+    const [isLoading, setIsLoading] = useState(false);
+    const { control, handleSubmit, formState: { errors } } = useForm();
+
+    const onSubmit  = (data) => {
+        console.log(data,"****DATA****");
+        setIsLoading(true);
+        auth().signInWithEmailAndPassword(data.Email, data.Password).then(async (userCredential) => {
+            setIsLoading(false);
+            const token = await userCredential.user.getIdToken(true);
+            await saveToken(token);
+            await userLogin(token);
+            navigation.navigate('AppStackNavigator', {
+                screen: 'Home',
+            })
+        })
+            .catch(error => {
+                setIsLoading(false);
+                if (error.code === 'auth/email-already-in-use') {
+                    alert('That email address is already in use!');
+                }
+
+                if (error.code === 'auth/invalid-email') {
+                    alert('That email address is invalid!');
+                }
+
+                if (error.code === 'auth/wrong-password') {
+                    alert('The password is invalid');
+                }
+
+                //console.error(error);
+            });
+    };
+
+    const saveToken = async (token) => {
+
+        try {
+            await AsyncStorage.setItem("token", token);
+        } catch (e) {
+            // console.log(e);
+            // saving token failed
+        }
+    };
+
+      //Geogle Login
+      GoogleSignin.configure({
+        webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
+      });
+
+      async function onGoogleButtonPress() {
+        // Get the users ID token
+    
+    
+        const { idToken } = await GoogleSignin.signIn();
+    
+        // Create a Google credential with the token
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+    
+        // Sign-in the user with the credential
+        auth().signInWithCredential(googleCredential).then(async (userCredential) => {
+            const token = await userCredential.user.getIdToken(true);
+            await saveToken(token);
+            await userLogin(token);
+          navigation.navigate('AppStackNavigator', {
+            screen: 'Home',
+        })
+        }).catch(error => {
+            console.log("google login error", error)
+        });
+      }
+
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -27,23 +103,43 @@ const Login = ({ navigation, user }) => {
                         <View style={{ paddingHorizontal: 20 }}>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
-                                <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    //  onFocus={()=>setToggleUser4(1)}
-                                    //  onBlur={()=>setToggleUser4(0)}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
-                                    label="Email"
-                                    placeholder='edwardd@gmail.com'
+                                <Controller
+                                    control={control}
+                                    rules={{
+                                        pattern: {
+                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            message: "invalid email address"
+                                        }
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
+                                            inputContainerStyle={styles.borderdv}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            style={styles.email}
+                                            labelStyle={styles.label}
+                                            placeholderTextColor="#000000"
+                                            label="Email"
+                                            placeholder='edwardd@gmail.com'
+                                        />
+                                    )}
+                                    name="Email"
+                                    defaultValue=""
                                 />
+                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter valid Email</Text>}
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
-                                <Input
+                                <Controller
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                     inputContainerStyle={styles.borderdv}
-                                    //  onFocus={()=>setToggleUser4(1)}
-                                    //  onBlur={()=>setToggleUser4(0)}
+                                    onBlur={onBlur}
+                                    onChangeText={onChange}
                                     style={styles.email}
                                     labelStyle={styles.label}
                                     placeholderTextColor="#000000"
@@ -51,6 +147,11 @@ const Login = ({ navigation, user }) => {
                                     placeholder='************'
                                     secureTextEntry={hideEye ? true : false}
                                 />
+                                    )}
+                                    name="Password"
+                                    defaultValue=""
+                                />
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "30%", fontSize: 14, paddingLeft: 15 }}>Emter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
                                     name={hideEye ? 'eye-off' : 'eye'}
@@ -65,14 +166,12 @@ const Login = ({ navigation, user }) => {
                         </View>
                         <View>
                             <TouchableOpacity
-                                style={styles.btn}
-                                activeOpacity={0.9}
-                                onPress={() => {
-                                    navigation.navigate('AppStackNavigator', {
-                                        screen: 'Home',
-                                    })
-                                }}>
-                                <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>
+                                      style={styles.btn}
+                                      activeOpacity={0.9}
+                                      onPress={handleSubmit(onSubmit)}
+                                >
+                                    {isLoading?<ActivityIndicator size="small" color="#ffffff"></ActivityIndicator>: <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>}
+                               
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>
@@ -84,9 +183,12 @@ const Login = ({ navigation, user }) => {
                             <View style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
                             </View>
-                            <View style={styles.iconBg}>
+                            <TouchableOpacity 
+                            onPress={() => onGoogleButtonPress()}
+                            activeOpacity={0.9}
+                            style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
-                            </View>
+                            </TouchableOpacity>
                             <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
                             </View>
@@ -108,7 +210,11 @@ const mapStateToProps = state => {
     return {
         user: state.userReducer.users
     }
-}
+};
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ userLogin }, dispatch);
+ 
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -201,13 +307,13 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25
     },
-    eyeIcon:{
-        position:"absolute",
+    eyeIcon: {
+        position: "absolute",
         left: "83%",
         bottom: "39%",
         paddingHorizontal: "6%",
         paddingVertical: "2%",
-      
+
     }
 })
-export default connect(mapStateToProps, null)(Login)
+export default connect(mapStateToProps,mapDispatchToProps)(Login)

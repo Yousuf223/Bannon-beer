@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "576462266383",
+    "project_id": "o-bannon-s-beer",
+    "storage_bucket": "o-bannon-s-beer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576462266383:android:68476752ec7a4f6dd0837a",
+        "android_client_info": {
+          "package_name": "com.appstirr.bannonsbeer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "576462266383-snva9d9d2bcarl8qao9h0u4kaqdhv9is.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appstirr.bannonsbeer",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7KY2NnoBIbBzbaeXs72Hj3HUV81af6sA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

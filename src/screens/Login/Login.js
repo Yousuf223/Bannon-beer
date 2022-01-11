@@ -11,57 +11,92 @@ import {
     ScrollView
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { connect, useDispatch } from 'react-redux'
+import { connect,useSelector, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
-import { userLogin } from '../../stores/actions/user.action';
+// import { userLogin } from '../../stores/actions/user.action';
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { userLogin } from '../../stores/actions/user.action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// var email = "yousuf@gmail.com";
+// var password = "111111"
 const Login = ({ navigation, user,userLogin }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
-
+    const count = useSelector((state) => state.userReducer.users)
     const onSubmit  = (data) => {
-        console.log(data,"****DATA****");
-        setIsLoading(true);
-        auth().signInWithEmailAndPassword(data.Email, data.Password).then(async (userCredential) => {
-            setIsLoading(false);
-            const token = await userCredential.user.getIdToken(true);
-            await saveToken(token);
-            await userLogin(token);
-            navigation.navigate('AppStackNavigator', {
-                screen: 'Home',
-            })
+        // console.log(data,"****DATA****");
+        var data1 = new FormData();
+
+      data1.append('email', data.Email);
+      data1.append('password', data.Password);
+      
+        userLogin(data1)
+        .then(res => {
+            if(res.success){
+                // console.log("hdhchdf",res)
+                saveToken(res.access_token);
+                navigation.navigate('AppStackNavigator', {
+                    screen: 'Home'
+                  })
+
+                 
+            }
+            else{
+                alert(res.message)
+            }
+            // console.log('error', err);
+            
+            // console.log("res", res)
         })
-            .catch(error => {
-                setIsLoading(false);
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('That email address is already in use!');
-                }
+        .catch(err => {
+            alert(err.message)
+            console.log('error', err);
+        })
 
-                if (error.code === 'auth/invalid-email') {
-                    alert('That email address is invalid!');
-                }
+        // alert(data)
+        // navigation.navigate('AppStackNavigator', {
+        //     screen: 'Home'
+        //   })
+        // setIsLoading(true);
+        // auth().signInWithEmailAndPassword(data.Email, data.Password).then(async (userCredential) => {
+        //     setIsLoading(false);
+        //     const token = await userCredential.user.getIdToken(true);
+        //     await saveToken(token);
+        //     await userLogin(token);
+        //     navigation.navigate('AppStackNavigator', {
+        //         screen: 'Home',
+        //     })
+        // })
+        //     .catch(error => {
+        //         setIsLoading(false);
+        //         if (error.code === 'auth/email-already-in-use') {
+        //             alert('That email address is already in use!');
+        //         }
 
-                if (error.code === 'auth/wrong-password') {
-                    alert('The password is invalid');
-                }
+        //         if (error.code === 'auth/invalid-email') {
+        //             alert('That email address is invalid!');
+        //         }
 
-                //console.error(error);
-            });
+        //         if (error.code === 'auth/wrong-password') {
+        //             alert('The password is invalid');
+        //         }
+
+        //         //console.error(error);
+        //     });
     };
 
     const saveToken = async (token) => {
-
         try {
             await AsyncStorage.setItem("token", token);
         } catch (e) {
-            // console.log(e);
-            // saving token failed
+            console.log(e,"saving token failed");
         }
     };
 
@@ -91,6 +126,8 @@ const Login = ({ navigation, user,userLogin }) => {
             console.log("google login error", error)
         });
       }
+
+      
 
     return (
         <>

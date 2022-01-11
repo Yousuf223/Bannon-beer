@@ -16,37 +16,60 @@ import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
-import { userLogin } from '../../stores/actions/user.action';
-const SignUp = ({ navigation, user,userLogin }) => {
+import { SignUpAction, userLogin } from '../../stores/actions/user.action';
+const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
 
     const onSubmit = (data) => {
-        console.log("it works");
+        // console.log("it works");
+        var data1 = new FormData();
+        data1.append('email', data.Email);
+        data1.append('password', data.Password);
+        data1.append('first_name', data.FirstName );
+        data1.append('last_name', data.LastName);
+        
+          SignUpAction(data1)
+          .then(res => {
+            // console.log("------------------------------")
+                  console.log("res",res)
+                  navigation.navigate('AppStackNavigator', {
+                    screen: 'Home'
+                  })
+        //         //  onPress={() => navigation.goBack()}
+              
+              // console.log('error', err);
+              
+              // console.log("res", res)
+          })
+          .catch(err => {
+              alert(err.message)
+              console.log('error', err);
+          })
         setIsLoading(true);
-        auth()
-            .createUserWithEmailAndPassword(data.Email, data.Password, data.firstName, data.LastName)
-            .then(() => {
-                console.log("it works in then")
-                setIsLoading(true);
-                Login(() => navigation.goBack())
-                //  onPress={() => navigation.goBack()}
-            })
-            .catch(error => {
-                if (error.code === 'auth/email-already-in-use') {
-                    setIsLoading(false);
-                    alert('That email address is already in use!');
-                }
+        // auth()
+        //     .createUserWithEmailAndPassword(data.Email, data.Password, data.firstName, data.LastName)
+        //     .then(() => {
+        //         console.log("it works in then")
+        //         setIsLoading(true);
+        //         Login(() => navigation.goBack())
+        //         //  onPress={() => navigation.goBack()}
+        //     })
+        //     .catch(error => {
+        //         if (error.code === 'auth/email-already-in-use') {
+        //             setIsLoading(false);
+        //             alert('That email address is already in use!');
+        //         }
 
-                if (error.code === 'auth/invalid-email') {
-                    setIsLoading(false);
-                    alert('That email address is invalid!');
-                }
-                setIsLoading(false);
-                console.error(error);
-            });
+        //         if (error.code === 'auth/invalid-email') {
+        //             setIsLoading(false);
+        //             alert('That email address is invalid!');
+        //         }
+        //         setIsLoading(false);
+        //         console.error(error);
+        //     });
     };
 
     return (
@@ -61,23 +84,6 @@ const SignUp = ({ navigation, user,userLogin }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <View style={{ width: "50%" }}>
                                     <Image style={styles.inputLogo} source={require('../../assets/images/name.png')} />
-                                    {/* <Input
-                                        inputContainerStyle={styles.borderdv}
-                                        //  onFocus={()=>setToggleUser4(1)}
-                                        //  onBlur={()=>setToggleUser4(0)}
-                                        // style={styles.email}
-                                        style={{
-                                            paddingLeft: 1,
-                                            fontSize: 12,
-                                            color: "#000002",
-                                            top: 12,
-                                            fontFamily: "Oswald-Regular"
-                                        }}
-                                        labelStyle={styles.label}
-                                        label="First Name"
-                                        placeholder='Edward'
-                                        placeholderTextColor="#000000"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         rules={{
@@ -345,7 +351,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin }, dispatch);
+    bindActionCreators({ userLogin,SignUpAction }, dispatch);
 
 
 const styles = StyleSheet.create({

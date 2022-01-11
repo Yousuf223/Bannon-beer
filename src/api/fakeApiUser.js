@@ -1,21 +1,84 @@
-//example api request: replace with your API request here in folder API
+import axios from 'axios'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const getUser = () => {
+export const getApi = async (url, data, token) => {
+  console.log("url", url)
   try {
-    return Promise.resolve({
-      status: 'success',
-      data: [
-        { id: 1, name: 'Fira' },
-        { id: 2, name: 'Nadia' },
-        { id: 3, name: 'Handy' },
-        { id: 4, name: 'Fakara' }
-      ]
+    let response = await axios.get(url + data, {
+      headers: {
+        "Accept": "application/json",
+        'Authorization': `Bearer ${token}`, 
+      },
+     
     })
+    if (response.status == 200) {
+      return Promise.resolve({
+        status: 'success',
+        data: response.data
+      })
+    }
+  } catch (e) {
+    console.log("url getApi error", e)
+    return Promise.reject(e)
+  }
+}
+
+export const postApi = async (url, data, auth) => {
+  try {
+    let response = await axios.post(url, data, {
+      headers: {
+       'Content-Type': 'application/json',
+        "Accept": "application/json",
+        'Authorization': `Bearer ${auth}`, 
+      }
+    })
+    if (response.status == 200) {
+      // console.log(response,"hghgg")
+      return Promise.resolve({
+        status: 'success',
+        data: response.data
+      })
+
+    }
   } catch (e) {
     return Promise.reject(e)
   }
 }
 
+
+export const saveApi = async (url, data, auth) => {
+  try {
+    let response = await axios.post(url, data, {
+      headers: {
+       'Content-Type': 'multipart/form-data',
+        "Accept": "application/json",
+        'Authorization': `Bearer ${auth}`, 
+      }
+    })
+    if (response.status == 200) {
+      return Promise.resolve({
+        status: 'success',
+        data: response.data
+      })
+    }
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
+// fetch("http://soplush.ingicweb.com/soplush/auth/signup.php?action=signup_customer", {
+//                     method: 'POST',
+//                     // dataType: "json",
+//                     headers: {
+//                         'Accept': 'application/json',
+//                         'Content-Type': 'multipart/form-data'
+//                     },
+//                     body: formData
+//                 }).then(res => res.json())
+
 module.exports = {
-  getUser
+  postApi,
+  getApi,
+  saveApi
+
 }

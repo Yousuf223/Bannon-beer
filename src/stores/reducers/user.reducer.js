@@ -1,6 +1,10 @@
+import { EDIT_PROFILE, LIST_DATA, SIGNUP } from '../actions/actionType';
+import {USER_LOGIN} from '../constants';
+// import { SIGNUP } from '../actions/actionType';
 const initialState = {
   users: [],
   isLoading: false,
+  ListDataAction:[]
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -24,6 +28,27 @@ export const userReducer = (state = initialState, action) => {
         isLoading: false
       }
 
+      case USER_LOGIN:
+        return {
+          ...state,
+          users : payload
+        }
+        case SIGNUP:
+          return {
+            ...state,
+            users:payload
+          }
+          case EDIT_PROFILE:
+            return{
+              ...state,
+              users:payload
+            }
+            case LIST_DATA:
+              return{
+                ...state,
+                ListDataAction:payload,
+                isLoading:false
+              }
     default:
       return state
   }

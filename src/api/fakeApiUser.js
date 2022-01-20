@@ -1,5 +1,6 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 
 export const getApi = async (url, data, token) => {
   console.log("url", url)
@@ -24,7 +25,6 @@ export const getApi = async (url, data, token) => {
 }
 
 export const postApi = async (url, data, auth) => {
-  console.log("postApi", url, data, token)
 
   try {
     let response = await axios.post(url, data, {
@@ -34,8 +34,8 @@ export const postApi = async (url, data, auth) => {
         'Authorization': `Bearer ${auth}`, 
       }
     })
+    console.log(response.status,"response.status")
     if (response.status == 200) {
-      // console.log(response,"hghgg")
       return Promise.resolve({
         status: 'success',
         data: response.data
@@ -43,7 +43,7 @@ export const postApi = async (url, data, auth) => {
 
     }
   } catch (e) {
-    console.log("postApi",e)
+    console.log("postApi reject",e)
     return Promise.reject(e)
   }
 }

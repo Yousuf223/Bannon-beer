@@ -37,6 +37,8 @@ const Login = ({ navigation, user, userLogin }) => {
 
         data1.append('email', data.Email);
         data1.append('password', data.Password);
+        // data1.append('fcm_token', data.token);
+        // console.log('fcm_tokenfcm_token',fcm_token)
 
         userLogin(data1)
             .then(res => {
@@ -120,7 +122,6 @@ const Login = ({ navigation, user, userLogin }) => {
         auth().signInWithCredential(googleCredential).then(async (userCredential) => {
             const token = await userCredential.user.getIdToken(true);
             await saveToken(token);
-            await userLogin(token);
             navigation.navigate('AppStackNavigator', {
                 screen: 'Home',
             })

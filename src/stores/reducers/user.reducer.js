@@ -1,10 +1,15 @@
-import { EDIT_PROFILE, LIST_DATA, SIGNUP } from '../actions/actionType';
-import {USER_LOGIN} from '../constants';
+import { EDIT_PROFILE, LIST_DATA, SIGNUP, FEATURED_PRODUCTS, My_Purchases, PUSH_NOTIFICATION, CHANGE_PASSWORD, FEEDBACK, ABOUT, QRCODE } from '../actions/actionType';
+import { AboutAction } from '../actions/user.action';
+import { USER_LOGIN } from '../constants';
 // import { SIGNUP } from '../actions/actionType';
 const initialState = {
   users: [],
   isLoading: false,
-  ListDataAction:[]
+  ListDataAction: [],
+  FeaturedProducts: [],
+  MyPurchases: [],
+  NotificationAction: [],
+  AboutAction:[]
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -28,27 +33,67 @@ export const userReducer = (state = initialState, action) => {
         isLoading: false
       }
 
-      case USER_LOGIN:
+    case USER_LOGIN:
+      return {
+        ...state,
+        users: payload
+      }
+    case SIGNUP:
+      return {
+        ...state,
+        users: payload
+      }
+    case CHANGE_PASSWORD:
+      return {
+        ...state,
+        users: payload
+      }
+      case QRCODE:
         return {
           ...state,
-          users : payload
+          users:payload
         }
-        case SIGNUP:
-          return {
-            ...state,
-            users:payload
-          }
-          case EDIT_PROFILE:
-            return{
-              ...state,
-              users:payload
-            }
-            case LIST_DATA:
-              return{
-                ...state,
-                ListDataAction:payload,
-                isLoading:false
-              }
+    case FEEDBACK:
+      return {
+        ...state,
+        users: payload
+      }
+    case EDIT_PROFILE:
+      return {
+        ...state,
+        users: payload
+      }
+    case LIST_DATA:
+      return {
+        ...state,
+        ListDataAction: payload,
+        isLoading: false
+      }
+    case FEATURED_PRODUCTS:
+      return {
+        ...state,
+        FeaturedProducts: payload,
+        isLoading: false
+      }
+    case My_Purchases:
+      return {
+        ...state,
+        MyPurchases: payload,
+        isLoading: false
+      }
+    case PUSH_NOTIFICATION:
+      return {
+        ...state,
+        NotificationAction: payload,
+        isLoading: false
+      }
+      case ABOUT:{
+        return{
+          ...state,
+          AboutAction:payload,
+          isLoading:false
+        }
+      }
     default:
       return state
   }

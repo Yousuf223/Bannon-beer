@@ -28,7 +28,7 @@ const ForgotPassword = ({ navigation, user }) => {
                                 labelStyle={styles.label}
                                 label="Email"
                                 placeholder='edwardd@gmail.com'
-                                placeholderTextColor="#000000"
+                                placeholderTextColor="#00000060"
                             />
                             </View>
                 <View>

@@ -1,4 +1,4 @@
-import React, {Component, useState, useRef} from 'react';
+import React, { Component, useState, useRef, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,51 +8,61 @@ import {
   TextInput,
   StyleSheet,
   ScrollView,
-  PanResponder,
   Image,
+  PanResponder,
   Animated,
+  FlatList
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {connect, useDispatch} from 'react-redux';
-import {SearchBar} from 'react-native-elements';
+import { connect, useDispatch, useSelector } from 'react-redux'
+import { SearchBar } from 'react-native-elements';
 import CardDetail from '../../components/CardDetail/CardDetail';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Modal from 'react-native-modal';
 import * as Progress from 'react-native-progress';
-const BeerMenu = ({navigation, user}) => {
+import { ListDataAction } from '../../stores/actions/user.action';
+const BeerMenu = ({ navigation, user }) => {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const cardData = [
-    {
-      number: '01',
-    },
-    {
-      description: 'Odell 90 Shilling',
-      image: require('../../assets/images/wine2.png'),
-      number: '02',
-    },
-    {
-      description: 'Ayinger Brauweisse',
-      image: require('../../assets/images/wine2.png'),
-      number: '03',
-    },
-    {
-      description: 'Lagunitas IPA',
-      image: require('../../assets/images/wine6.png'),
-      number: '04',
-    },
-    {
-      description: 'Sierra Nevada Pale Ale',
-      image: require('../../assets/images/wine2.png'),
-      number: '05',
-    },
-    {
-      description: 'Lagunitas IPA',
-      image: require('../../assets/images/wine6.png'),
-      number: '06',
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(false);
+  const [data1, setData1] = useState([]);
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(ListDataAction())
+  }, [])
+
+  const data = useSelector(state => state.userReducer.ListDataAction)
+  // const cardData = [
+  //   {
+  //     number: '01',
+  //   },
+  //   {
+  //     description: 'Odell 90 Shilling',
+  //     image: require('../../assets/images/wine2.png'),
+  //     number: '02',
+  //   },
+  //   {
+  //     description: 'Ayinger Brauweisse',
+  //     image: require('../../assets/images/wine2.png'),
+  //     number: '03',
+  //   },
+  //   {
+  //     description: 'Lagunitas IPA',
+  //     image: require('../../assets/images/wine6.png'),
+  //     number: '04',
+  //   },
+  //   {
+  //     description: 'Sierra Nevada Pale Ale',
+  //     image: require('../../assets/images/wine2.png'),
+  //     number: '05',
+  //   },
+  //   {
+  //     description: 'Lagunitas IPA',
+  //     image: require('../../assets/images/wine6.png'),
+  //     number: '06',
+  //   },
+  // ];
   const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -63,7 +73,7 @@ const BeerMenu = ({navigation, user}) => {
           y: pan.y._value,
         });
       },
-      onPanResponderMove: Animated.event([null, {dx: pan.x, dy: pan.y}]),
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }]),
       onPanResponderRelease: () => {
         pan.flattenOffset({
           x: pan.x._value,
@@ -92,11 +102,32 @@ const BeerMenu = ({navigation, user}) => {
       setSelect(e => [...newArr]);
     }
   };
+
+
+
+ const  searchFilterFunction = text => {    
+setSearch(text)
+
+    const newData = data.data.filter((item) => {      
+      const itemData = `${item.name.toUpperCase()}`;
+      console.log("itemDataitemData",itemData)  
+       const textData = text.toUpperCase();
+       return itemData.indexOf(textData) > -1; 
+    });
+    setData1(newData)
+  };
+
+  console.log(data1,"data1data1data1data1data1data1data1data1data1data1")
+  const buyArray = data?.data?.filter((e) => e.buy)
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
+      <StatusBar
+        barStyle="dark-content"
+        // value={query}
+        autoCorrect={false}  
+        backgroundColor={'#f8ece0'} />
       <View style={styles.row}>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: 'row' }}>
           <AntDesign
             onPress={() => navigation.goBack()}
             name="arrowleft"
@@ -105,48 +136,59 @@ const BeerMenu = ({navigation, user}) => {
           />
           <Text style={styles.text0}>Beer Menu</Text>
         </View>
-        <Text style={styles.text1}>75 Items</Text>
+        <Text style={styles.text1}>{data.data.length} Items</Text>
       </View>
-      <View style={{paddingVertical: 10}}>
+      <View style={{ paddingVertical: 10 }}>
         <SearchBar
           platform="ios"
           placeholder="Search"
           placeholderTextColor="#85786f"
-          searchIcon={{iconStyle: {color: '#85786f'}}}
+          searchIcon={{ iconStyle: { color: '#85786f' } }}
           inputStyle={{
             color: '#fff',
             fontSize: 14,
             fontFamily: 'Oswald-Regular',
           }}
-          containerStyle={{backgroundColor: '#f8ece0'}}
+          containerStyle={{ backgroundColor: '#f8ece0' }}
           inputContainerStyle={{
             backgroundColor: '#eaddcd',
             borderRadius: 25,
           }}
-          onChangeText={setSearch}
+          // onChangeText={setSearch}ssss
+        onChangeText={text => searchFilterFunction(text)
+        
+    
+        }
+
           value={search}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={{paddingHorizontal: 20}}>
-          {cardData.map(item => {
-            return (
-              <View style={{paddingVertical: 6}}>
-                <CardDetail
-                  number={item.number}
-                  decription={item.description}
-                  image={item.image}
-                  onPress={() => navigation.navigate('QRScaner')}
+        <View style={{ paddingHorizontal: 20 }}>
+              <FlatList
+                       keyExtractor={(item, index) => index}
+                       
+                       data={data1?.length > 0 ? data1 : data.data}
+                       renderItem={({ item }) => {
+                           return (
+                            <View style={{ paddingVertical: 6 }}>
+                            <CardDetail
+                              number={item.id}
+                              decription={item.name}
+                              image={item.image}
+                              price={item.price}
+                              alocoal={item.alcohol_percentage}
+                              onPress={() => navigation.navigate('QRScaner')}
+                            />
+                        
+                          </View>
+                           )
+                       }}
                 />
-              </View>
-            );
-          })}
         </View>
-      </ScrollView>
       <View style={styles.posi}>
         <Animated.View
           style={{
-            transform: [{translateY: pan.y}],
+            transform: [{ translateY: pan.y }],
           }}
           {...panResponder.panHandlers}>
           <TouchableOpacity
@@ -170,12 +212,12 @@ const BeerMenu = ({navigation, user}) => {
         isVisible={modalVisible}
         onBackButtonPress={() => setModalVisible(!modalVisible)}
         onBackdropPress={() => setModalVisible(!modalVisible)}>
-        <View style={{height: '100%', width: '100%'}}>
+        <View style={{ height: '100%', width: '100%' }}>
           <View style={styles.modalView}>
             <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
               <View style={styles.rowModal}>
                 <Text style={styles.beerCard}>Beer Card</Text>
-                <View style={{flexDirection: 'row'}}>
+                <View style={{ flexDirection: 'row' }}>
                   <TORN
                     onPress={() => setSelect([])}
                     activeOpacity={0.9}
@@ -192,7 +234,7 @@ const BeerMenu = ({navigation, user}) => {
               </View>
               <View style={styles.rowProgress}>
                 <Progress.Bar
-                  progress={select.length / 100}
+                  progress={buyArray?.length / data?.data?.length}
                   animated={true}
                   width={260}
                   height={24}
@@ -214,25 +256,23 @@ const BeerMenu = ({navigation, user}) => {
               {/* <View >
             <Text>1</Text>
           </View> */}
-              <View style={styles.count}>
-                {jsx.map((jsx, index) => {
-                  return (
-                    <TORN
-                      activeOpacity={0.8}
-                      onPress={() => count(index)}
-                      style={styles.loop}>
-                      {select.findIndex(e => e == index) != -1 ? (
-                        <Image
-                          style={styles.cross}
-                          source={require('../../assets/images/stamp.png')}
-                        />
-                      ) : (
-                        <Text style={styles.textNum}>{jsx}</Text>
-                      )}
-                    </TORN>
-                  );
-                })}
-              </View>
+               <View style={styles.count}>
+                  {data?.data?.map((jsx, index) => {
+                    return (
+                      <TORN
+                        activeOpacity={0.8}
+                        onPress={() =>
+                          count(index)
+                        }
+                        style={styles.loop}>
+                        {jsx.buy ? <Image
+                          style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{index + 1}</Text>}
+                      </TORN>
+                    )
+                  }
+                  )
+                  }
+                </View>
             </ScrollView>
           </View>
         </View>

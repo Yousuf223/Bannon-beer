@@ -4,7 +4,9 @@ export default function PointCard({
     number = "03",
     title = "Ayinger Brauweisse",
     point="125",
-    image= ""
+    image= "",
+    percentage="",
+    date=""
 }) {
     return (
         <>
@@ -12,18 +14,18 @@ export default function PointCard({
                 <View style={{ flexDirection: "row",justifyContent:"space-between" }}>
                     <View style={{flex:2}}>
                         <View style={styles.btn}>
-                            <Text style={styles.text}>23 May, 2021</Text>
+                            <Text style={styles.text}>{date}</Text>
                         </View>
                         <Text style={styles.title}> <Text style={styles.number}>{number}</Text> {title}</Text>
                         <View style={{ marginVertical: 6 }}>
                             <View style={{ backgroundColor: "#f3e7db", borderRadius: 4, paddingHorizontal: 4, paddingVertical: 2,alignItems:"center",width:50,height:22 }}>
-                                <Text style={styles.text1}>Alc 4.2</Text>
+                                <Text style={styles.text1}>Alc {percentage}</Text>
                             </View>
                         </View>
                     </View>
                     <View style={{flexDirection:"row",justifyContent:"center",alignItems:"center",}}>
                         <Image style={{width:38,height:38,marginTop:5}} source={image} />
-                        <Text style={styles.text2}>{point}</Text>
+                        <Text style={styles.text2}>${point}</Text>
                     </View>
                 </View>
             </View>

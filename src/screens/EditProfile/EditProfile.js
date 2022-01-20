@@ -7,12 +7,13 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from 'react-native'
 import { useSelector, connect, useDispatch, } from 'react-redux'
 import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { imagePicker } from '../../helper/utils';
+import { imagePicker,cameraPicker } from '../../helper/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { EditProfileAction } from '../../stores/actions/user.action';
 import { bindActionCreators } from 'redux';
@@ -20,7 +21,6 @@ import { bindActionCreators } from 'redux';
 // import { useState } from 'react'
 const EditProfile = ({ navigation, user, EditProfileAction }) => {
     const newData = useSelector((state) => state.userReducer.users)
-console.log('ddggsd',newData)
     // const [data, setData] = useState([]);
     useEffect(() => {
         AsyncStorage.getItem('data')
@@ -43,18 +43,27 @@ console.log('ddggsd',newData)
     const [email, setEmail] = useState();
     const [image, setImage] = useState()
     const [name, setName] = useState()
-
+    const [camera, setCamera] = useState()
     const imageSelector = async () => {
         try {
             const url = await imagePicker(false)
             setImage(url[0].path)
+            console.log("hhhhhhhhhhhh-----",url)
             setName(url[0].path.substring(url[0].path.lastIndexOf('/') + 1))
         } catch (error) {
 
         }
     }
+    const cameraSelector = async () => {
+        try {
+            const url = await cameraPicker(false)
+            setCamera(url[0].path)
+            console.log("hhhhhhhhhhhh-----",url)
+            setName(url[0].path.substring(url[0].path.lastIndexOf('/') + 1))
+        } catch (error) {
 
-
+        }
+    }
     const onSubmit = (data) => {
 
         var data1 = new FormData();
@@ -99,7 +108,15 @@ console.log('ddggsd',newData)
                         >
                             <Image style={styles.profile} source={image ? { uri: image } : require('../../assets/images/profilePicture.png')} />
                         </TouchableOpacity>
+                        <TouchableOpacity 
+                        style={{   position: "absolute",
+                        top: "100%",
+                        right: "34%"}}
+                        activeOpacity={0.9}
+                        onPress={cameraSelector}
+                        >
                         <Image style={styles.camera} source={require('../../assets/images/editCamera.png')} />
+                        </TouchableOpacity>
                     </View>
                     <View>
                         <View>
@@ -113,7 +130,7 @@ console.log('ddggsd',newData)
                                 labelStyle={styles.label}
                                 label="First Name"
                                 placeholder='First Name'
-                                placeholderTextColor="#000000"
+                                placeholderTextColor="#00000060"
                                 value={fName}
 
                             />
@@ -131,7 +148,7 @@ console.log('ddggsd',newData)
                                 labelStyle={styles.label}
                                 label="Last Name"
                                 placeholder='First Name'
-                                placeholderTextColor="#000000"
+                                placeholderTextColor="#00000060"
                                 value={lName}
 
                             />
@@ -148,7 +165,7 @@ console.log('ddggsd',newData)
                                 labelStyle={styles.label}
                                 label="Email Address"
                                 placeholder='Email'
-                                placeholderTextColor="#000000"
+                                placeholderTextColor="#00000060"
                                 value={email}
 
                             />
@@ -193,7 +210,8 @@ const styles = StyleSheet.create({
     profile: {
         width: 88,
         height: 88,
-        borderRadius:20
+        borderRadius:15,
+        // resizeMode:"cover"
     },
     row: {
         alignItems: "center",
@@ -234,9 +252,6 @@ const styles = StyleSheet.create({
     camera: {
         width: 25,
         height: 25,
-        position: "absolute",
-        top: "100%",
-        right: "34%"
     }
 })
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)

@@ -17,37 +17,41 @@ import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { SignUpAction, userLogin } from '../../stores/actions/user.action';
-const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
+import DatePicker from 'react-native-date-picker'
+import messaging from '@react-native-firebase/messaging';
+const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
-
+    const [date, setDate] = useState(new Date())
+    const [open, setOpen] = useState(false)
     const onSubmit = (data) => {
         // console.log("it works");
         var data1 = new FormData();
         data1.append('email', data.Email);
         data1.append('password', data.Password);
-        data1.append('first_name', data.FirstName );
+        data1.append('first_name', data.FirstName);
         data1.append('last_name', data.LastName);
-        
-          SignUpAction(data1)
-          .then(res => {
-            // console.log("------------------------------")
-                  console.log("res",res)
-                  navigation.navigate('AppStackNavigator', {
+        data1.append('dob',data.date)
+        date: moment(date).format('YYYY-MM-DD'),
+        SignUpAction(data1)
+            .then(res => {
+                // console.log("------------------------------")
+                console.log("res", res)
+                navigation.navigate('AppStackNavigator', {
                     screen: 'Home'
-                  })
-        //         //  onPress={() => navigation.goBack()}
-              
-              // console.log('error', err);
-              
-              // console.log("res", res)
-          })
-          .catch(err => {
-              alert(err.message)
-              console.log('error', err);
-          })
+                })
+                //         //  onPress={() => navigation.goBack()}
+
+                // console.log('error', err);
+
+                // console.log("res", res)
+            })
+            .catch(err => {
+                alert(err.message)
+                console.log('error', err);
+            })
         setIsLoading(true);
         // auth()
         //     .createUserWithEmailAndPassword(data.Email, data.Password, data.firstName, data.LastName)
@@ -72,6 +76,11 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
         //     });
     };
 
+    // messaging().getToken()
+    // .then(token => {
+    //   console.log("token", token)
+    // })
+    console.log("date", date)
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -91,21 +100,21 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                         }}
                                         render={({ field: { onChange, onBlur, value } }) => (
                                             <Input
-                                            inputContainerStyle={styles.borderdv}
-                                            onBlur={onBlur}
-                                            onChangeText={onChange}
-                                            style={{
-                                                paddingLeft: 1,
-                                                fontSize: 12,
-                                                color: "#000002",
-                                                top: 12,
-                                                fontFamily: "Oswald-Regular"
-                                            }}
-                                            labelStyle={styles.label}
-                                            label="First Name"
-                                            placeholder='Edward'
-                                            placeholderTextColor="#000000"
-                                        />
+                                                inputContainerStyle={styles.borderdv}
+                                                onBlur={onBlur}
+                                                onChangeText={onChange}
+                                                style={{
+                                                    paddingLeft: 1,
+                                                    fontSize: 12,
+                                                    color: "#000002",
+                                                    top: 12,
+                                                    fontFamily: "Oswald-Regular"
+                                                }}
+                                                labelStyle={styles.label}
+                                                label="First Name"
+                                                placeholder='Edward'
+                                                placeholderTextColor="#00000060"
+                                            />
                                         )}
                                         name="FirstName"
                                         defaultValue=""
@@ -130,28 +139,28 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                         placeholder='Davidson'
                                         placeholderTextColor="#000000"
                                     /> */}
-                                      <Controller
+                                    <Controller
                                         control={control}
                                         rules={{
                                             required: true,
                                         }}
                                         render={({ field: { onChange, onBlur, value } }) => (
                                             <Input
-                                            inputContainerStyle={styles.borderdv}
-                                            onBlur={onBlur}
-                                            onChangeText={onChange}
-                                            style={{
-                                                paddingLeft: 1,
-                                                fontSize: 12,
-                                                color: "#000002",
-                                                top: 12,
-                                                fontFamily: "Oswald-Regular"
-                                            }}
-                                            labelStyle={styles.label}
-                                            label="Last Name"
-                                            placeholder='Davidson'
-                                            placeholderTextColor="#000000"
-                                        />
+                                                inputContainerStyle={styles.borderdv}
+                                                onBlur={onBlur}
+                                                onChangeText={onChange}
+                                                style={{
+                                                    paddingLeft: 1,
+                                                    fontSize: 12,
+                                                    color: "#000002",
+                                                    top: 12,
+                                                    fontFamily: "Oswald-Regular"
+                                                }}
+                                                labelStyle={styles.label}
+                                                label="Last Name"
+                                                placeholder='Davidson'
+                                                placeholderTextColor="#00000060"
+                                            />
                                         )}
                                         name="LastName"
                                         defaultValue=""
@@ -159,8 +168,9 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                     {errors.LastName && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Last Name</Text>}
                                 </View>
                             </View>
-                            {/* <View>
-
+                            <TouchableOpacity 
+                            onPress={() => setOpen(true)}
+                            >
                                 <Image style={styles.inputLogo} source={require('../../assets/images/date.png')} />
                                 <Input
                                     inputContainerStyle={styles.borderdv}
@@ -168,11 +178,27 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
+                                    placeholderTextColor="#00000060"
+                                    // onChangeText={(text) => setDate(text)}
                                     label="Date of Birth"
                                     placeholder='25 Oct, 1985'
+                                    value={date.toDateString()}
                                 />
-                            </View> */}
+                                <DatePicker
+                                    modal
+                                    open={open}
+                                    date={date || new Date()}
+                                    // onDateChange={setDate}
+                                    mode='date'
+                                    onConfirm={(date) => {
+                                        setOpen(false)
+                                        setDate(date)
+                                    }}
+                                    onCancel={() => {
+                                        setOpen(false)
+                                    }}
+                                />
+                            </TouchableOpacity>
                             <View>
 
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
@@ -187,12 +213,12 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                     placeholder='edwardd@gmail.com'
                                 /> */}
                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
@@ -206,13 +232,13 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                             labelStyle={styles.label}
                                             label="Email Address"
                                             placeholder='edwardd@gmail.com'
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                         />
-                                        )}
-                                        name="Email"
-                                        defaultValue=""
-                                    />
-                                    {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Email</Text>}
+                                    )}
+                                    name="Email"
+                                    defaultValue=""
+                                />
+                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Email</Text>}
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
@@ -228,29 +254,29 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                     secureTextEntry={hideEye ? true : false}
 
                                 /> */}
-                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                <Controller
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Password"
                                             placeholder='************'
                                             secureTextEntry={hideEye ? true : false}
-        
+
                                         />
-                                        )}
-                                        name="Password"
-                                        defaultValue=""
-                                    />
-                                    {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
+                                    )}
+                                    name="Password"
+                                    defaultValue=""
+                                />
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
                                     name={hideEye ? 'eye-off' : 'eye'}
@@ -272,28 +298,28 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                                     secureTextEntry={hideEye ? true : false}
                                 /> */}
                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Confirm Password"
                                             placeholder='************'
                                             secureTextEntry={hideEye ? true : false}
-        
+
                                         />
-                                        )}
-                                        name="Password"
-                                        defaultValue=""
-                                    />
-                                    {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
+                                    )}
+                                    name="Password"
+                                    defaultValue=""
+                                />
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
                                     name={hideEye ? 'eye-off' : 'eye'}
@@ -306,12 +332,12 @@ const SignUp = ({ navigation, user,userLogin,SignUpAction }) => {
                             <TouchableOpacity
                                 style={styles.btn}
                                 activeOpacity={0.9}
-                                onPress={handleSubmit(onSubmit) }
-                                // onPress={() => {
-                                //     navigation.navigate('AppStackNavigator', {
-                                //         screen: 'Home',
-                                //     })
-                                // }}
+                                onPress={handleSubmit(onSubmit)}
+                            // onPress={() => {
+                            //     navigation.navigate('AppStackNavigator', {
+                            //         screen: 'Home',
+                            //     })
+                            // }}
                             >
                                 <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>
                             </TouchableOpacity>
@@ -351,7 +377,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin,SignUpAction }, dispatch);
+    bindActionCreators({ userLogin, SignUpAction }, dispatch);
 
 
 const styles = StyleSheet.create({

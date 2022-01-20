@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   SafeAreaView,
   View,
@@ -13,7 +13,7 @@ import {
   ImageBackground
 } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import Modal from 'react-native-modal';
 import { fetchDataUser } from '../../stores/actions/user.action'
 import Card from '../../components/Card/Card'
@@ -23,30 +23,21 @@ import { ScrollView } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress';
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IOS } from 'react-native-permissions/lib/typescript/constants';
+import { ListDataAction, FeaturedProducts } from '../../stores/actions/user.action';
 const Home = (props) => {
   const { navigation } = props
   const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(ListDataAction())
+  }, [])
+  useEffect(() => {
+    dispatch(FeaturedProducts())
+  }, [])
+  const data1 = useSelector(state => state.userReducer.FeaturedProducts)
+
+  const data = useSelector(state => state.userReducer.ListDataAction)
   const [modalVisible, setModalVisible] = useState(false);
-  const cardData = [
-    {
-      number: '01'
-    },
-    {
-      description: "Odell 90 Shilling",
-      image: require('../../assets/images/wine2.png')
 
-    },
-    {
-      description: "Ayinger Brauweisse",
-    },
-    {
-      description: "Lagunitas IPA",
-      image: require('../../assets/images/wine2.png')
-    },
-    {
-
-    }
-  ]
   const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -80,7 +71,7 @@ const Home = (props) => {
   for (var i = 1; i <= 75; i++) {
     jsx.push(i)
   }
-  
+
   const [select, setSelect] = useState([])
   const count = (index) => {
 
@@ -99,30 +90,32 @@ const Home = (props) => {
     }
 
   }
+
+  const buyArray = data?.data?.filter((e) => e.buy)
   return (
     <>
-    <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
+      <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
       <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-              <TORN
-                activeOpacity={0.8}
-                onPress={() => navigation.toggleDrawer()}
-              >
-                <Image style={styles.menu} source={require('../../assets/images/menu.png')} />
-              </TORN>
-              <Image style={styles.logo} source={require('../../assets/images/logo.png')} />
-              <TORN
-                onPress={() => navigation.navigate('Notification')}
-                activeOpacity={0.8}
-              >
-                <Image style={styles.notification} source={require('../../assets/images/notification.png')} />
-              </TORN>
-            </View>
+        <View style={styles.header}>
+          <TORN
+            activeOpacity={0.8}
+            onPress={() => navigation.toggleDrawer()}
+          >
+            <Image style={styles.menu} source={require('../../assets/images/menu.png')} />
+          </TORN>
+          <Image style={styles.logo} source={require('../../assets/images/logo.png')} />
+          <TORN
+            onPress={() => navigation.navigate('Notification')}
+            activeOpacity={0.8}
+          >
+            <Image style={styles.notification} source={require('../../assets/images/notification.png')} />
+          </TORN>
+        </View>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{ paddingHorizontal: 20 }}>
             <View style={styles.row2}>
               <View>
-                <Text style={{fontFamily:'Oswald-Medium',color:"#000000",fontSize:16}}>Top Beers</Text>
+                <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>Top Beers</Text>
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <TORN
@@ -136,18 +129,32 @@ const Home = (props) => {
 
 
             <View style={{ flexDirection: "row", justifyContent: "space-around", position: "relative", zIndex: 10 }}>
-              {/*              
+              {/*                            
              <Card/> */}
-              <Card 
+              {data1?.data?.map((item) => {
+                return (
+                  <Card
+                    image={item.image}
+                    price={item.price}
+                    decription={item.name}
+                    alcohol={item.alcohol_percentage}
+                    id={item.id}
+                    onPress={() => navigation.navigate('QRScaner',{
+                      item:item
+                    })}
+                  />
+                )
+              })}
+              {/* <Card 
                     onPress={()=>navigation.navigate('QRScaner')}
                     />
               <Card 
               onPress={()=>navigation.navigate('QRScaner')}
-              />
+              /> */}
             </View>
             <View style={styles.row2}>
               <View>
-                <Text style={{fontFamily:'Oswald-Medium',color:"#000000",fontSize:16}}>All Beers</Text>
+                <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>All Beers</Text>
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <TORN
@@ -158,17 +165,21 @@ const Home = (props) => {
               </TORN>
             </View>
             {
-              cardData.map((item) => {
+              data?.data?.map((item) => {
                 return (
                   <View style={{ marginVertical: 6, }}>
                     <CardDetail
-                      number={item.number}
+                      number={item.id}
                       image={item.image}
-                      decription={item.description} 
-                      onPress={() => navigation.navigate('QRScaner')}
-                      />
+                      decription={item.name}
+                      price={item.price}
+                      alocoal={item.alcohol_percentage}
+                      onPress={() => navigation.navigate('QRScaner', {
+                        item: item
+                      })}
+                    />
                     {/* {number} */}
-                    
+
                   </View>
                 )
 
@@ -206,23 +217,23 @@ const Home = (props) => {
           isVisible={modalVisible}
           onBackButtonPress={() => setModalVisible(!modalVisible)}
           onBackdropPress={() => setModalVisible(!modalVisible)}>
-          <View style={{height: '100%', width: '100%',}}>
+          <View style={{ height: '100%', width: '100%', }}>
             <View style={styles.modalView}>
               <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
                 <View style={styles.rowModal}>
                   <Text style={styles.beerCard}>Beer Card</Text>
                   <View style={{ flexDirection: "row" }}>
                     <TORN
-                     onPress={() => setSelect([])}
-                    activeOpacity={0.9}
-                    style={styles.reset}>
+                      onPress={() => setSelect([])}
+                      activeOpacity={0.9}
+                      style={styles.reset}>
                       <Text style={styles.resetText}>Reset</Text>
                     </TORN>
                     <Entypo onPress={() => setModalVisible(!modalVisible)} name='cross' size={25} color={'#85786f'} />
                   </View>
                 </View>
                 <View style={styles.rowProgress}>
-                  <Progress.Bar progress={select.length/75}
+                  <Progress.Bar progress={buyArray?.length / data?.data?.length}
                     animated={true} width={270}
                     height={24}
                     color={"#e74a07"}
@@ -230,13 +241,13 @@ const Home = (props) => {
                     borderWidth={0}
                     unfilledColor={"#e4d8cc"}
                   />
-                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>75-75</Text>
+                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>{buyArray?.length}-{data?.data?.length}</Text>
                 </View>
                 {/* <View >
             <Text>1</Text>
           </View> */}
                 <View style={styles.count}>
-                  {jsx.map((jsx, index) => {
+                  {data?.data?.map((jsx, index) => {
                     return (
                       <TORN
                         activeOpacity={0.8}
@@ -244,8 +255,8 @@ const Home = (props) => {
                           count(index)
                         }
                         style={styles.loop}>
-                        {select.findIndex((e) => e == index) != -1 ? <Image
-                          style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{jsx}</Text>}
+                        {jsx.buy ? <Image
+                          style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{index + 1}</Text>}
                       </TORN>
                     )
                   }
@@ -276,8 +287,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "6%",
-    marginHorizontal:20
+    marginTop: "10%",
+    marginHorizontal: 20
   },
   menu: {
     width: 20,

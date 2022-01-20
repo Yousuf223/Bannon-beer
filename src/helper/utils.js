@@ -14,3 +14,17 @@ export const imagePicker = async ({multiple=true, }) => {
        console.log('imagePicker error', error)
    }
 }
+
+export const cameraPicker = async () => {
+    try {
+        const result1 = await ImagePicker.openCamera({
+            width: 300,
+            height: 400,
+            cropping: true
+        })
+        console.log('result1',result1);
+        return result1
+       } catch (error) {
+           console.log('imagePicker error', error)
+       }
+}

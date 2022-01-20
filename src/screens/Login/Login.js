@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import {
     SafeAreaView,
     View,
@@ -11,7 +11,7 @@ import {
     ScrollView
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { connect,useSelector, useDispatch } from 'react-redux'
+import { connect, useSelector, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
@@ -21,44 +21,43 @@ import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { userLogin } from '../../stores/actions/user.action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 // var email = "yousuf@gmail.com";
 // var password = "111111"
-const Login = ({ navigation, user,userLogin }) => {
+const Login = ({ navigation, user, userLogin }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
     const count = useSelector((state) => state.userReducer.users)
-    const onSubmit  = (data) => {
+    const onSubmit = (data) => {
         // console.log(data,"****DATA****");
         var data1 = new FormData();
 
-      data1.append('email', data.Email);
-      data1.append('password', data.Password);
-      
-        userLogin(data1)
-        .then(res => {
-            if(res.success){
-                // console.log("hdhchdf",res)
-                saveToken(res.access_token);
-                navigation.navigate('AppStackNavigator', {
-                    screen: 'Home'
-                  })
+        data1.append('email', data.Email);
+        data1.append('password', data.Password);
 
-                 
-            }
-            else{
-                alert(res.message)
-            }
-            // console.log('error', err);
-            
-            // console.log("res", res)
-        })
-        .catch(err => {
-            alert(err.message)
-            console.log('error', err);
-        })
+        userLogin(data1)
+            .then(res => {
+                if (res.success) {
+                    // console.log("hdhchdf",res)
+                    saveToken(res.access_token);
+                    navigation.navigate('AppStackNavigator', {
+                        screen: 'Home'
+                    })
+                }
+                else {
+                    alert(res.message)
+                }
+                // console.log('error', err);
+
+                // console.log("res", res)
+            })
+            .catch(err => {
+                alert(err.message)
+                console.log('error', err);
+            })
 
         // alert(data)
         // navigation.navigate('AppStackNavigator', {
@@ -89,46 +88,53 @@ const Login = ({ navigation, user,userLogin }) => {
         //         }
 
         //         //console.error(error);
+
         //     });
     };
+
+
 
     const saveToken = async (token) => {
         try {
             await AsyncStorage.setItem("token", token);
         } catch (e) {
-            console.log(e,"saving token failed");
+            console.log(e, "saving token failed");
         }
     };
 
-      //Geogle Login
-      GoogleSignin.configure({
+    //Geogle Login
+    GoogleSignin.configure({
         webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
-      });
+    });
 
-      async function onGoogleButtonPress() {
+    async function onGoogleButtonPress() {
         // Get the users ID token
-    
-    
+
+
         const { idToken } = await GoogleSignin.signIn();
-    
+
         // Create a Google credential with the token
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    
+
         // Sign-in the user with the credential
         auth().signInWithCredential(googleCredential).then(async (userCredential) => {
             const token = await userCredential.user.getIdToken(true);
             await saveToken(token);
             await userLogin(token);
-          navigation.navigate('AppStackNavigator', {
-            screen: 'Home',
-        })
+            navigation.navigate('AppStackNavigator', {
+                screen: 'Home',
+            })
         }).catch(error => {
             console.log("google login error", error)
         });
-      }
+    }
 
-      
-
+    messaging().getToken()
+        .then(token => {
+            console.log("token", token)
+            // alert('Notification send',token)
+        })
+        
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -155,7 +161,7 @@ const Login = ({ navigation, user,userLogin }) => {
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Email"
                                             placeholder='edwardd@gmail.com'
                                         />
@@ -174,24 +180,24 @@ const Login = ({ navigation, user,userLogin }) => {
                                     }}
                                     render={({ field: { onChange, onBlur, value } }) => (
                                         <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
-                                    label="Password"
-                                    placeholder='************'
-                                    secureTextEntry={hideEye ? true : false}
-                                />
+                                            inputContainerStyle={styles.borderdv}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            style={styles.email}
+                                            labelStyle={styles.label}
+                                            placeholderTextColor="#00000060"
+                                            label="Password"
+                                            placeholder='************'
+                                            secureTextEntry={hideEye ? true : false}
+                                        />
                                     )}
                                     name="Password"
                                     defaultValue=""
                                 />
-                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "30%", fontSize: 14, paddingLeft: 15 }}>Emter Password</Text>}
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    name={hideEye ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
                                 />
@@ -199,16 +205,16 @@ const Login = ({ navigation, user,userLogin }) => {
                         </View>
                         <View style={styles.row}>
                             {/* <Text style={{color:"#ada097",fontWeight:"bold",fontSize:12,fontFamily:"Oswald-Regular"}}>Remember</Text> */}
-                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{ color: "#ada097", fontWeight: "bold", fontSize: 12, fontFamily: "Oswald-Regular" }}>Forgot Password?</Text>
+                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{ color: "#ada097", fontWeight: "bold", fontSize: 12, fontFamily: "Oswald-Regular", }}>Forgot Password?</Text>
                         </View>
                         <View>
                             <TouchableOpacity
-                                      style={styles.btn}
-                                      activeOpacity={0.9}
-                                      onPress={handleSubmit(onSubmit)}
-                                >
-                                    {isLoading?<ActivityIndicator size="small" color="#ffffff"></ActivityIndicator>: <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>}
-                               
+                                style={styles.btn}
+                                activeOpacity={0.9}
+                                onPress={handleSubmit(onSubmit)}
+                            >
+                                {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>}
+
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>
@@ -220,10 +226,10 @@ const Login = ({ navigation, user,userLogin }) => {
                             <View style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
                             </View>
-                            <TouchableOpacity 
-                            onPress={() => onGoogleButtonPress()}
-                            activeOpacity={0.9}
-                            style={styles.iconBg}>
+                            <TouchableOpacity
+                                onPress={() => onGoogleButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
                             </TouchableOpacity>
                             <View style={styles.iconBg}>
@@ -250,7 +256,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch =>
     bindActionCreators({ userLogin }, dispatch);
- 
+
 
 const styles = StyleSheet.create({
     container: {
@@ -353,4 +359,4 @@ const styles = StyleSheet.create({
 
     }
 })
-export default connect(mapStateToProps,mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

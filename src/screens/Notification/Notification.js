@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import {
     SafeAreaView,
     View,
@@ -10,34 +10,17 @@ import {
     Linking,
     ScrollView
 } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch,useSelector} from 'react-redux'
 import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { NotificationAction } from '../../stores/actions/user.action';
 const Notification = ({ navigation, user }) => {
     const dispatch = useDispatch()
-    const NotificatioCard = [
-        {
+    useEffect(() => {
+        dispatch(NotificationAction())
+       }, [])
+    const data = useSelector(state => state.userReducer.NotificationAction)
 
-        },
-        {
-
-        },
-        {
-
-        },
-        {
-
-        },
-        {
-
-        },
-        {
-
-        },
-        {
-
-        },
-    ]
     return (
         <>
             <View style={styles.container}>
@@ -47,17 +30,17 @@ const Notification = ({ navigation, user }) => {
              </View>
              <ScrollView style={{marginTop:"6%"}}>
                {
-                   NotificatioCard.map((item) => {
+                   data?.data?.map((item) => {
                        return(
                         <View style={styles.card}>
                         <View style={{flexDirection:"row"}}> 
                         <Image style={{width:30,height:30,resizeMode:"contain",alignSelf:"center",borderRadius:25}} source={require('../../assets/images/scan.png')} />
                        <View>
                         <View style={styles.btn}>
-                            <Text style={styles.date}>23 May 2021</Text>
+                            <Text style={styles.date}>{item.created_at}</Text>
                         </View>
-                        <View style={{width:"98%"}}>
-                        <Text style={styles.text1}>You have scanned 21 Petrus Cherry Chocalate</Text>
+                        <View style={{width:"100%"}}>
+                        <Text style={styles.text1}>{item.message}</Text>
                         </View>
                         </View>
                         </View>

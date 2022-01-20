@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import {
     SafeAreaView,
     View,
@@ -9,47 +9,53 @@ import {
     StyleSheet,
     ScrollView
 } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch,useSelector} from 'react-redux'
 import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import PointCard from '../../components/PointCard/PointCard';
+import { MyPurchases } from '../../stores/actions/user.action';
 const MyPurchase = ({ navigation, user }) => {
     const dispatch = useDispatch()
-    const cardData = [
-        {
-            point:'$6.00',
-        },
-        {
-            title: "Franziskaner Hefeweizen",
-            number: '02',
-            point:'$7.00',
-        },
-        {
-            title: "8th wonder heaterade gose",
-            number: '03',
-            point:'$6.00',
-        },
-        {
-            title: "Dogfish head punkin ale",
-            number: '04',
-            point:'$8.00',
-        },
-        {
-            title: "Petrus Cherry Chocolate",
-            number: '05',
-            point:'$9.00',
-        },
-        {
-            title: "Bwd border town",
-            number: '06',
-            point:'$12.00',
-        },
-        {
-            title: "Lagunitas IPA",
-            number: '06',
-            point:'$6.00',
-        },
-    ]
+    useEffect(() => {
+     dispatch(MyPurchases())
+    }, [])
+  
+    const data = useSelector(state => state.userReducer.MyPurchases)
+    // const cardData = [
+    //     {
+    //         point:'$6.00',
+    //     },
+    //     {
+    //         title: "Franziskaner Hefeweizen",
+    //         number: '02',
+    //         point:'$7.00',
+    //     },
+    //     {
+    //         title: "8th wonder heaterade gose",
+    //         number: '03',
+    //         point:'$6.00',
+    //     },
+    //     {
+    //         title: "Dogfish head punkin ale",
+    //         number: '04',
+    //         point:'$8.00',
+    //     },
+    //     {
+    //         title: "Petrus Cherry Chocolate",
+    //         number: '05',
+    //         point:'$9.00',
+    //     },
+    //     {
+    //         title: "Bwd border town",
+    //         number: '06',
+    //         point:'$12.00',
+    //     },
+    //     {
+    //         title: "Lagunitas IPA",
+    //         number: '06',
+    //         point:'$6.00',
+    //     },
+    // ]
     return (
         <>
         <View style={styles.container}>
@@ -61,14 +67,15 @@ const MyPurchase = ({ navigation, user }) => {
             <ScrollView showsVerticalScrollIndicator={false} >
             <View style={{ paddingHorizontal: 20,flex:1,flexGrow:1 }}>
                     { 
-                    cardData.map((item) => {
+                    data?.data?.map((item) => {
                         return(
                             <View style={{ paddingVertical: 6 }}>
                             <PointCard
-                                number={item.number}
-                                title={item.title}
-                                point={item.point}
-                                image={item.image}
+                                number={item.product.id}
+                                title={item.product.name}
+                                point={item.product.price}
+                                percentage={item.product.alcohol_percentage}
+                                date={item.created_at}
                             />
                         </View>
                         )

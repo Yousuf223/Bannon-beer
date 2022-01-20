@@ -22,7 +22,7 @@ import {
 // import {Switch} from 'react-native-elements';
 const {width, height} = Dimensions.get('window');
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
+import { useSelector, connect, useDispatch, } from 'react-redux'
 import Animated from 'react-native-reanimated';
 import Home from '../../screens/Home/Home.screen';
 import MyPurchase from '../../screens/MyPurchase/MyPurchase';
@@ -43,6 +43,9 @@ const DrawerContent = props => {
     // },
 
   ];
+
+  const newData = useSelector((state) => state.userReducer.users)
+  console.log("newDatanewDatanewData",newData)
   const [untilToday, setUntilToday] = useState(false)
   const [quality , setQuality] = useState(false)
   const [smart, setSmart] = useState(false);
@@ -55,9 +58,11 @@ const DrawerContent = props => {
           <StatusBar barStyle="dark-content" translucent={true} backgroundColor={'transparent'} />
        
         <View style={styles.top}>
-        <Image style={styles.profile} source={require('../../assets/images/profilePicture.png')} />
+        <Image style={styles.profile}  source={{
+          uri:newData?.profile_picture,
+        }} />
           <View style={{flexDirection:"row"}}>
-          <Text style={styles.profileName}>Edward Davidson</Text>
+          <Text style={styles.profileName}>{newData?.first_name} {newData?.last_name}</Text>
           <TouchableOpacity 
           onPress={() => navigation.navigate('EditProfile')}
           activeOpacity={0.9}
@@ -67,7 +72,7 @@ const DrawerContent = props => {
           </View>
           <View style={{flexDirection:"row",justifyContent:"space-between"}}>
             <Text style={styles.textNum}>+1-202-555-0184</Text>
-            <Text style={styles.textNum1}>edwardd@gmail.com</Text>
+            <Text style={styles.textNum1}>{newData?.email}</Text>
           </View>
         </View>
         <View style={{paddingLeft:15,paddingTop:"18%"}}>
@@ -291,7 +296,7 @@ const styles = StyleSheet.create({
     bottom:4
   },
   logout:{
-    paddingTop:"12%",
+    paddingTop:"22%",
     paddingLeft:15,
     flexDirection:"row"
   },
@@ -304,7 +309,8 @@ const styles = StyleSheet.create({
   },
   profile:{
     width:55,
-    height:55
+    height:55,
+    borderRadius:15
   },
   editProfile:{
     width:20,

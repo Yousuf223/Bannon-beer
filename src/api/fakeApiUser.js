@@ -4,7 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export const getApi = async (url, data, token) => {
   console.log("url", url)
   try {
-    let response = await axios.get(url + data, {
+    let response = await axios.get(data ? url + data : url, {
       headers: {
         "Accept": "application/json",
         'Authorization': `Bearer ${token}`, 
@@ -24,6 +24,8 @@ export const getApi = async (url, data, token) => {
 }
 
 export const postApi = async (url, data, auth) => {
+  console.log("postApi", url, data, token)
+
   try {
     let response = await axios.post(url, data, {
       headers: {
@@ -41,6 +43,7 @@ export const postApi = async (url, data, auth) => {
 
     }
   } catch (e) {
+    console.log("postApi",e)
     return Promise.reject(e)
   }
 }

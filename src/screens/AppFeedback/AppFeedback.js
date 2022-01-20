@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState,useEffect} from 'react'
 import {
     SafeAreaView,
     View,
@@ -9,12 +9,44 @@ import {
     StyleSheet,
     ScrollView
 } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import { bindActionCreators } from 'redux';
 import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import PointCard from '../../components/PointCard/PointCard';
-const AppFeedback = ({ navigation, user }) => {
+import { FeedbackAction } from '../../stores/actions/user.action';
+const AppFeedback = ({ navigation, user ,FeedbackAction}) => {
     const dispatch = useDispatch()
+    const newData = useSelector((state) => state.userReducer.users)
+const [subject, setSubject] = useState()
+const [feedback, setFeedback] = useState()
+const [isLoading, setIsLoading] = useState(false);
+useEffect(() => {
+    setFeedback(newData?.feedback)
+    setSubject(newData?.subject);
+}, [])
+
+    const onSubmit = (data) => {
+        var data1 = new FormData();
+        data1.append('feedback', feedback);
+        data1.append('subject', subject);
+     
+
+        FeedbackAction(data1)
+        .then(res => {
+          alert(res?.message)
+                // console.log("res",res)
+                // navigation.navigate('AppStackNavigator', {
+                //   screen: 'Home'
+                // })
+      // 
+        })
+        .catch(err => {
+            alert(err.message)
+            console.log('error', err);
+        })
+      setIsLoading(true);
+    }
 
     return (
         <>
@@ -33,6 +65,8 @@ const AppFeedback = ({ navigation, user }) => {
                         label="First Name"
                         placeholder='Edward Davidson'
                         placeholderTextColor="#000000"
+                        onChangeText={(text) => setFeedback(text)}
+                        value={feedback}
                     />
                     <Input
                         inputContainerStyle={styles.borderdv}
@@ -43,6 +77,8 @@ const AppFeedback = ({ navigation, user }) => {
                         label="Subject"
                         placeholder='edwardd@gmail.com'
                         placeholderTextColor="#000000"
+                        onChangeText={(text) => setSubject(text)}
+                        value={subject}
                     />
                     <Input
                         inputContainerStyle={styles.borderdv}
@@ -56,9 +92,12 @@ const AppFeedback = ({ navigation, user }) => {
                     />
                 </View>
                 <View style={styles.footer}>
-                    <View style={styles.btn}>
+                    <TouchableOpacity  
+                    activeOpacity={0.9}
+                    onPress={()=> onSubmit()}
+                    style={styles.btn}>
                     <Text style={styles.text}>Submit</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </View>
         </>
@@ -70,6 +109,9 @@ const mapStateToProps = state => {
         user: state.userReducer.users
     }
 }
+
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({FeedbackAction}, dispatch);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -125,4 +167,4 @@ const styles = StyleSheet.create({
 
     }
 })
-export default connect(mapStateToProps, null)(AppFeedback)
+export default connect(mapStateToProps, mapDispatchToProps)(AppFeedback)

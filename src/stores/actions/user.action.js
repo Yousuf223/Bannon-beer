@@ -62,7 +62,7 @@ export function SignUpAction(objData) {
 export function SocialLoginAction(data12) {
   return async dispatch => {
     const data = await postApi(`${base_url}api/loginwithemail`, data12);
-    dispatch({type: SOCIAL_LOGIN, payload: data?.data});
+    dispatch({type: SOCIAL_LOGIN, payload: data?.data?.data});
     return data;
   };
 }

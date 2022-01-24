@@ -1,9 +1,9 @@
-import { EDIT_PROFILE, LIST_DATA, SIGNUP, FEATURED_PRODUCTS, My_Purchases, PUSH_NOTIFICATION, CHANGE_PASSWORD, FEEDBACK, ABOUT, QRCODE } from '../actions/actionType';
-import { AboutAction } from '../actions/user.action';
-import { USER_LOGIN } from '../constants';
+import { EDIT_PROFILE, LIST_DATA, SIGNUP, FEATURED_PRODUCTS, My_Purchases, PUSH_NOTIFICATION, CHANGE_PASSWORD, FEEDBACK, ABOUT, QRCODE, SOCIAL_LOGIN } from '../actions/actionType';
+// import { AboutAction, userLogout } from '../actions/user.action';
+import { USER_LOGIN,USER_LOGOUT } from '../constants';
 // import { SIGNUP } from '../actions/actionType';
 const initialState = {
-  users: [],
+  users: null,
   isLoading: false,
   ListDataAction: [],
   FeaturedProducts: [],
@@ -34,15 +34,27 @@ export const userReducer = (state = initialState, action) => {
       }
 
     case USER_LOGIN:
+
+    console.log('data in reducers======', payload)
       return {
         ...state,
         users: payload
       }
+      case USER_LOGOUT:
+        return {
+          ...state,
+          users: null
+        }
     case SIGNUP:
       return {
         ...state,
         users: payload
       }
+      case SOCIAL_LOGIN:
+        return{
+          ...state,
+          users:payload
+        }
     case CHANGE_PASSWORD:
       return {
         ...state,

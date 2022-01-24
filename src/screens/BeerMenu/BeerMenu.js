@@ -163,10 +163,10 @@ setSearch(text)
           value={search}
         />
       </View>
-        <View style={{ paddingHorizontal: 20 }}>
+        <View style={{ paddingHorizontal: 20,}}>
               <FlatList
                        keyExtractor={(item, index) => index}
-                       
+                       showsVerticalScrollIndicator={false}
                        data={data1?.length > 0 ? data1 : data.data}
                        renderItem={({ item }) => {
                            return (
@@ -184,7 +184,9 @@ setSearch(text)
                            )
                        }}
                 />
+                   <View style={{height:"40%"}}></View>
         </View>
+     
       <View style={styles.posi}>
         <Animated.View
           style={{

@@ -48,7 +48,7 @@ const EditProfile = ({ navigation, user, EditProfileAction }) => {
         try {
             const url = await imagePicker(false)
             setImage(url[0].path)
-            console.log("hhhhhhhhhhhh-----",url)
+            console.log("imagePicker hhhhhhhhhhhh-----",url)
             setName(url[0].path.substring(url[0].path.lastIndexOf('/') + 1))
         } catch (error) {
 
@@ -57,9 +57,9 @@ const EditProfile = ({ navigation, user, EditProfileAction }) => {
     const cameraSelector = async () => {
         try {
             const url = await cameraPicker(false)
-            setCamera(url[0].path)
-            console.log("hhhhhhhhhhhh-----",url)
-            setName(url[0].path.substring(url[0].path.lastIndexOf('/') + 1))
+            console.log("cameraPicker hhhhhhhhhhhh-----",url)
+            setImage(url.path)
+            setName(url.path.substring(url.path.lastIndexOf('/') + 1))
         } catch (error) {
 
         }
@@ -81,9 +81,8 @@ const EditProfile = ({ navigation, user, EditProfileAction }) => {
 
         EditProfileAction(data1)
             .then(res => {
-                //         //  onPress={() => navigation.goBack()}
-                // console.log('error', err);
-                // console.log("res", res)
+                navigation.goBack()
+                    
             })
             .catch(err => {
                 // alert(err.message)
@@ -176,7 +175,7 @@ const EditProfile = ({ navigation, user, EditProfileAction }) => {
                             activeOpacity={0.9}
                             onPress={() => onSubmit(image)}
                             style={styles.btn}>
-                            <Text style={{ color: "#fdf0ea", fontSize: 16, fontFamily: "Oswald-Bold" }}>Save Changes</Text>
+                          {isLoading ? <ActivityIndicator size="small" color="#ffffff" />:<Text style={{ color: "#fdf0ea", fontSize: 16, fontFamily: "Oswald-Bold" }}>Save Changes</Text>}  
                         </TouchableOpacity>
                     </View>
                 </ScrollView>

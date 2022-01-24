@@ -33,8 +33,8 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
         data1.append('password', data.Password);
         data1.append('first_name', data.FirstName);
         data1.append('last_name', data.LastName);
-        data1.append('dob',data.date)
-        date: moment(date).format('YYYY-MM-DD'),
+        // data1.append('dob',data.date)
+        // date: moment(date).format('YYYY-MM-DD'),
         SignUpAction(data1)
             .then(res => {
                 // console.log("------------------------------")
@@ -168,7 +168,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                     {errors.LastName && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Last Name</Text>}
                                 </View>
                             </View>
-                            <TouchableOpacity 
+                            {/* <TouchableOpacity 
                             onPress={() => setOpen(true)}
                             >
                                 <Image style={styles.inputLogo} source={require('../../assets/images/date.png')} />
@@ -198,7 +198,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                         setOpen(false)
                                     }}
                                 />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             <View>
 
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />

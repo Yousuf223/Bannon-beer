@@ -19,18 +19,35 @@ import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { userLogin } from '../../stores/actions/user.action';
+import { userLogin,SocialLoginAction } from '../../stores/actions/user.action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
-
+import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
 // var email = "yousuf@gmail.com";
 // var password = "111111"
-const Login = ({ navigation, user, userLogin }) => {
+const Login = ({ navigation,userLogin,SocialLoginAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
     const count = useSelector((state) => state.userReducer.users)
+
+
+
+// useEffect(()=>{
+// if(Object.keys(count).length > 0 ){
+//     console.log('user login and save ')
+// }
+// else {
+//     console.log('data not found ')
+// }
+
+
+
+// },[])
+
+
+
     const onSubmit = (data) => {
         // console.log(data,"****DATA****");
         var data1 = new FormData();
@@ -45,9 +62,10 @@ const Login = ({ navigation, user, userLogin }) => {
                 if (res.success) {
                     // console.log("hdhchdf",res)
                     saveToken(res.access_token);
-                    navigation.navigate('AppStackNavigator', {
-                        screen: 'Home'
-                    })
+                    console.log('abcder----#',res)
+                    // navigation.navigate('AppStackNavigator', {
+                    //     screen: 'Home'
+                    // })
                 }
                 else {
                     alert(res.message)
@@ -109,26 +127,108 @@ const Login = ({ navigation, user, userLogin }) => {
         webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
     });
 
-    async function onGoogleButtonPress() {
-        // Get the users ID token
 
 
+    async function onGoogleButtonPress(){
         const { idToken } = await GoogleSignin.signIn();
 
-        // Create a Google credential with the token
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        auth().signInWithCredential(googleCredential)
+        .then(async (userCredential)=>{
+            console.log('userdata from google', userCredential)
 
-        // Sign-in the user with the credential
-        auth().signInWithCredential(googleCredential).then(async (userCredential) => {
-            const token = await userCredential.user.getIdToken(true);
-            await saveToken(token);
-            navigation.navigate('AppStackNavigator', {
-                screen: 'Home',
-            })
-        }).catch(error => {
-            console.log("google login error", error)
-        });
-    }
+            var data1 = new FormData();
+            data1.append('key', 'aaaabbbbcccc');
+        data1.append('email', userCredential.additionalUserInfo.profile.email);
+            // var data12 = new FormData();
+            // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+            // data12.append('email', 'abcd123@gmail.com');
+
+                       
+                        data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+                        data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
+                        
+
+                        data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+
+                        console.log('data12', data1)
+
+                        // const token = await userCredential.user.getIdToken(true);
+                        // console.log('token from google', token)
+                                // await saveToken(token);
+                                // navigation.navigate('AppStackNavigator', {
+                                //     screen: 'Home',
+                                // })
+                                SocialLoginAction(data1)
+                                .then(res => {
+                                    saveToken(res?.data?.access_token);
+                                    console.log('res.access_token---------',res)
+                                    // navigation.navigate('AppStackNavigator', {
+                                    //                 screen: 'Home',
+                                    //             })
+                                    console.log("res", res)
+                                   
+                                })
+                                .catch(err => {
+                                    alert(err.message)
+                                    console.log('error', err);
+                                })
+                   console.log('Yousuf--------------------jjjjj',data1)
+//                    .then( (res)=>{
+//                        console.log('res' , res)
+//                    })
+//                    .catch((error)=>{
+// console.log('error from api', error)
+//                    })
+
+        })
+        .catch((error)=>{
+            console.log('error google', error)
+        })
+    } 
+    
+    // async function onGoogleButtonPress() {
+    //     // Get the users ID token
+
+
+    //     const { idToken } = await GoogleSignin.signIn();
+
+    //     // Create a Google credential with the token
+    //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+    //     // Sign-in the user with the credential
+    //     auth().signInWithCredential(googleCredential).then(async (userCredential) => {
+    //                     var data1 = new FormData();
+    //             data1.append('email', userCredential.additionalUserInfo.profile.email);
+    //             data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+    //             data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
+    //             data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+    //             console.log("user---------------------", data1)
+    //             //   SocialLoginAction(data1).then((res)=>{
+    //             //       console.log('res from api', res)
+    //             //   }).catch((e)=>{
+    //             //       console.log('error api',e)
+    //             //   })
+    //         //        .then(res => {
+    //         //     // saveToken(res.access_token);
+    //         //     // console.log("------------------------------")
+    //         //     console.log("res---------------------", res)
+            
+    //         // })
+    //         .catch(err => {
+    //             alert(err)
+    //             console.log('error google', err);
+    //         })
+    //         console.log('userCredentialuserCredentialuserCredentialuserCredential',userCredential)
+    //         const token = await userCredential.user.getIdToken(true);
+    //         await saveToken(token);
+    //         navigation.navigate('AppStackNavigator', {
+    //             screen: 'Home',
+    //         })
+    //     }).catch(error => {
+    //         console.log("google login error", error)
+    //     });
+    // }
 
     messaging().getToken()
         .then(token => {
@@ -136,6 +236,60 @@ const Login = ({ navigation, user, userLogin }) => {
             // alert('Notification send',token)
         })
         
+
+       // facebook Login
+
+       async function onFacebookButtonPress() {
+        // Attempt login with permissions
+        // const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+    
+        // if (result.isCancelled) {
+        //   throw 'User cancelled the login process';
+        // }
+    
+        // // Once signed in, get the users AccesToken
+        // const data = await AccessToken.getCurrentAccessToken();
+    
+        // if (!data) {
+        //   throw 'Something went wrong obtaining access token';
+        // }
+    
+        // // Create a Firebase credential with the AccessToken
+        // const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
+    
+        // // Sign-in the user with the credential
+        // auth().signInWithCredential(facebookCredential).then(async () => {
+        //     console.log("facebookCredential FACEBOOK SIGNED IN", facebookCredential)
+        //   await  saveToken(facebookCredential.token);
+        // }).catch(error => {
+        //   console.error(error);
+        // });
+        
+
+        LoginManager.logInWithPermissions(["public_profile"]).then(
+            function (result) {
+              if (result.isCancelled) {
+                console.log("Login cancelled")
+              } else {
+console.log('resultresultresult',result)
+            
+                Profile.getCurrentProfile().then(async function (currentProfile) {
+            
+                    console.log('------------------------------------------------------------------',currentProfile)
+                    navigation.navigate('AppStackNavigator', {
+                        screen: 'Home',
+                    })
+                    // console.log("facbook response", currentProfile)
+                })
+              }
+            },
+            function (error) {
+                console.log("facbook error", error)
+            }
+          )
+      }
+
+
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -224,9 +378,11 @@ const Login = ({ navigation, user, userLogin }) => {
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <View style={styles.iconBg}>
+                            <TouchableOpacity 
+                            onPress={() => onFacebookButtonPress()}
+                            style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
-                            </View>
+                            </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => onGoogleButtonPress()}
                                 activeOpacity={0.9}
@@ -256,7 +412,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin }, dispatch);
+    bindActionCreators({ userLogin,SocialLoginAction }, dispatch);
 
 
 const styles = StyleSheet.create({

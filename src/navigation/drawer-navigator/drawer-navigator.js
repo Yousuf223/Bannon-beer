@@ -31,10 +31,14 @@ import EditProfile from '../../screens/EditProfile/EditProfile';
 import Notification from '../../screens/Notification/Notification';
 import ChangePassword from '../../screens/ChangePassword/ChangePassword';
 import QRScaner from '../../screens/QRScaner/QRScaner';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppFeedback from '../../screens/AppFeedback/AppFeedback';
 import ToggleSwich from '../../components/ToggleSwich/ToggleSwich';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import { userLogout } from '../../stores/actions/user.action';
 const DrawerContent = props => {
+
+  const dispatch =useDispatch()
   const draweritem = [
     // {
     //   // image: '',
@@ -156,7 +160,12 @@ const DrawerContent = props => {
         <TouchableOpacity 
         activeOpacity={0.8}
         style={styles.logout}
-        onPress={() => navigation.navigate('Login')}
+        onPress={()=>{
+          
+          
+          AsyncStorage.clear();
+dispatch(userLogout(navigation))
+        }}
         >
            <Image style={styles.menuHome} source={require('../../assets/images/menuLogout.png')} />
           <Text style={styles.textLogout}>Logout</Text>

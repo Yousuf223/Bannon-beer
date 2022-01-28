@@ -156,6 +156,7 @@ function AppStackNavigator() {
 // }
 function MainNavigation({ user, userLogin }) {
   const [tokenData , settokenData] = useState();
+  const [isMount , setisMount] = useState(false);
   const dispatch = useDispatch()
   useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
@@ -168,6 +169,9 @@ function MainNavigation({ user, userLogin }) {
       } catch (e) {
         // Restoring token failed
       }
+      setTimeout(() => {
+        setisMount(true)
+      }, 1500)
     };
     bootstrapAsync();
   }, []);
@@ -183,8 +187,8 @@ function MainNavigation({ user, userLogin }) {
   console.log('aaaaaa======= tokenData',tokenData, newData)
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={
+    <NavigationContainer  theme={{colors: {background: '#f8ece0'}}}>
+     {isMount && <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={
         newData   ? 'AppStackNavigator' :'AuthStackNavigator'
 }   >
  
@@ -199,7 +203,7 @@ function MainNavigation({ user, userLogin }) {
           name="AppStackNavigator"
           options={{ headerShown: false }}
           component={AppStackNavigator}/>}
-      </Stack.Navigator>
+      </Stack.Navigator>}
     </NavigationContainer>
   )
 }

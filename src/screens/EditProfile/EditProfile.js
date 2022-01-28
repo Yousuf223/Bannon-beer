@@ -13,6 +13,7 @@ import {
 import {useSelector, connect, useDispatch} from 'react-redux';
 import {Input} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import Feather from 'react-native-vector-icons/Feather'
 import {imagePicker, cameraPicker} from '../../helper/utils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {EditProfileAction} from '../../stores/actions/user.action';
@@ -33,6 +34,7 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
     setLName(newData?.last_name);
     setEmail(newData?.email);
     setImage(newData?.profile_picture);
+    setPhone(newData?.contact)
   }, []);
 
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
   const [lName, setLName] = useState();
   const [email, setEmail] = useState();
   const [image, setImage] = useState();
+  const [phone, setPhone] = useState();
   const [name, setName] = useState();
   const [camera, setCamera] = useState();
   const imageSelector = async () => {
@@ -64,6 +67,7 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
     data1.append('first_name', fName);
     data1.append('last_name', lName);
     data1.append('email', email);
+    data1.append('contact',phone)
     data1.append('_method', 'put');
     if (name) {
       data1.append('profile_picture', {
@@ -72,8 +76,6 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
         name: name,
       });
     }
-    console.log(data, '---------fffh-------- data1', data1);
-
     EditProfileAction(data1)
       .then(res => {
         navigation.goBack();
@@ -124,7 +126,7 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
             <View>
               <Image
                 style={styles.inputLogo}
-                source={require('../../assets/images/email.png')}
+                source={require('../../assets/images/name.png')}
               />
               <Input
                 inputContainerStyle={styles.borderdv}
@@ -139,13 +141,13 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
               />
               <Image
                 style={styles.inputLogo}
-                source={require('../../assets/images/email.png')}
+                source={require('../../assets/images/name.png')}
               />
             </View>
             <View>
               <Image
                 style={styles.inputLogo}
-                source={require('../../assets/images/email.png')}
+                source={require('../../assets/images/name.png')}
               />
               <Input
                 inputContainerStyle={styles.borderdv}
@@ -155,7 +157,8 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
                 style={styles.email}
                 labelStyle={styles.label}
                 label="Last Name"
-                placeholder="First Name"
+               
+                placeholder="Last Name"
                 placeholderTextColor="#00000060"
                 value={lName}
               />
@@ -176,6 +179,27 @@ const EditProfile = ({navigation, user, EditProfileAction}) => {
                 placeholder="Email"
                 placeholderTextColor="#00000060"
                 value={email}
+                disabled={true}
+              />
+            </View>
+            <View>
+            <Feather
+            style={{position:"absolute", top: 20,
+            left: 10,}}
+              name="phone"
+              size={16}
+              color={'#e84a03'}
+            />
+            <Input
+                inputContainerStyle={styles.borderdv}
+                // onBlur={onBlur}
+                onChangeText={text => setPhone(text)}
+                style={styles.email}
+                labelStyle={styles.label}
+                label="Phone Number"
+                placeholder="Phone Number"
+                placeholderTextColor="#00000060"
+                value={phone}
               />
             </View>
           </View>

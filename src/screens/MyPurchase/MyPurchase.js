@@ -21,41 +21,7 @@ const MyPurchase = ({ navigation, user }) => {
     }, [])
   
     const data = useSelector(state => state.userReducer.MyPurchases)
-    // const cardData = [
-    //     {
-    //         point:'$6.00',
-    //     },
-    //     {
-    //         title: "Franziskaner Hefeweizen",
-    //         number: '02',
-    //         point:'$7.00',
-    //     },
-    //     {
-    //         title: "8th wonder heaterade gose",
-    //         number: '03',
-    //         point:'$6.00',
-    //     },
-    //     {
-    //         title: "Dogfish head punkin ale",
-    //         number: '04',
-    //         point:'$8.00',
-    //     },
-    //     {
-    //         title: "Petrus Cherry Chocolate",
-    //         number: '05',
-    //         point:'$9.00',
-    //     },
-    //     {
-    //         title: "Bwd border town",
-    //         number: '06',
-    //         point:'$12.00',
-    //     },
-    //     {
-    //         title: "Lagunitas IPA",
-    //         number: '06',
-    //         point:'$6.00',
-    //     },
-    // ]
+
     return (
         <>
         <View style={styles.container}>

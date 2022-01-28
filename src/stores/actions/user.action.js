@@ -55,6 +55,7 @@ export function userLogin(data1, id) {
 export function SignUpAction(objData) {
   return async dispatch => {
     const data = await postApi(`${base_url}api/signup`, objData);
+    dispatch({type: SIGNUP, payload: data?.data});
     return data;
   };
 }
@@ -143,11 +144,13 @@ export function FeedbackAction(FeedbackData) {
 
 export function ListDataAction() {
   return async dispatch => {
+    console.log("res.access_token on ListDataAction", await AsyncStorage.getItem('token'))
     const data = await getApi(
       `${base_url}api/products`,
       '',
       await AsyncStorage.getItem('token'),
     );
+
     dispatch({type: LIST_DATA, payload: data?.data});
     // console.log('dddddddhhhhhhhh',data)
     return data;

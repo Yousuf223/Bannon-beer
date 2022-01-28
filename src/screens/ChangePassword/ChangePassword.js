@@ -7,7 +7,8 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    ActivityIndicator,
 } from 'react-native'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import { Input } from 'react-native-elements';
@@ -18,6 +19,7 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
     const newData = useSelector((state) => state.userReducer.users)
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
+    const [hideEye1, setHideEye1] = useState()
     const [password,setPassword] = useState()
     const [confirmPassword,setContirmPassword] = useState()
     const [isLoading, setIsLoading] = useState(false);
@@ -28,29 +30,40 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
     }, [])
 
     const onSubmit = (data) => {
+        setIsLoading(true);
         var data1 = new FormData();
         data1.append('old_password', password);
         data1.append('new_password', confirmPassword);
-     
-
-        ChangePasswordAction(data1)
-        .then(res => {
-          // console.log("------------------------------")
-                console.log("res",res)
-                navigation.navigate('AppStackNavigator', {
-                  screen: 'Home'
-                })
-      //         //  onPress={() => navigation.goBack()}
+        
+        if (typeof password !== 'undefined' || typeof confirmPassword !== 'undefined'){
             
-            // console.log('error', err);
-            
-            // console.log("res", res)
-        })
-        .catch(err => {
-            alert(err.message)
-            console.log('error', err);
-        })
-      setIsLoading(true);
+            ChangePasswordAction(data1)
+            .then(res => {
+              // console.log("------------------------------")
+                    console.log("res",res)
+                    navigation.navigate('AppStackNavigator', {
+                        screen: 'Home'
+                    })
+                    alert(res.message)
+                    setContirmPassword('')
+                    setPassword('')
+          //         //  onPress={() => navigation.goBack()}
+          setIsLoading(false)
+                // console.log('error', err);
+                
+                // console.log("res", res)
+            })
+            .catch(err => {
+                
+                console.log('error', err);
+                setIsLoading(false)
+            })
+        }
+        else{
+            alert('please fill all fields')
+            setIsLoading(false)
+        }
+      
     }
     return (
         <>
@@ -66,14 +79,14 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
                         style={styles.email}
                         labelStyle={styles.label}
                         placeholderTextColor="#00000060"
-                        label="Password"
+                        label="Old Password"
                         placeholder='************'
-                        secureTextEntry={hideEye ? true : false}
+                        secureTextEntry={hideEye ? false : true}
                         value={password}
                     />
                           <Feather
                     style={styles.eyeIcon}
-                    name={hideEye ? 'eye-off' : 'eye'} 
+                    name={hideEye ? 'eye' : 'eye-off'} 
                     size={18} color={'#c8bcb0'}
                     onPress={() => setHideEye(!hideEye)}
                      />
@@ -88,16 +101,16 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
                         style={styles.email}
                         labelStyle={styles.label}
                         placeholderTextColor="#00000060"
-                        label="Confirm Password"
+                        label="New Password"
                         placeholder='************'
-                        secureTextEntry={hideEye ? true : false}
+                        secureTextEntry={hideEye1 ? false : true}
                         value={confirmPassword}
                     />
                     <Feather
                     style={styles.eyeIcon}
-                    name={hideEye ? 'eye-off' : 'eye'} 
+                    name={hideEye ? 'eye' : 'eye-off'} 
                     size={18} color={'#c8bcb0'}
-                    onPress={() => setHideEye(!hideEye)}
+                    onPress={() => setHideEye1(!hideEye1)}
                      />
                 </View>
                 <View>
@@ -105,7 +118,7 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
                         style={styles.btn}
                         onPress={() => onSubmit()}
                         activeOpacity={0.9}>
-                        <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Confirm</Text>
+                       {isLoading? <ActivityIndicator size="small" color="#ffffff" />:<Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Confirm</Text>} 
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.textDigit}>Set a new and strong password</Text>

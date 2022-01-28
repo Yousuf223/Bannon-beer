@@ -58,17 +58,17 @@ export const userReducer = (state = initialState, action) => {
     case CHANGE_PASSWORD:
       return {
         ...state,
-        users: payload
+        // users: payload
       }
       case QRCODE:
         return {
           ...state,
-          users:payload
+          // users:payload
         }
     case FEEDBACK:
       return {
         ...state,
-        users: payload
+        // users: payload
       }
     case EDIT_PROFILE:
       return {

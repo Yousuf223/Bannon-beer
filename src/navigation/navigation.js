@@ -47,39 +47,39 @@ const Drawer = createDrawerNavigator();
 
 
 
-const Screens = ({ navigation, style }) => {
-  const progress = useDrawerProgress();
+// const Screens = ({ navigation, style }) => {
+//   const progress = useDrawerProgress();
 
-  // const scale = Animated.interpolate(progress, {
-  //   inputRange: [0, 1],
-  //   outputRange: [1, 0.9],
-  // });
-  // const borderRadius = Animated.interpolate(progress, {
-  //   inputRange: [0, 1],
-  //   outputRange: [0, 30],
-  // });
+//   // const scale = Animated.interpolate(progress, {
+//   //   inputRange: [0, 1],
+//   //   outputRange: [1, 0.9],
+//   // });
+//   // const borderRadius = Animated.interpolate(progress, {
+//   //   inputRange: [0, 1],
+//   //   outputRange: [0, 30],
+//   // });
 
-  // const animatedStyle = {borderRadius, transform: [{scale}]};
-  return (
-    <Animated.View
-    // style={StyleSheet.flatten([styles.stack, animatedStyle])}
-    // style={animatedStyle}
-    >
-      <DrawerStack.Navigator
-        screenOptions={{
-          headerTransparent: true,
-          headerTitle: null,
-          headerShown: false,
-        }}
-        headerMode="none">
+//   // const animatedStyle = {borderRadius, transform: [{scale}]};
+//   return (
+//     <Animated.View
+//     // style={StyleSheet.flatten([styles.stack, animatedStyle])}
+//     // style={animatedStyle}
+//     >
+//       <DrawerStack.Navigator
+//         screenOptions={{
+//           headerTransparent: true,
+//           headerTitle: null,
+//           headerShown: false,
+//         }}
+//         headerMode="none">
 
 
-        <DrawerStack.Screen name="Home">{props => <Home {...props} />}</DrawerStack.Screen>
+//         <DrawerStack.Screen name="Home">{props => <Home {...props} />}</DrawerStack.Screen>
 
-      </DrawerStack.Navigator>
-    </Animated.View>
-  );
-};
+//       </DrawerStack.Navigator>
+//     </Animated.View>
+//   );
+// };
 
 // function MyDrawer() {
 //   return (

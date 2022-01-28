@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     SafeAreaView,
     View,
@@ -7,7 +7,8 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    ActivityIndicator,
 } from 'react-native'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux';
@@ -15,37 +16,45 @@ import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import PointCard from '../../components/PointCard/PointCard';
 import { FeedbackAction } from '../../stores/actions/user.action';
-const AppFeedback = ({ navigation, user ,FeedbackAction}) => {
+const AppFeedback = ({ navigation, user,FeedbackAction }) => {
     const dispatch = useDispatch()
     const newData = useSelector((state) => state.userReducer.users)
-const [subject, setSubject] = useState()
-const [feedback, setFeedback] = useState()
-const [isLoading, setIsLoading] = useState(false);
-useEffect(() => {
-    setFeedback(newData?.feedback)
-    setSubject(newData?.subject);
-}, [])
+    const [subject, setSubject] = useState(false)
+    const [feedback, setFeedback] = useState(false)
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        setFeedback(newData?.feedback)
+        setSubject(newData?.subject);
+    }, [])
 
-    const onSubmit = (data) => {
-        var data1 = new FormData();
-        data1.append('feedback', feedback);
-        data1.append('subject', subject);
-     
+    const onSubmit = async () => {
+        setIsLoading(true)
+        
+        if (feedback && subject ) {
 
-        FeedbackAction(data1)
-        .then(res => {
-          alert(res?.message)
-                // console.log("res",res)
-                // navigation.navigate('AppStackNavigator', {
-                //   screen: 'Home'
-                // })
-      // 
-        })
-        .catch(err => {
-            alert(err.message)
-            console.log('error', err);
-        })
-      setIsLoading(true);
+            var data1 = new FormData();
+            data1.append('feedback', feedback);
+            data1.append('subject', subject);
+            await FeedbackAction(data1)
+                .then(res => {
+                    alert(res?.message)
+                    setIsLoading(false)
+                    // console.log("res",res)
+                    // navigation.navigate('AppStackNavigator', {
+                    //   screen: 'Home'
+                    // })
+                    // 
+                })
+                .catch(err => {
+                    setIsLoading(false)
+                    alert(err.message)
+                    console.log('error', err);
+                })
+          
+        } else {
+            alert('Please fill all the fields', null, 'error')
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -64,7 +73,7 @@ useEffect(() => {
                         labelStyle={styles.label}
                         label="First Name"
                         placeholder='Edward Davidson'
-                        placeholderTextColor="#000000"
+                        placeholderTextColor="#00000060"
                         onChangeText={(text) => setFeedback(text)}
                         value={feedback}
                     />
@@ -76,7 +85,8 @@ useEffect(() => {
                         labelStyle={styles.label}
                         label="Subject"
                         placeholder='edwardd@gmail.com'
-                        placeholderTextColor="#000000"
+                        placeholderTextColor="#00000060"
+                        placeholderTextColor="#00000060"
                         onChangeText={(text) => setSubject(text)}
                         value={subject}
                     />
@@ -87,16 +97,17 @@ useEffect(() => {
                         style={styles.email}
                         labelStyle={styles.label}
                         label="Message"
-                        placeholderTextColor="#000000"
+                        placeholderTextColor="#00000060"
                         placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
                     />
                 </View>
                 <View style={styles.footer}>
-                    <TouchableOpacity  
-                    activeOpacity={0.9}
-                    onPress={()=> onSubmit()}
-                    style={styles.btn}>
-                    <Text style={styles.text}>Submit</Text>
+                    <TouchableOpacity
+                    disabled={isLoading}
+                        activeOpacity={0.9}
+                        onPress={() => onSubmit()}
+                        style={styles.btn}>
+                        {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <Text style={styles.text}>Submit</Text>}
                     </TouchableOpacity>
                 </View>
             </View>
@@ -111,7 +122,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({FeedbackAction}, dispatch);
+    bindActionCreators({ FeedbackAction }, dispatch);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -126,15 +137,15 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         color: "#000000",
         fontSize: 20,
-        fontFamily:"Oswald-Medium",
-        bottom:5
+        fontFamily: "Oswald-Medium",
+        bottom: 5
     },
     email: {
         paddingLeft: 2,
         fontSize: 12,
         color: "#000000",
         top: 6,
-        fontFamily:"Oswald-Regular"
+        fontFamily: "Oswald-Regular"
     },
     borderdv: {
         borderBottomColor: "#e1d5c9",
@@ -144,26 +155,26 @@ const styles = StyleSheet.create({
         paddingLeft: 2,
         fontSize: 12,
         top: 14,
-        fontFamily:"Oswald-Regular"
+        fontFamily: "Oswald-Regular"
     },
-    footer:{
-        width:"100%",
-        height:"50%",
-        justifyContent:"center",
-        
+    footer: {
+        width: "100%",
+        height: "50%",
+        justifyContent: "center",
+
     },
-    btn:{
-        backgroundColor:"#e74a07",
-        marginHorizontal:20,
-        justifyContent:"center",
-        alignItems:"center",
-        paddingVertical:12,
-        borderRadius:12
+    btn: {
+        backgroundColor: "#e74a07",
+        marginHorizontal: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingVertical: 12,
+        borderRadius: 12
     },
-    text:{
-        color:"#ffffff",
-        fontSize:18,
-        fontFamily:"Oswald-Medium"
+    text: {
+        color: "#ffffff",
+        fontSize: 18,
+        fontFamily: "Oswald-Medium"
 
     }
 })

@@ -75,16 +75,21 @@ const DrawerContent = props => {
           </TouchableOpacity>
           </View>
           <View style={{flexDirection:"row",justifyContent:"space-between"}}>
-            <Text style={styles.textNum}>+1-202-555-0184</Text>
+            <Text style={styles.textNum}>{newData?.contact}</Text>
             <Text style={styles.textNum1}>{newData?.email}</Text>
           </View>
         </View>
         <View style={{paddingLeft:15,paddingTop:"18%"}}>
           <TouchableOpacity 
+        
                 onPress={() => {
-                  navigation.navigate('AppStackNavigator', {
-                      screen: 'Home',
-                  })
+                  // navigation.navigate('MyDrawer', {
+                  //     screen: 'Home',
+                  // })
+                  // navigation.navigate('MyDrawer', {
+                  //     screen: 'Home',
+                  // })
+                  navigation.navigate('HomeDrawer')
               }}
           activeOpacity={0.8}
           style={styles.row1}
@@ -95,6 +100,7 @@ const DrawerContent = props => {
           <TouchableOpacity
           activeOpacity={0.8}
           style={styles.row1}
+      
           onPress={() => navigation.navigate('MyPurchase')}
           >
              <Image style={styles.menuHome} source={require('../../assets/images/menuPurchases.png')} />
@@ -161,8 +167,6 @@ const DrawerContent = props => {
         activeOpacity={0.8}
         style={styles.logout}
         onPress={()=>{
-          
-          
           AsyncStorage.clear();
 dispatch(userLogout(navigation))
         }}
@@ -202,7 +206,7 @@ const Screens = ({navigation, style}) => {
         headerMode="none">
  
 
-        <Stack.Screen name="Home">{props => <Home {...props} />}</Stack.Screen>
+        <Stack.Screen name="HomeDrawer">{props => <Home {...props} />}</Stack.Screen>
         <Stack.Screen name="MyPurchase">{props => <MyPurchase {...props} />}</Stack.Screen>
         <Stack.Screen name="AppFeedback">{props => <AppFeedback {...props} />}</Stack.Screen>
         <Stack.Screen name="About">{props => <About {...props} />}</Stack.Screen>

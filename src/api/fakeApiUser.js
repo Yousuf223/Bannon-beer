@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
 export const getApi = async (url, data, token) => {
-  console.log("url", url)
+  console.log("url, token getApi", url, token)
   try {
     let response = await axios.get(data ? url + data : url, {
       headers: {

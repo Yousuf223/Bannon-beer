@@ -7,10 +7,12 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
-    Image
+    Image,
+    ActivityIndicator
 } from 'react-native'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { connect, useDispatch } from 'react-redux'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import moment from 'moment';
+import { connect, useDispatch } from 'react-redux';
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
@@ -26,54 +28,55 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
     const { control, handleSubmit, formState: { errors } } = useForm();
     const [date, setDate] = useState(new Date())
     const [open, setOpen] = useState(false)
+
+
     const onSubmit = (data) => {
-        // console.log("it works");
-        var data1 = new FormData();
-        data1.append('email', data.Email);
-        data1.append('password', data.Password);
-        data1.append('first_name', data.FirstName);
-        data1.append('last_name', data.LastName);
-        // data1.append('dob',data.date)
-        // date: moment(date).format('YYYY-MM-DD'),
-        SignUpAction(data1)
-            .then(res => {
-                // console.log("------------------------------")
-                console.log("res", res)
-                navigation.navigate('AppStackNavigator', {
-                    screen: 'Home'
-                })
-                //         //  onPress={() => navigation.goBack()}
-
-                // console.log('error', err);
-
-                // console.log("res", res)
-            })
-            .catch(err => {
-                alert(err.message)
-                console.log('error', err);
-            })
         setIsLoading(true);
-        // auth()
-        //     .createUserWithEmailAndPassword(data.Email, data.Password, data.firstName, data.LastName)
-        //     .then(() => {
-        //         console.log("it works in then")
-        //         setIsLoading(true);
-        //         Login(() => navigation.goBack())
-        //         //  onPress={() => navigation.goBack()}
-        //     })
-        //     .catch(error => {
-        //         if (error.code === 'auth/email-already-in-use') {
-        //             setIsLoading(false);
-        //             alert('That email address is already in use!');
-        //         }
-
-        //         if (error.code === 'auth/invalid-email') {
-        //             setIsLoading(false);
-        //             alert('That email address is invalid!');
-        //         }
-        //         setIsLoading(false);
-        //         console.error(error);
-        //     });
+        var letters = /^[A-Za-z]+$/;
+        if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!==""){
+            if(data.Password!=data.Confirm_Password){
+                alert('Password does not match')
+                setIsLoading(false)
+            }
+            else if (!data.FirstName.match(letters) || !data.LastName.match(letters)) {
+                alert('Please enter a valid name')
+                setIsLoading(false)
+            }
+            else{
+            var data1 = new FormData();
+            data1.append('email', data.Email);
+            data1.append('password', data.Password);
+            data1.append('password', data.Confirm_Password);
+            data1.append('first_name', data.FirstName);
+            data1.append('last_name', data.LastName);
+            data1.append('dob',moment(data?.date).format('YYYY-MM-DD'))
+            // date: moment(date).format('YYYY-MM-DD'),
+            console.log('check-----========check',data1)
+            SignUpAction(data1)
+                .then(res => {
+                    // console.log("------------------------------")
+                    console.log("res", res)
+                    navigation.navigate('AuthStackNavigator', {
+                        screen: 'Login'
+                    })
+                    //         //  onPress={() => navigation.goBack()}
+                    setIsLoading(false)
+                })
+                .catch(err => {
+                    
+                    if(err.response.status==422){
+                        alert('This email has already been taken')
+                    }
+                    setIsLoading(false)
+                    console.log('error', err.response.data.errors);
+                })
+            }
+        }else{
+            alert('Please fill all the fields', null, 'error')
+            setIsLoading(false)
+        }
+   
+        
     };
 
     // messaging().getToken()
@@ -168,7 +171,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                     {errors.LastName && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Last Name</Text>}
                                 </View>
                             </View>
-                            {/* <TouchableOpacity 
+                            <TouchableOpacity 
                             onPress={() => setOpen(true)}
                             >
                                 <Image style={styles.inputLogo} source={require('../../assets/images/date.png')} />
@@ -179,12 +182,14 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                     style={styles.email}
                                     labelStyle={styles.label}
                                     placeholderTextColor="#00000060"
-                                    // onChangeText={(text) => setDate(text)}
+                                     onChangeText={(text) => setDate(text)}
                                     label="Date of Birth"
                                     placeholder='25 Oct, 1985'
                                     value={date.toDateString()}
+                                    disabled={true}
                                 />
                                 <DatePicker
+                                maximumDate={new Date()}
                                     modal
                                     open={open}
                                     date={date || new Date()}
@@ -198,7 +203,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                         setOpen(false)
                                     }}
                                 />
-                            </TouchableOpacity> */}
+                            </TouchableOpacity>
                             <View>
 
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
@@ -242,18 +247,6 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
-                                {/* <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
-                                    label="Password"
-                                    placeholder='************'
-                                    secureTextEntry={hideEye ? true : false}
-
-                                /> */}
                                 <Controller
                                     control={control}
                                     rules={{
@@ -316,10 +309,10 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
 
                                         />
                                     )}
-                                    name="Password"
+                                    name="Confirm_Password"
                                     defaultValue=""
                                 />
-                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
+                                {errors.Confirm_Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
                                     name={hideEye ? 'eye-off' : 'eye'}
@@ -339,7 +332,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                             //     })
                             // }}
                             >
-                                <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>
+                               {isLoading?<ActivityIndicator size="small" color="#ffffff" /> :<Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>} 
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>

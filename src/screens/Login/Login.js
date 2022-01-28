@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     SafeAreaView,
     View,
@@ -19,13 +19,14 @@ import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { userLogin,SocialLoginAction } from '../../stores/actions/user.action';
+import { userLogin, SocialLoginAction } from '../../stores/actions/user.action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
+
 // var email = "yousuf@gmail.com";
 // var password = "111111"
-const Login = ({ navigation,userLogin,SocialLoginAction }) => {
+const Login = ({ navigation, userLogin, SocialLoginAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
@@ -34,82 +35,52 @@ const Login = ({ navigation,userLogin,SocialLoginAction }) => {
 
 
 
-// useEffect(()=>{
-// if(Object.keys(count).length > 0 ){
-//     console.log('user login and save ')
-// }
-// else {
-//     console.log('data not found ')
-// }
+    // useEffect(()=>{
+    // if(Object.keys(count).length > 0 ){
+    //     console.log('user login and save ')
+    // }
+    // else {
+    //     console.log('data not found ')
+    // }
 
 
 
-// },[])
+    // },[])
 
 
 
     const onSubmit = (data) => {
+
+        setIsLoading(true);
+
         // console.log(data,"****DATA****");
         var data1 = new FormData();
 
         data1.append('email', data.Email);
         data1.append('password', data.Password);
-        // data1.append('fcm_token', data.token);
-        // console.log('fcm_tokenfcm_token',fcm_token)
-
         userLogin(data1)
             .then(res => {
                 if (res.success) {
-                    // console.log("hdhchdf",res)
+                    setIsLoading(false);
+                    console.log("res.access_token on LOGIN",res)
                     saveToken(res.access_token);
-                    console.log('abcder----#',res)
-                    // navigation.navigate('AppStackNavigator', {
-                    //     screen: 'Home'
-                    // })
+                    console.log('abcder----#', res)
                 }
+
                 else {
-                    alert(res.message)
+                     alert(res.message)
+                     setIsLoading(false);
                 }
                 // console.log('error', err);
 
                 // console.log("res", res)
             })
-            .catch(err => {
-                alert(err.message)
-                console.log('error', err);
+            .catch((e)=>{
+                console.log('error',e)
+                alert('Please enter a valid email')
+                setIsLoading(false)
             })
-
-        // alert(data)
-        // navigation.navigate('AppStackNavigator', {
-        //     screen: 'Home'
-        //   })
-        // setIsLoading(true);
-        // auth().signInWithEmailAndPassword(data.Email, data.Password).then(async (userCredential) => {
-        //     setIsLoading(false);
-        //     const token = await userCredential.user.getIdToken(true);
-        //     await saveToken(token);
-        //     await userLogin(token);
-        //     navigation.navigate('AppStackNavigator', {
-        //         screen: 'Home',
-        //     })
-        // })
-        //     .catch(error => {
-        //         setIsLoading(false);
-        //         if (error.code === 'auth/email-already-in-use') {
-        //             alert('That email address is already in use!');
-        //         }
-
-        //         if (error.code === 'auth/invalid-email') {
-        //             alert('That email address is invalid!');
-        //         }
-
-        //         if (error.code === 'auth/wrong-password') {
-        //             alert('The password is invalid');
-        //         }
-
-        //         //console.error(error);
-
-        //     });
+      
     };
 
 
@@ -129,64 +100,63 @@ const Login = ({ navigation,userLogin,SocialLoginAction }) => {
 
 
 
-    async function onGoogleButtonPress(){
+    async function onGoogleButtonPress() {
         const { idToken } = await GoogleSignin.signIn();
 
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
         auth().signInWithCredential(googleCredential)
-        .then(async (userCredential)=>{
-            console.log('userdata from google', userCredential)
+            .then(async (userCredential) => {
+                console.log('userdata from google', userCredential)
 
-            var data1 = new FormData();
-            data1.append('key', 'aaaabbbbcccc');
-        data1.append('email', userCredential.additionalUserInfo.profile.email);
-            // var data12 = new FormData();
-            // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
-            // data12.append('email', 'abcd123@gmail.com');
+                var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                data1.append('email', userCredential.additionalUserInfo.profile.email);
+                // var data12 = new FormData();
+                // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                // data12.append('email', 'abcd123@gmail.com');
 
-                       
-                        data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
-                        data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
-                        
 
-                        data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+                data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+                data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
 
-                        console.log('data12', data1)
 
-                        // const token = await userCredential.user.getIdToken(true);
-                        // console.log('token from google', token)
-                                // await saveToken(token);
-                                // navigation.navigate('AppStackNavigator', {
-                                //     screen: 'Home',
-                                // })
-                                SocialLoginAction(data1)
-                                .then(res => {
-                                    saveToken(res?.data?.access_token);
-                                    console.log('res.access_token---------',res)
-                                    // navigation.navigate('AppStackNavigator', {
-                                    //                 screen: 'Home',
-                                    //             })
-                                    console.log("res", res)
-                                   
-                                })
-                                .catch(err => {
-                                    alert(err.message)
-                                    console.log('error', err);
-                                })
-                   console.log('Yousuf--------------------jjjjj',data1)
-//                    .then( (res)=>{
-//                        console.log('res' , res)
-//                    })
-//                    .catch((error)=>{
-// console.log('error from api', error)
-//                    })
+                data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
 
-        })
-        .catch((error)=>{
-            console.log('error google', error)
-        })
-    } 
-    
+                console.log('data12', data1)
+
+                // const token = await userCredential.user.getIdToken(true);
+                // console.log('token from google', token)
+                // await saveToken(token);
+                // navigation.navigate('AppStackNavigator', {
+                //     screen: 'Home',
+                // })
+                SocialLoginAction(data1)
+                    .then(res => {
+                        saveToken(res?.data?.access_token);
+                        // navigation.navigate('AppStackNavigator', {
+                        //                 screen: 'Home',
+                        //             })
+                        console.log("res", res)
+
+                    })
+                    .catch(err => {
+                        alert(err.message)
+                        console.log('error', err);
+                    })
+                console.log('Yousuf--------------------jjjjj', data1)
+                //                    .then( (res)=>{
+                //                        console.log('res' , res)
+                //                    })
+                //                    .catch((error)=>{
+                // console.log('error from api', error)
+                //                    })
+
+            })
+            .catch((error) => {
+                console.log('error google', error)
+            })
+    }
+
     // async function onGoogleButtonPress() {
     //     // Get the users ID token
 
@@ -213,7 +183,7 @@ const Login = ({ navigation,userLogin,SocialLoginAction }) => {
     //         //     // saveToken(res.access_token);
     //         //     // console.log("------------------------------")
     //         //     console.log("res---------------------", res)
-            
+
     //         // })
     //         .catch(err => {
     //             alert(err)
@@ -235,28 +205,28 @@ const Login = ({ navigation,userLogin,SocialLoginAction }) => {
             console.log("token", token)
             // alert('Notification send',token)
         })
-        
 
-       // facebook Login
 
-       async function onFacebookButtonPress() {
+    // facebook Login
+
+    async function onFacebookButtonPress() {
         // Attempt login with permissions
         // const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-    
+
         // if (result.isCancelled) {
         //   throw 'User cancelled the login process';
         // }
-    
+
         // // Once signed in, get the users AccesToken
         // const data = await AccessToken.getCurrentAccessToken();
-    
+
         // if (!data) {
         //   throw 'Something went wrong obtaining access token';
         // }
-    
+
         // // Create a Firebase credential with the AccessToken
         // const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-    
+
         // // Sign-in the user with the credential
         // auth().signInWithCredential(facebookCredential).then(async () => {
         //     console.log("facebookCredential FACEBOOK SIGNED IN", facebookCredential)
@@ -264,31 +234,65 @@ const Login = ({ navigation,userLogin,SocialLoginAction }) => {
         // }).catch(error => {
         //   console.error(error);
         // });
-        
+
 
         LoginManager.logInWithPermissions(["public_profile"]).then(
             function (result) {
-              if (result.isCancelled) {
-                console.log("Login cancelled")
-              } else {
-console.log('resultresultresult',result)
-            
-                Profile.getCurrentProfile().then(async function (currentProfile) {
-            
-                    console.log('------------------------------------------------------------------',currentProfile)
-                    navigation.navigate('AppStackNavigator', {
-                        screen: 'Home',
+                if (result.isCancelled) {
+                    console.log("Login cancelled")
+                } else {
+                    console.log('resultresultresult', result)
+
+                    Profile.getCurrentProfile().then(async function (currentProfile) {
+                        console.log('user facebook------======',currentProfile)
+                        var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                // data1.append('email', currentProfile);
+                // var data12 = new FormData();
+                // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                // data12.append('email', 'abcd123@gmail.com');
+
+
+                data1.append('first_name', currentProfile.firstName);
+                data1.append('last_name', currentProfile.lastName);
+                data1.append('userID', currentProfile.userID);
+
+                var email;
+                email=currentProfile.email
+                if(email==null){
+                    email=currentProfile.userID
+                }
+                data1.append('email', email);
+
+                data1.append('profile_picture', currentProfile.imageURL);
+
+                        // console.log('------------------------------------------------------------------',currentProfile)
+                        // navigation.navigate('AppStackNavigator', {
+                        //     screen: 'Home',
+                        // })
+                        console.log("data1data1data1---data1", currentProfile)
+                        SocialLoginAction(data1)
+                        .then(res => {
+                            console.log("res----------", res)
+                            saveToken(res?.data?.access_token);
+                            // navigation.navigate('AppStackNavigator', {
+                            //                 screen: 'Home',
+                            //             })
+                          
+    
+                        })
+                        .catch(err => {
+                            alert(err.message)
+                            console.log('error', err);
+                        })
                     })
-                    // console.log("facbook response", currentProfile)
-                })
-              }
+                }
             },
             function (error) {
                 console.log("facbook error", error)
             }
-          )
-      }
-
+        )
+    }
 
     return (
         <>
@@ -304,8 +308,9 @@ console.log('resultresultresult',result)
                                 <Controller
                                     control={control}
                                     rules={{
+                                        required: true,
                                         pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            // value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                             message: "invalid email address"
                                         }
                                     }}
@@ -313,6 +318,7 @@ console.log('resultresultresult',result)
                                         <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
+                                          
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
@@ -324,7 +330,7 @@ console.log('resultresultresult',result)
                                     name="Email"
                                     defaultValue=""
                                 />
-                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter valid Email</Text>}
+                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter  Email</Text>}
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
@@ -343,7 +349,7 @@ console.log('resultresultresult',result)
                                             placeholderTextColor="#00000060"
                                             label="Password"
                                             placeholder='************'
-                                            secureTextEntry={hideEye ? true : false}
+                                            secureTextEntry={hideEye ? false : true}
                                         />
                                     )}
                                     name="Password"
@@ -352,6 +358,7 @@ console.log('resultresultresult',result)
                                 {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
+                                    // name={hideEye ? 'eye-off' : 'eye'} 
                                     name={hideEye ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
@@ -364,6 +371,7 @@ console.log('resultresultresult',result)
                         </View>
                         <View>
                             <TouchableOpacity
+                            disabled={isLoading}
                                 style={styles.btn}
                                 activeOpacity={0.9}
                                 onPress={handleSubmit(onSubmit)}
@@ -378,9 +386,9 @@ console.log('resultresultresult',result)
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <TouchableOpacity 
-                            onPress={() => onFacebookButtonPress()}
-                            style={styles.iconBg}>
+                            <TouchableOpacity
+                                onPress={() => onFacebookButtonPress()}
+                                style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -412,7 +420,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin,SocialLoginAction }, dispatch);
+    bindActionCreators({ userLogin, SocialLoginAction }, dispatch);
 
 
 const styles = StyleSheet.create({

@@ -59,17 +59,20 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
       <QRCodeScanner
         onRead={onSuccess}
         // onRead={onSuccess()}
-        flashMode={RNCamera.Constants.FlashMode.torch}
+        flashMode={RNCamera.Constants.FlashMode.auto}
+        
         bottomContent={
           <TouchableOpacity style={styles.buttonTouchable}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center',justifyContent:'space-between'}}>
+              <View style={{width:"30%"}}>
               <Image
-                style={{width: 30, height: 88}}
+                style={{width: 30, height: 88,marginLeft:20}}
                 source={{uri: item.image}}
               />
-              <View>
+              </View>
+              <View style={{width:"70%",}}>
                 <Text>
-                  02<Text></Text>
+                  02  <Text></Text>
                   {item.name}
                 </Text>
                 <View style={{marginVertical: 6}}>
@@ -92,7 +95,7 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
                       color: '#e74a07',
                       fontFamily: 'Oswald-Bold',
                       fontSize: 12,
-                      marginTop: 1,
+                      marginTop: 4,
                     }}>
                     ${item.price}
                   </Text>
@@ -125,9 +128,10 @@ const styles = StyleSheet.create({
   buttonTouchable: {
     backgroundColor: '#fff',
     top: 20,
-    width: '85%',
-    height: '70%',
+    width: '80%',
+    height: '50%',
     borderRadius: 10,
+    flexDirection:"row",
   },
   text1: {
     color: '#7f705d',

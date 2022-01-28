@@ -28,10 +28,14 @@ const BeerMenu = ({ navigation, user }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data1, setData1] = useState([]);
   const dispatch = useDispatch()
+  // useEffect(() => {
+  //   dispatch(ListDataAction())
+  // }, [])
   useEffect(() => {
-    dispatch(ListDataAction())
+    setTimeout(() => {
+      dispatch(ListDataAction())
+    }, 2000)
   }, [])
-
   const data = useSelector(state => state.userReducer.ListDataAction)
   // const cardData = [
   //   {
@@ -123,6 +127,7 @@ setSearch(text)
     <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
+      
         // value={query}
         autoCorrect={false}  
         backgroundColor={'#f8ece0'} />
@@ -136,7 +141,7 @@ setSearch(text)
           />
           <Text style={styles.text0}>Beer Menu</Text>
         </View>
-        <Text style={styles.text1}>{data.data.length} Items</Text>
+        <Text style={styles.text1}>{data?.data?.length} Items</Text>
       </View>
       <View style={{ paddingVertical: 10 }}>
         <SearchBar
@@ -145,7 +150,7 @@ setSearch(text)
           placeholderTextColor="#85786f"
           searchIcon={{ iconStyle: { color: '#85786f' } }}
           inputStyle={{
-            color: '#fff',
+            color: '#000',
             fontSize: 14,
             fontFamily: 'Oswald-Regular',
           }}
@@ -177,7 +182,9 @@ setSearch(text)
                               image={item.image}
                               price={item.price}
                               alocoal={item.alcohol_percentage}
-                              onPress={() => navigation.navigate('QRScaner')}
+                              onPress={() => navigation.navigate('QRScaner', {
+                                item: item
+                              })}
                             />
                         
                           </View>
@@ -189,10 +196,11 @@ setSearch(text)
      
       <View style={styles.posi}>
         <Animated.View
-          style={{
-            transform: [{ translateY: pan.y }],
-          }}
-          {...panResponder.panHandlers}>
+          // style={{
+          //   transform: [{ translateY: pan.y }],
+          // }}
+          // {...panResponder.panHandlers}
+          >
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             activeOpacity={0.9}>
@@ -210,7 +218,7 @@ setSearch(text)
         animationOutTiming={600}
         backdropColor="#f8ece0"
         backdropOpacity={1}
-        transparent={false}
+        transparent={true}
         isVisible={modalVisible}
         onBackButtonPress={() => setModalVisible(!modalVisible)}
         onBackdropPress={() => setModalVisible(!modalVisible)}>
@@ -252,7 +260,7 @@ setSearch(text)
                     paddingLeft: 6,
                     fontFamily: 'Oswald-Medium',
                   }}>
-                  75-75
+                  {data.data.length}-75
                 </Text>
               </View>
               {/* <View >

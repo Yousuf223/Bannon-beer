@@ -28,10 +28,14 @@ const Home = (props) => {
   const { navigation } = props
   const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(ListDataAction())
+    setTimeout(() => {
+      dispatch(ListDataAction())
+    }, 2000)
   }, [])
   useEffect(() => {
-    dispatch(FeaturedProducts())
+    setTimeout(() => {
+      dispatch(FeaturedProducts())
+    }, 2000)
   }, [])
   const data1 = useSelector(state => state.userReducer.FeaturedProducts)
 
@@ -99,7 +103,7 @@ const Home = (props) => {
         <View style={styles.header}>
           <TORN
             activeOpacity={0.8}
-            onPress={() => navigation.toggleDrawer()}
+            onPress={() => navigation.openDrawer()}
           >
             <Image style={styles.menu} source={require('../../assets/images/menu.png')} />
           </TORN>
@@ -158,6 +162,7 @@ const Home = (props) => {
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <TORN
+              hitSlop={{top: 20, left: 40, bottom: 20, right: 20}}
                 onPress={() => navigation.navigate('BeerMenu')}
                 activeOpacity={0.9}
                 style={styles.btn}>
@@ -192,10 +197,10 @@ const Home = (props) => {
         <View
           style={styles.posi}>
           <Animated.View
-            style={{
-              transform: [{ translateY: pan.y }]
-            }}
-            {...panResponder.panHandlers}
+            // style={{
+            //   transform: [{ translateY: pan.y }]
+            // }}
+            // {...panResponder.panHandlers}
           >
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
@@ -213,7 +218,7 @@ const Home = (props) => {
           animationOutTiming={600}
           backdropColor="#f8ece0"
           backdropOpacity={1}
-          transparent={false}
+          transparent={true}
           isVisible={modalVisible}
           onBackButtonPress={() => setModalVisible(!modalVisible)}
           onBackdropPress={() => setModalVisible(!modalVisible)}>
@@ -241,7 +246,7 @@ const Home = (props) => {
                     borderWidth={0}
                     unfilledColor={"#e4d8cc"}
                   />
-                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>{buyArray?.length}-{data?.data?.length}</Text>
+                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>{data?.data?.length}-75</Text>
                 </View>
                 {/* <View >
             <Text>1</Text>
@@ -287,7 +292,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "10%",
+    marginTop: "3%",
+    marginTop: Platform.OS == "android" ? "10%" : "3%",
     marginHorizontal: 20
   },
   menu: {
@@ -320,6 +326,7 @@ const styles = StyleSheet.create({
     height: "75%",
     borderRadius: 4,
     alignItems: "center",
+    marginRight:10
 
   },
   textView: {

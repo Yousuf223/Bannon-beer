@@ -8,7 +8,8 @@ import {
     StyleSheet,
     ScrollView,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    Alert
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import moment from 'moment';
@@ -23,7 +24,8 @@ import DatePicker from 'react-native-date-picker'
 import messaging from '@react-native-firebase/messaging';
 const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
     const dispatch = useDispatch()
-    const [hideEye, setHideEye] = useState()
+    const [hideEye, setHideEye] = useState();
+    const [hideEye1, setHideEye1] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
     const [date, setDate] = useState(new Date())
@@ -35,11 +37,12 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
         var letters = /^[A-Za-z]+$/;
         if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!==""){
             if(data.Password!=data.Confirm_Password){
-                alert('Password does not match')
+                Alert.alert("O'Bannon's",'Password does not match')
+              
                 setIsLoading(false)
             }
             else if (!data.FirstName.match(letters) || !data.LastName.match(letters)) {
-                alert('Please enter a valid name')
+                Alert.alert("O'Bannon's",'Please enter a valid name')
                 setIsLoading(false)
             }
             else{
@@ -65,14 +68,14 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                 .catch(err => {
                     
                     if(err.response.status==422){
-                        alert('This email has already been taken')
+                        Alert.alert("O'Bannon's",'This email has already been taken')
                     }
                     setIsLoading(false)
                     console.log('error', err.response.data.errors);
                 })
             }
         }else{
-            alert('Please fill all the fields', null, 'error')
+            Alert.alert("O'Bannon's",'Please fill all the fields', null, 'error')
             setIsLoading(false)
         }
    
@@ -262,7 +265,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                             placeholderTextColor="#00000060"
                                             label="Password"
                                             placeholder='************'
-                                            secureTextEntry={hideEye ? true : false}
+                                            secureTextEntry={hideEye ? false : true}
 
                                         />
                                     )}
@@ -272,7 +275,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                 {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    name={hideEye1 ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
                                 />
@@ -305,7 +308,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                             placeholderTextColor="#00000060"
                                             label="Confirm Password"
                                             placeholder='************'
-                                            secureTextEntry={hideEye ? true : false}
+                                            secureTextEntry={hideEye1 ? false : true}
 
                                         />
                                     )}
@@ -315,9 +318,9 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                 {errors.Confirm_Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    name={hideEye1 ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
-                                    onPress={() => setHideEye(!hideEye)}
+                                    onPress={() => setHideEye1(!hideEye1)}
                                 />
                             </View>
                         </View>
@@ -326,6 +329,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                 style={styles.btn}
                                 activeOpacity={0.9}
                                 onPress={handleSubmit(onSubmit)}
+                                disabled={isLoading}
                             // onPress={() => {
                             //     navigation.navigate('AppStackNavigator', {
                             //         screen: 'Home',

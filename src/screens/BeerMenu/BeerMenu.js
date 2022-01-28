@@ -260,7 +260,7 @@ setSearch(text)
                     paddingLeft: 6,
                     fontFamily: 'Oswald-Medium',
                   }}>
-                  {data.data.length}-75
+                 75-{data.data.length}
                 </Text>
               </View>
               {/* <View >

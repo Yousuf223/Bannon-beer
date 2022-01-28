@@ -32,7 +32,7 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
     QRCodeAction(data1)
       .then(res => {
         //
-        Alert.alert('Alert', res?.message);
+        Alert.alert("O'Bannon's",(res.message))
         console.log(
           'res------------------==============',
           res,

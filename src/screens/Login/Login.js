@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     StyleSheet,
+    Alert,
     ScrollView
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -68,7 +69,7 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                 }
 
                 else {
-                     alert(res.message)
+                    Alert.alert("O'Bannon's",(res.message))
                      setIsLoading(false);
                 }
                 // console.log('error', err);
@@ -77,7 +78,7 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
             })
             .catch((e)=>{
                 console.log('error',e)
-                alert('Please enter a valid email')
+                Alert.alert("O'Bannon's",'Please enter a valid email')
                 setIsLoading(false)
             })
       

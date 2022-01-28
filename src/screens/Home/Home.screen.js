@@ -24,6 +24,9 @@ import * as Progress from 'react-native-progress';
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IOS } from 'react-native-permissions/lib/typescript/constants';
 import { ListDataAction, FeaturedProducts } from '../../stores/actions/user.action';
+import { useIsFocused } from '@react-navigation/native'
+;
+
 const Home = (props) => {
   const { navigation } = props
   const dispatch = useDispatch()
@@ -37,6 +40,12 @@ const Home = (props) => {
       dispatch(FeaturedProducts())
     }, 2000)
   }, [])
+
+  const isFocused = useIsFocused()
+  useEffect(() => {
+      dispatch(ListDataAction())
+
+  }, [isFocused])
   const data1 = useSelector(state => state.userReducer.FeaturedProducts)
 
   const data = useSelector(state => state.userReducer.ListDataAction)
@@ -246,13 +255,14 @@ const Home = (props) => {
                     borderWidth={0}
                     unfilledColor={"#e4d8cc"}
                   />
-                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>{data?.data?.length}-75</Text>
+                  <Text style={{ color: "#867970", fontSize: 14, paddingLeft: 6, fontFamily: "Oswald-Medium" }}>75-{data?.data?.length}</Text>
                 </View>
                 {/* <View >
             <Text>1</Text>
           </View> */}
                 <View style={styles.count}>
                   {data?.data?.map((jsx, index) => {
+                    console.log('jhdhjh======',jsx.buy )
                     return (
                       <TORN
                         activeOpacity={0.8}
@@ -293,7 +303,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: "3%",
-    marginTop: Platform.OS == "android" ? "10%" : "3%",
+    marginTop: Platform.OS == "android" ? "10%" : "5%",
     marginHorizontal: 20
   },
   menu: {

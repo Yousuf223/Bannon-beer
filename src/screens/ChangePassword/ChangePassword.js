@@ -9,6 +9,7 @@ import {
     StyleSheet,
     ScrollView,
     ActivityIndicator,
+    Alert
 } from 'react-native'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import { Input } from 'react-native-elements';
@@ -44,7 +45,8 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
                     navigation.navigate('AppStackNavigator', {
                         screen: 'Home'
                     })
-                    alert(res.message)
+                    Alert.alert("O'Bannon's",(res.message))
+                    // alert(res.message)
                     setContirmPassword('')
                     setPassword('')
           //         //  onPress={() => navigation.goBack()}
@@ -60,7 +62,8 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
             })
         }
         else{
-            alert('please fill all fields')
+            Alert.alert("O'Bannon's",'Please fill all fields')
+            // alert('please fill all fields')
             setIsLoading(false)
         }
       
@@ -115,6 +118,7 @@ const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
                 </View>
                 <View>
                     <TouchableOpacity
+                    disabled={isLoading}
                         style={styles.btn}
                         onPress={() => onSubmit()}
                         activeOpacity={0.9}>

@@ -9,6 +9,7 @@ import {
     StyleSheet,
     ScrollView,
     ActivityIndicator,
+    Alert
 } from 'react-native'
 import { connect, useDispatch, useSelector } from 'react-redux'
 import { bindActionCreators } from 'redux';
@@ -47,12 +48,13 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
                 })
                 .catch(err => {
                     setIsLoading(false)
-                    alert(err.message)
+                    Alert.alert("O'Bannon's",err.message)
                     console.log('error', err);
                 })
           
         } else {
-            alert('Please fill all the fields', null, 'error')
+            
+           Alert.alert("O'Bannon's",'Please fill all the fields', null, 'error')
             setIsLoading(false)
         }
     }

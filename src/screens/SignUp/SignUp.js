@@ -37,7 +37,8 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
     const onSubmit = (data) => {
         //setIsLoading(true);
         var letters = /^[A-Za-z]+$/;
-        if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!=="" || data.date!=""){
+        if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!=="" || data?.date!=""){
+            console.log('yyyyy-------========hhhhhhh',data?.date)
             if(data.Password!=data.Confirm_Password){
                 Alert.alert("O'Bannon's",'Password does not match')
               
@@ -47,7 +48,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                 Alert.alert("O'Bannon's",'Please enter a valid name')
                 setIsLoading(false)
             }
-           else if (data.date == null ){
+           else if (data == null ){
             Alert.alert("O'Bannon's","Please select Date Of Birth")
            }
             else{
@@ -60,7 +61,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
             data1.append('last_name', data.LastName);
             data1.append('dob',moment(data?.date).format('YYYY-MM-DD'))
             // date: moment(date).format('YYYY-MM-DD'),
-            //console.log('check-----========check',data1)
+            // console.log('check-----========check',data1)
             SignUpAction(data1)
                 .then(res => {
                     // console.log("------------------------------")
@@ -404,7 +405,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                 {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye1 ? 'eye' : 'eye-off'}
+                                    name={hideEye ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
                                 />

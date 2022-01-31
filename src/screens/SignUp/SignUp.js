@@ -19,9 +19,11 @@ import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { SignUpAction, userLogin } from '../../stores/actions/user.action';
 import DatePicker from 'react-native-date-picker'
 import messaging from '@react-native-firebase/messaging';
+import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
 const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState();
@@ -33,9 +35,9 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
 
 
     const onSubmit = (data) => {
-        setIsLoading(true);
+        //setIsLoading(true);
         var letters = /^[A-Za-z]+$/;
-        if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!==""){
+        if(data.Email != "" || data.FirstName!=""|| data.LastName!=""|| data.Password!=""|| data.Confirm_Password!=="" || data.date!=""){
             if(data.Password!=data.Confirm_Password){
                 Alert.alert("O'Bannon's",'Password does not match')
               
@@ -45,7 +47,11 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                 Alert.alert("O'Bannon's",'Please enter a valid name')
                 setIsLoading(false)
             }
+           else if (data.date == null ){
+            Alert.alert("O'Bannon's","Please select Date Of Birth")
+           }
             else{
+            setIsLoading(true);
             var data1 = new FormData();
             data1.append('email', data.Email);
             data1.append('password', data.Password);
@@ -54,11 +60,11 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
             data1.append('last_name', data.LastName);
             data1.append('dob',moment(data?.date).format('YYYY-MM-DD'))
             // date: moment(date).format('YYYY-MM-DD'),
-            console.log('check-----========check',data1)
+            //console.log('check-----========check',data1)
             SignUpAction(data1)
                 .then(res => {
                     // console.log("------------------------------")
-                    console.log("res", res)
+                    //console.log("res", res)
                     navigation.navigate('AuthStackNavigator', {
                         screen: 'Login'
                     })
@@ -71,7 +77,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                         Alert.alert("O'Bannon's",'This email has already been taken')
                     }
                     setIsLoading(false)
-                    console.log('error', err.response.data.errors);
+                   // console.log('error', err.response.data.errors);
                 })
             }
         }else{
@@ -81,12 +87,134 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
    
         
     };
+    const saveToken = async (token) => {
+        try {
+            await AsyncStorage.setItem("token", token);
+        } catch (e) {
+            console.log(e, "saving token failed");
+        }
+    };
 
-    // messaging().getToken()
-    // .then(token => {
-    //   console.log("token", token)
-    // })
-    console.log("date", date)
+    //Geogle Login
+    GoogleSignin.configure({
+        webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
+    });
+    async function onGoogleButtonPress() {
+        const { idToken } = await GoogleSignin.signIn();
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        auth().signInWithCredential(googleCredential)
+            .then(async (userCredential) => {
+                console.log('userdata from google', userCredential)
+
+                var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                data1.append('email', userCredential.additionalUserInfo.profile.email);
+                // var data12 = new FormData();
+                // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                // data12.append('email', 'abcd123@gmail.com');
+
+
+                data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+                data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
+
+
+                data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+
+                console.log('data12', data1)
+
+                // const token = await userCredential.user.getIdToken(true);
+                // console.log('token from google', token)
+                // await saveToken(token);
+                // navigation.navigate('AppStackNavigator', {
+                //     screen: 'Home',
+                // })
+                SocialLoginAction(data1)
+                    .then(res => {
+                        saveToken(res?.data?.access_token);
+                        // navigation.navigate('AppStackNavigator', {
+                        //                 screen: 'Home',
+                        //             })
+                        console.log("res", res)
+
+                    })
+                    .catch(err => {
+                        alert(err.message)
+                        console.log('error', err);
+                    })
+                console.log('Yousuf--------------------jjjjj', data1)
+                //                    .then( (res)=>{
+                //                        console.log('res' , res)
+                //                    })
+                //                    .catch((error)=>{
+                // console.log('error from api', error)
+                //                    })
+
+            })
+            .catch((error) => {
+                console.log('error google', error)
+            })
+    }
+   // facebook Login
+
+   async function onFacebookButtonPress() {
+    LoginManager.logInWithPermissions(["public_profile"]).then(
+        function (result) {
+            if (result.isCancelled) {
+                console.log("Login cancelled")
+            } else {
+                console.log('resultresultresult', result)
+
+                Profile.getCurrentProfile().then(async function (currentProfile) {
+                    console.log('user facebook------======',currentProfile)
+                    var data1 = new FormData();
+            data1.append('key', 'aaaabbbbcccc');
+            // data1.append('email', currentProfile);
+            // var data12 = new FormData();
+            // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+            // data12.append('email', 'abcd123@gmail.com');
+
+
+            data1.append('first_name', currentProfile.firstName);
+            data1.append('last_name', currentProfile.lastName);
+            data1.append('userID', currentProfile.userID);
+
+            var email;
+            email=currentProfile.email
+            if(email==null){
+                email=currentProfile.userID
+            }
+            data1.append('email', email);
+
+            data1.append('profile_picture', currentProfile.imageURL);
+
+                    // console.log('------------------------------------------------------------------',currentProfile)
+                    // navigation.navigate('AppStackNavigator', {
+                    //     screen: 'Home',
+                    // })
+                    console.log("data1data1data1---data1", currentProfile)
+                    SocialLoginAction(data1)
+                    .then(res => {
+                        console.log("res----------", res)
+                        saveToken(res?.data?.access_token);
+                        // navigation.navigate('AppStackNavigator', {
+                        //                 screen: 'Home',
+                        //             })
+                      
+
+                    })
+                    .catch(err => {
+                        alert(err.message)
+                        console.log('error', err);
+                    })
+                })
+            }
+        },
+        function (error) {
+            console.log("facbook error", error)
+        }
+    )
+}
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -241,6 +369,7 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                                             label="Email Address"
                                             placeholder='edwardd@gmail.com'
                                             placeholderTextColor="#00000060"
+                                            autoCapitalize="none"
                                         />
                                     )}
                                     name="Email"
@@ -341,16 +470,23 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction }) => {
                         </View>
                         <View style={styles.orLoginContainer}>
                             <View style={styles.linedv}></View>
-                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily: 'Raleway-Regular' }}>Or Sign Up with</Text>
+                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily: 'Oswald-Regular' }}>Or Sign Up with</Text>
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <View style={styles.iconBg}>
+                            <TouchableOpacity 
+                            onPress={() => onFacebookButtonPress()}
+                            activeOpacity={0.9}
+                             style={styles.iconBg}
+                             >
                                 <AntDesign name='facebook-square' size={25} color={'#254ba0'} />
-                            </View>
-                            <View style={styles.iconBg}>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                            activeOpacity={0.9}
+                             onPress={() => onGoogleButtonPress()}
+                             style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
-                            </View>
+                            </TouchableOpacity>
                             <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
                             </View>

@@ -211,32 +211,6 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
     // facebook Login
 
     async function onFacebookButtonPress() {
-        // Attempt login with permissions
-        // const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-
-        // if (result.isCancelled) {
-        //   throw 'User cancelled the login process';
-        // }
-
-        // // Once signed in, get the users AccesToken
-        // const data = await AccessToken.getCurrentAccessToken();
-
-        // if (!data) {
-        //   throw 'Something went wrong obtaining access token';
-        // }
-
-        // // Create a Firebase credential with the AccessToken
-        // const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
-
-        // // Sign-in the user with the credential
-        // auth().signInWithCredential(facebookCredential).then(async () => {
-        //     console.log("facebookCredential FACEBOOK SIGNED IN", facebookCredential)
-        //   await  saveToken(facebookCredential.token);
-        // }).catch(error => {
-        //   console.error(error);
-        // });
-
-
         LoginManager.logInWithPermissions(["public_profile"]).then(
             function (result) {
                 if (result.isCancelled) {
@@ -326,6 +300,7 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                                             placeholderTextColor="#00000060"
                                             label="Email"
                                             placeholder='edwardd@gmail.com'
+                                            autoCapitalize="none"
                                         />
                                     )}
                                     name="Email"

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>O'Bannon's</string>
+	<string>O&apos;Bannon&apos;s</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -44,7 +44,7 @@
 	<key>FacebookClientToken</key>
 	<string>32fe4bebd83f447692df191bfa98e425</string>
 	<key>FacebookDisplayName</key>
-	<string>Bannon'sBeer</string>
+	<string>Bannon&apos;sBeer</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -55,6 +55,8 @@
 	<string>This app wants to use your location</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app wants to use your Microphone</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app wants to access your photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Oswald-Bold.ttf</string>
@@ -86,8 +88,6 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

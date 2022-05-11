@@ -7,7 +7,8 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    BackHandler
 } from 'react-native'
 import { connect, useDispatch,useSelector} from 'react-redux'
 import { Input } from 'react-native-elements';
@@ -20,6 +21,24 @@ const MyPurchase = ({ navigation, user }) => {
      dispatch(MyPurchases())
     }, [])
   
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+          'hardwareBackPress',
+          backAction
+        )
+    
+        return () => backHandler.remove()
+      }, [])
+    
+      const backAction = () => {
+        if (navigation.isFocused()) {
+            navigation.navigate('HomeDrawer')
+          return true
+        } else {
+          return false
+        }
+      }
+
     const data = useSelector(state => state.userReducer.MyPurchases)
 
     return (
@@ -27,7 +46,7 @@ const MyPurchase = ({ navigation, user }) => {
         <View style={styles.container}>
             {/* <StatusBar barStyle="dark-content" backgroundColor={'#20382b'} /> */}
             <View style={styles.header}>
-            <AntDesign onPress={() => navigation.goBack()} name='arrowleft' size={23} color={'#85786f'} />
+            <AntDesign onPress={() => navigation.navigate('HomeDrawer')} name='arrowleft' size={23} color={'#85786f'} />
             <Text style={styles.text1}>My Purchases</Text>
             </View>      
             <ScrollView showsVerticalScrollIndicator={false} >

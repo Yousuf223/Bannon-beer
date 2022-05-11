@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         marginVertical:6,
-        marginLeft:"3%"
+        marginLeft:12
     },
     date:{
         fontSize: 10,

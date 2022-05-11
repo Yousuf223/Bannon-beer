@@ -23,9 +23,8 @@ import { ScrollView } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress';
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IOS } from 'react-native-permissions/lib/typescript/constants';
-import { ListDataAction, FeaturedProducts } from '../../stores/actions/user.action';
-import { useIsFocused } from '@react-navigation/native'
-;
+import { ListDataAction, FeaturedProducts,ResetApi } from '../../stores/actions/user.action';
+import { useIsFocused } from '@react-navigation/native';
 
 const Home = (props) => {
   const { navigation } = props
@@ -40,6 +39,12 @@ const Home = (props) => {
       dispatch(FeaturedProducts())
     }, 2000)
   }, [])
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     dispatch(ResetApi())
+  //   }, 2000)
+  // }, [])
 
   const isFocused = useIsFocused()
   useEffect(() => {
@@ -105,6 +110,15 @@ const Home = (props) => {
   }
 
   const buyArray = data?.data?.filter((e) => e.buy)
+
+  const resetFunc =()=>{
+   dispatch(ResetApi())
+   dispatch(ListDataAction())
+   dispatch(FeaturedProducts())
+  }
+
+  // const [reset,setReset] = useState(data?.data?.length === buyArray?.length)
+
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -196,7 +210,6 @@ const Home = (props) => {
 
                   </View>
                 )
-
               })
             }
 
@@ -238,7 +251,7 @@ const Home = (props) => {
                   <Text style={styles.beerCard}>Beer Card</Text>
                   <View style={{ flexDirection: "row" }}>
                     <TORN
-                      onPress={() => setSelect([])}
+                      onPress={() => resetFunc()}
                       activeOpacity={0.9}
                       style={styles.reset}>
                       <Text style={styles.resetText}>Reset</Text>
@@ -390,7 +403,8 @@ const styles = StyleSheet.create({
     paddingBottom: 20
   },
   reset: {
-    backgroundColor: "#d9cdc1",
+    backgroundColor: "#e74a07",
+    // backgroundColor: "#d9cdc1",
     width: 50,
     height: 26,
     borderRadius: 6,

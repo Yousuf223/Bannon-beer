@@ -1,4 +1,4 @@
-import { EDIT_PROFILE, LIST_DATA, SIGNUP, FEATURED_PRODUCTS, My_Purchases, PUSH_NOTIFICATION, CHANGE_PASSWORD, FEEDBACK, ABOUT, QRCODE, SOCIAL_LOGIN } from '../actions/actionType';
+import { EDIT_PROFILE, LIST_DATA, SIGNUP, FEATURED_PRODUCTS, My_Purchases, PUSH_NOTIFICATION, CHANGE_PASSWORD, FEEDBACK, ABOUT, QRCODE, SOCIAL_LOGIN, TOGGLE_VALUE,FORGOT_PASSWORD } from '../actions/actionType';
 // import { AboutAction, userLogout } from '../actions/user.action';
 import { USER_LOGIN,USER_LOGOUT } from '../constants';
 // import { SIGNUP } from '../actions/actionType';
@@ -34,8 +34,6 @@ export const userReducer = (state = initialState, action) => {
       }
 
     case USER_LOGIN:
-
-    console.log('data in reducers======', payload)
       return {
         ...state,
         users: payload
@@ -60,6 +58,11 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         // users: payload
       }
+      case FORGOT_PASSWORD:
+        return {
+          ...state,
+          // users: payload
+        }
       case QRCODE:
         return {
           ...state,
@@ -70,6 +73,11 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         // users: payload
       }
+      case TOGGLE_VALUE:
+        return {
+          ...state,
+          users:payload
+        }
     case EDIT_PROFILE:
       return {
         ...state,

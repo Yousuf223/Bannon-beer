@@ -64,6 +64,7 @@
 		752F801272D14523BCDBCBC3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = BannonsBeer/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8445D0C8279587AE009EA3E7 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		8462EA3C27FEF9C50076DABE /* BannonsBeer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = BannonsBeer.entitlements; path = BannonsBeer/BannonsBeer.entitlements; sourceTree = "<group>"; };
 		8DFC27775F364DBDBA9B55A4 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		9A4C6C4062E54EDCB5D65E92 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		9FF3DE950D8B42FB81FC0928 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
@@ -116,6 +117,7 @@
 		13B07FAE1A68108700A75B9A /* BannonsBeer */ = {
 			isa = PBXGroup;
 			children = (
+				8462EA3C27FEF9C50076DABE /* BannonsBeer.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -565,8 +567,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = B5387AGUHB;
+				CODE_SIGN_ENTITLEMENTS = BannonsBeer/BannonsBeer.entitlements;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 67TJC7B827;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = BannonsBeer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -579,7 +582,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.appstirr.BannonsBeer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appstirr.OBannonsBeer;
 				PRODUCT_NAME = BannonsBeer;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -593,8 +596,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 5;
-				DEVELOPMENT_TEAM = B5387AGUHB;
+				CODE_SIGN_ENTITLEMENTS = BannonsBeer/BannonsBeer.entitlements;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = 67TJC7B827;
 				INFOPLIST_FILE = BannonsBeer/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -606,7 +610,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.appstirr.BannonsBeer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.appstirr.OBannonsBeer;
 				PRODUCT_NAME = BannonsBeer;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

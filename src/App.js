@@ -5,14 +5,15 @@ import { Provider } from 'react-redux'
 import { store } from './stores'
 import SplashScreen from 'react-native-splash-screen'
 import messaging from '@react-native-firebase/messaging';
-
+import { Alert } from 'react-native'
 
 const App = () => {
   
   useEffect(() => {
 
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      Alert.alert(remoteMessage.notification.title,remoteMessage.notification.body);
+      console.log('remoteMessageremoteMessage',remoteMessage)
       });
     setTimeout(
       () => {

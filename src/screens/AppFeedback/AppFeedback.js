@@ -45,6 +45,8 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
                     //   screen: 'Home'
                     // })
                     // 
+                    setSubject('')
+                    setFeedback('')
                 })
                 .catch(err => {
                     setIsLoading(false)

@@ -5,7 +5,7 @@ export default function CardDetail({
     decription = 'GUINNESS',
     number = '',
     price = "",
-    image = require('../../assets/images/wine3.png'),
+    image = '',
     onPress,
     navigation,
     alocoal=''

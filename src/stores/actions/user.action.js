@@ -13,6 +13,9 @@ import {
   ABOUT,
   QRCODE,
   SOCIAL_LOGIN,
+  TOGGLE_VALUE,
+  RESET_API,
+  FORGOT_PASSWORD
 } from './actionType';
 export const fetchUserRequest = () => {
   return {
@@ -55,7 +58,7 @@ export function userLogin(data1, id) {
 export function SignUpAction(objData) {
   return async dispatch => {
     const data = await postApi(`${base_url}api/signup`, objData);
-    dispatch({type: SIGNUP, payload: data?.data});
+    dispatch({type: SIGNUP});
     return data;
   };
 }
@@ -112,7 +115,20 @@ export function ChangePasswordAction(ChangeData) {
     return data;
   };
 }
-
+export function ForgotPasswordAction(ForgotData) {
+  console.log('ForgotDataForgotDataForgotDataForgotData',ForgotData)
+  return async dispatch => {
+    const {data} = await postApi(
+      `${base_url}api/forgot-password`,
+    ForgotData,
+    console.log('datadatat',ForgotData),
+      await AsyncStorage.getItem('token'),
+    );
+    dispatch({type: FORGOT_PASSWORD, payload: data?.data});
+   
+    return data;
+  };
+}
 export function QRCodeAction(QRData) {
   return async dispatch => {
     try {
@@ -137,7 +153,20 @@ export function FeedbackAction(FeedbackData) {
       FeedbackData,
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: FEEDBACK, payload: data?.data});
+    dispatch({type: FEATURED_PRODUCTS, payload: data?.data});
+    return data;
+  };
+}
+
+export function Toggle_Value(toggle) {
+  return async dispatch => {
+    const {data} = await postApi(
+      `${base_url}api/notificationtoggle`,
+      toggle,
+      await AsyncStorage.getItem('token'),
+    );
+    dispatch({type: TOGGLE_VALUE, payload: data?.data});
+    console.log("data Toggle_Value", data)
     return data;
   };
 }
@@ -170,7 +199,19 @@ export function FeaturedProducts() {
     return data;
   };
 }
-
+export function ResetApi() {
+  return async dispatch => {
+    const data = await getApi(
+      `${base_url}api/resetbeercard`,
+      '',
+      await AsyncStorage.getItem('token'),
+    );
+    console.log('datadata====',data)
+    // dispatch({type: RESET_API, payload: data?.data});
+    
+    return data;
+  };
+}
 export function MyPurchases() {
   return async dispatch => {
     const data = await getApi(

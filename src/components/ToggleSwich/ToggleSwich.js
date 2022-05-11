@@ -36,7 +36,7 @@ const ToggleSwich = ({
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: 2,
-          backgroundColor:"#de4907",
+          backgroundColor: getSelectionMode == 1 ? '#949a96' : "#de4907",
           borderRadius:20
         }}>
         <View

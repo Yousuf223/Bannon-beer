@@ -21,14 +21,17 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
   const newData = useSelector(state => state.userReducer.users);
   useEffect(() => {
     setstate(newData?.state);
+    console.log('newDatanewData',newData)
   }, []);
   const onSuccess = e => {
     var data1 = new FormData();
     data1.append('barcode_id', e?.data);
-    console.log('Yousuf', e?.data, e);
+    data1.append('product_id', item.id);
+    // console.log('Barcode id',item.id);
     // Linking.openURL(e.data).catch(err =>
     //     console.error('An error occured', err)
     // );
+    console.log('data1data1data1',data1)
     QRCodeAction(data1)
       .then(res => {
         //
@@ -72,7 +75,7 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
               </View>
               <View style={{width:"70%",}}>
                 <Text>
-                  02  <Text></Text>
+                  {item.id} <Text></Text>
                   {item.name}
                 </Text>
                 <View style={{marginVertical: 6}}>

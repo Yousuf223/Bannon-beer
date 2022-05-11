@@ -9,7 +9,8 @@ import {
     ActivityIndicator,
     StyleSheet,
     Alert,
-    ScrollView
+    ScrollView,
+    Platform
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { connect, useSelector, useDispatch } from 'react-redux'
@@ -24,13 +25,15 @@ import { userLogin, SocialLoginAction } from '../../stores/actions/user.action';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
 import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
-
+import { appleAuth } from '@invertase/react-native-apple-authentication'
 // var email = "yousuf@gmail.com";
 // var password = "111111"
 const Login = ({ navigation, userLogin, SocialLoginAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
+    const [fcm_token, setFcm_token] = useState('')
+    
     const { control, handleSubmit, formState: { errors } } = useForm();
     const count = useSelector((state) => state.userReducer.users)
 
@@ -59,6 +62,9 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
 
         data1.append('email', data.Email);
         data1.append('password', data.Password);
+        data1.append('fcm_token', fcm_token)
+      
+        console.log('data1data1-----222222',data1)
         userLogin(data1)
             .then(res => {
                 if (res.success) {
@@ -66,6 +72,7 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                     console.log("res.access_token on LOGIN",res)
                     saveToken(res.access_token);
                     console.log('abcder----#', res)
+
                 }
 
                 else {
@@ -122,15 +129,6 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
 
 
                 data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
-
-                console.log('data12', data1)
-
-                // const token = await userCredential.user.getIdToken(true);
-                // console.log('token from google', token)
-                // await saveToken(token);
-                // navigation.navigate('AppStackNavigator', {
-                //     screen: 'Home',
-                // })
                 SocialLoginAction(data1)
                     .then(res => {
                         saveToken(res?.data?.access_token);
@@ -145,12 +143,6 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                         console.log('error', err);
                     })
                 console.log('Yousuf--------------------jjjjj', data1)
-                //                    .then( (res)=>{
-                //                        console.log('res' , res)
-                //                    })
-                //                    .catch((error)=>{
-                // console.log('error from api', error)
-                //                    })
 
             })
             .catch((error) => {
@@ -158,52 +150,12 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
             })
     }
 
-    // async function onGoogleButtonPress() {
-    //     // Get the users ID token
-
-
-    //     const { idToken } = await GoogleSignin.signIn();
-
-    //     // Create a Google credential with the token
-    //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    //     // Sign-in the user with the credential
-    //     auth().signInWithCredential(googleCredential).then(async (userCredential) => {
-    //                     var data1 = new FormData();
-    //             data1.append('email', userCredential.additionalUserInfo.profile.email);
-    //             data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
-    //             data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
-    //             data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
-    //             console.log("user---------------------", data1)
-    //             //   SocialLoginAction(data1).then((res)=>{
-    //             //       console.log('res from api', res)
-    //             //   }).catch((e)=>{
-    //             //       console.log('error api',e)
-    //             //   })
-    //         //        .then(res => {
-    //         //     // saveToken(res.access_token);
-    //         //     // console.log("------------------------------")
-    //         //     console.log("res---------------------", res)
-
-    //         // })
-    //         .catch(err => {
-    //             alert(err)
-    //             console.log('error google', err);
-    //         })
-    //         console.log('userCredentialuserCredentialuserCredentialuserCredential',userCredential)
-    //         const token = await userCredential.user.getIdToken(true);
-    //         await saveToken(token);
-    //         navigation.navigate('AppStackNavigator', {
-    //             screen: 'Home',
-    //         })
-    //     }).catch(error => {
-    //         console.log("google login error", error)
-    //     });
-    // }
+  
 
     messaging().getToken()
         .then(token => {
             console.log("token", token)
+            setFcm_token(token)
             // alert('Notification send',token)
         })
 
@@ -269,6 +221,97 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
         )
     }
 
+    async function onAppleButtonPress() {
+        // Start the sign-in request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+      
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+          throw new Error('Apple Sign-In failed - no identify token returned');
+        }
+      
+        // Create a Firebase credential from the response
+        const { identityToken, nonce } = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+      
+        // Sign the user in with the credential
+        auth().signInWithCredential(appleCredential) 
+        .then( async (appleLogin) => {
+            // console.log('appleLogin',appleLogin)
+            var data1 = new FormData();
+            console.log('appleLogin----------',appleLogin.user.email)
+            data1.append('email', appleLogin.user.email);
+            data1.append('key', 'aaaabbbbcccc');
+            data1.append('first_name', appleLogin.user.displayName);
+            console.log('appleLogin=============jjjj',data1)
+
+
+
+
+            SocialLoginAction(data1)
+                .then(res => {
+                    saveToken(res?.data?.access_token);
+          
+                    console.log("res", res)
+
+                })
+                .catch(err => {
+                    alert(err.message)
+                    console.log('error', err);
+                })
+            console.log('Yousuf--------------------jjjjj', data1)
+        //  console.log('appleLoginappleLogin',appleLogin?.additionalUserInfo)
+            //   navigation.navigate('AppStackNavigator', {
+            //                             screen: 'Home',
+            //                         })
+        })
+        
+      }
+    // async function onAppleButtonPress() {
+    //     // alert('guyuyguyguyg')
+    //     // Start the sign-in request
+    //     const appleAuthRequestResponse = await appleAuth.performRequest({
+    //       requestedOperation: appleAuth.Operation.LOGIN,
+    //       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+    //     })
+    
+    //     // Ensure Apple returned a user identityToken
+    //     if (!appleAuthRequestResponse.identityToken) {
+    //       throw new Error('Apple Sign-In failed - no identify token returned')
+    //     }
+    //     // Create a Firebase credential from the response
+    //     const { identityToken, nonce } = appleAuthRequestResponse
+    //     const appleCredential = auth.AppleAuthProvider.credential(
+    //       identityToken,
+    //       nonce
+    //     )
+    //     // Sign the user in with the credential
+    //     return auth()
+    //       .signInWithCredential(appleCredential)
+    //       .then(e => {
+    //         console.log('user data from  faceBook', e)
+    //         console.log(e.user.email, 'email')
+    //         console.log(e.user.displayName, 'displayName')
+    
+    //         // let userData = {
+    //         //   email: e.user.email,
+    //         //   name: e.user.displayName ? e.user.displayName : '',
+    //         //   photo: '',
+    //         //   device_id: fcmToken,
+    //         //   provider: 'apple'
+    //         // }
+    //         console.log('userData', userData)
+    //         dispatch(SocialLoginAction(e?.data?.socialMediaLogin?.data))
+    //         console.log('e?.data?.socialMediaLogin?.data',e?.data?.socialMediaLogin?.data)
+    //       })
+    
+    //       .catch(error => {
+    //         console.log('error', error)
+    //       })
+    //   }
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -367,15 +410,22 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                                 style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
                             </TouchableOpacity>
+                            {Platform.OS ==  'ios' ? <TouchableOpacity
+                                onPress={() => onAppleButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}
+                            >
+                                <AntDesign name='apple1' size={25}  />
+                            </TouchableOpacity> : <View></View>}
                             <TouchableOpacity
                                 onPress={() => onGoogleButtonPress()}
                                 activeOpacity={0.9}
                                 style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
                             </TouchableOpacity>
-                            <View style={styles.iconBg}>
+                            {/* <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
-                            </View>
+                            </View> */}
                         </View>
                         <TouchableOpacity
                             activeOpacity={0.9}

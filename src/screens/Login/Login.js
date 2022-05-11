@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
     SafeAreaView,
     View,
@@ -8,90 +8,310 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     StyleSheet,
-    ScrollView
+    Alert,
+    ScrollView,
+    Platform
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useSelector, useDispatch } from 'react-redux'
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
-import { userLogin } from '../../stores/actions/user.action';
+// import { userLogin } from '../../stores/actions/user.action';
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-const Login = ({ navigation, user,userLogin }) => {
+import { userLogin, SocialLoginAction } from '../../stores/actions/user.action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
+import { appleAuth } from '@invertase/react-native-apple-authentication'
+// var email = "yousuf@gmail.com";
+// var password = "111111"
+const Login = ({ navigation, userLogin, SocialLoginAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
     const [isLoading, setIsLoading] = useState(false);
+    const [fcm_token, setFcm_token] = useState('')
+    
     const { control, handleSubmit, formState: { errors } } = useForm();
+    const count = useSelector((state) => state.userReducer.users)
 
-    const onSubmit  = (data) => {
-        console.log(data,"****DATA****");
+
+
+    // useEffect(()=>{
+    // if(Object.keys(count).length > 0 ){
+    //     console.log('user login and save ')
+    // }
+    // else {
+    //     console.log('data not found ')
+    // }
+
+
+
+    // },[])
+
+
+
+    const onSubmit = (data) => {
+
         setIsLoading(true);
-        auth().signInWithEmailAndPassword(data.Email, data.Password).then(async (userCredential) => {
-            setIsLoading(false);
-            const token = await userCredential.user.getIdToken(true);
-            await saveToken(token);
-            await userLogin(token);
-            navigation.navigate('AppStackNavigator', {
-                screen: 'Home',
+
+        // console.log(data,"****DATA****");
+        var data1 = new FormData();
+
+        data1.append('email', data.Email);
+        data1.append('password', data.Password);
+        data1.append('fcm_token', fcm_token)
+      
+        console.log('data1data1-----222222',data1)
+        userLogin(data1)
+            .then(res => {
+                if (res.success) {
+                    setIsLoading(false);
+                    console.log("res.access_token on LOGIN",res)
+                    saveToken(res.access_token);
+                    console.log('abcder----#', res)
+
+                }
+
+                else {
+                    Alert.alert("O'Bannon's",(res.message))
+                     setIsLoading(false);
+                }
+                // console.log('error', err);
+
+                // console.log("res", res)
             })
-        })
-            .catch(error => {
-                setIsLoading(false);
-                if (error.code === 'auth/email-already-in-use') {
-                    alert('That email address is already in use!');
-                }
-
-                if (error.code === 'auth/invalid-email') {
-                    alert('That email address is invalid!');
-                }
-
-                if (error.code === 'auth/wrong-password') {
-                    alert('The password is invalid');
-                }
-
-                //console.error(error);
-            });
+            .catch((e)=>{
+                console.log('error',e)
+                Alert.alert("O'Bannon's",'Please enter a valid email')
+                setIsLoading(false)
+            })
+      
     };
 
-    const saveToken = async (token) => {
 
+
+    const saveToken = async (token) => {
         try {
             await AsyncStorage.setItem("token", token);
         } catch (e) {
-            // console.log(e);
-            // saving token failed
+            console.log(e, "saving token failed");
         }
     };
 
-      //Geogle Login
-      GoogleSignin.configure({
+    //Geogle Login
+    GoogleSignin.configure({
         webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
-      });
+    });
 
-      async function onGoogleButtonPress() {
-        // Get the users ID token
-    
-    
+
+
+    async function onGoogleButtonPress() {
         const { idToken } = await GoogleSignin.signIn();
-    
-        // Create a Google credential with the token
-        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-    
-        // Sign-in the user with the credential
-        auth().signInWithCredential(googleCredential).then(async (userCredential) => {
-            const token = await userCredential.user.getIdToken(true);
-            await saveToken(token);
-            await userLogin(token);
-          navigation.navigate('AppStackNavigator', {
-            screen: 'Home',
-        })
-        }).catch(error => {
-            console.log("google login error", error)
-        });
-      }
 
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        auth().signInWithCredential(googleCredential)
+            .then(async (userCredential) => {
+                console.log('userdata from google', userCredential)
+
+                var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                data1.append('email', userCredential.additionalUserInfo.profile.email);
+                // var data12 = new FormData();
+                // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                // data12.append('email', 'abcd123@gmail.com');
+
+
+                data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+                data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
+
+
+                data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+                SocialLoginAction(data1)
+                    .then(res => {
+                        saveToken(res?.data?.access_token);
+                        // navigation.navigate('AppStackNavigator', {
+                        //                 screen: 'Home',
+                        //             })
+                        console.log("res", res)
+
+                    })
+                    .catch(err => {
+                        alert(err.message)
+                        console.log('error', err);
+                    })
+                console.log('Yousuf--------------------jjjjj', data1)
+
+            })
+            .catch((error) => {
+                console.log('error google', error)
+            })
+    }
+
+  
+
+    messaging().getToken()
+        .then(token => {
+            console.log("token", token)
+            setFcm_token(token)
+            // alert('Notification send',token)
+        })
+
+
+    // facebook Login
+
+    async function onFacebookButtonPress() {
+        LoginManager.logInWithPermissions(["public_profile"]).then(
+            function (result) {
+                if (result.isCancelled) {
+                    console.log("Login cancelled")
+                } else {
+                    console.log('resultresultresult', result)
+
+                    Profile.getCurrentProfile().then(async function (currentProfile) {
+                        console.log('user facebook------======',currentProfile)
+                        var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                // data1.append('email', currentProfile);
+                // var data12 = new FormData();
+                // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                // data12.append('email', 'abcd123@gmail.com');
+
+
+                data1.append('first_name', currentProfile.firstName);
+                data1.append('last_name', currentProfile.lastName);
+                data1.append('userID', currentProfile.userID);
+
+                var email;
+                email=currentProfile.email
+                if(email==null){
+                    email=currentProfile.userID
+                }
+                data1.append('email', email);
+
+                data1.append('profile_picture', currentProfile.imageURL);
+
+                        // console.log('------------------------------------------------------------------',currentProfile)
+                        // navigation.navigate('AppStackNavigator', {
+                        //     screen: 'Home',
+                        // })
+                        console.log("data1data1data1---data1", currentProfile)
+                        SocialLoginAction(data1)
+                        .then(res => {
+                            console.log("res----------", res)
+                            saveToken(res?.data?.access_token);
+                            // navigation.navigate('AppStackNavigator', {
+                            //                 screen: 'Home',
+                            //             })
+                          
+    
+                        })
+                        .catch(err => {
+                            alert(err.message)
+                            console.log('error', err);
+                        })
+                    })
+                }
+            },
+            function (error) {
+                console.log("facbook error", error)
+            }
+        )
+    }
+
+    async function onAppleButtonPress() {
+        // Start the sign-in request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+      
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+          throw new Error('Apple Sign-In failed - no identify token returned');
+        }
+      
+        // Create a Firebase credential from the response
+        const { identityToken, nonce } = appleAuthRequestResponse;
+        const appleCredential = auth.AppleAuthProvider.credential(identityToken, nonce);
+      
+        // Sign the user in with the credential
+        auth().signInWithCredential(appleCredential) 
+        .then( async (appleLogin) => {
+            // console.log('appleLogin',appleLogin)
+            var data1 = new FormData();
+            console.log('appleLogin----------',appleLogin.user.email)
+            data1.append('email', appleLogin.user.email);
+            data1.append('key', 'aaaabbbbcccc');
+            data1.append('first_name', appleLogin.user.displayName);
+            console.log('appleLogin=============jjjj',data1)
+
+
+
+
+            SocialLoginAction(data1)
+                .then(res => {
+                    saveToken(res?.data?.access_token);
+          
+                    console.log("res", res)
+
+                })
+                .catch(err => {
+                    alert(err.message)
+                    console.log('error', err);
+                })
+            console.log('Yousuf--------------------jjjjj', data1)
+        //  console.log('appleLoginappleLogin',appleLogin?.additionalUserInfo)
+            //   navigation.navigate('AppStackNavigator', {
+            //                             screen: 'Home',
+            //                         })
+        })
+        
+      }
+    // async function onAppleButtonPress() {
+    //     // alert('guyuyguyguyg')
+    //     // Start the sign-in request
+    //     const appleAuthRequestResponse = await appleAuth.performRequest({
+    //       requestedOperation: appleAuth.Operation.LOGIN,
+    //       requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+    //     })
+    
+    //     // Ensure Apple returned a user identityToken
+    //     if (!appleAuthRequestResponse.identityToken) {
+    //       throw new Error('Apple Sign-In failed - no identify token returned')
+    //     }
+    //     // Create a Firebase credential from the response
+    //     const { identityToken, nonce } = appleAuthRequestResponse
+    //     const appleCredential = auth.AppleAuthProvider.credential(
+    //       identityToken,
+    //       nonce
+    //     )
+    //     // Sign the user in with the credential
+    //     return auth()
+    //       .signInWithCredential(appleCredential)
+    //       .then(e => {
+    //         console.log('user data from  faceBook', e)
+    //         console.log(e.user.email, 'email')
+    //         console.log(e.user.displayName, 'displayName')
+    
+    //         // let userData = {
+    //         //   email: e.user.email,
+    //         //   name: e.user.displayName ? e.user.displayName : '',
+    //         //   photo: '',
+    //         //   device_id: fcmToken,
+    //         //   provider: 'apple'
+    //         // }
+    //         console.log('userData', userData)
+    //         dispatch(SocialLoginAction(e?.data?.socialMediaLogin?.data))
+    //         console.log('e?.data?.socialMediaLogin?.data',e?.data?.socialMediaLogin?.data)
+    //       })
+    
+    //       .catch(error => {
+    //         console.log('error', error)
+    //       })
+    //   }
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -106,8 +326,9 @@ const Login = ({ navigation, user,userLogin }) => {
                                 <Controller
                                     control={control}
                                     rules={{
+                                        required: true,
                                         pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                            // value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                             message: "invalid email address"
                                         }
                                     }}
@@ -115,18 +336,20 @@ const Login = ({ navigation, user,userLogin }) => {
                                         <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
+                                          
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Email"
                                             placeholder='edwardd@gmail.com'
+                                            autoCapitalize="none"
                                         />
                                     )}
                                     name="Email"
                                     defaultValue=""
                                 />
-                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter valid Email</Text>}
+                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter  Email</Text>}
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
@@ -137,24 +360,25 @@ const Login = ({ navigation, user,userLogin }) => {
                                     }}
                                     render={({ field: { onChange, onBlur, value } }) => (
                                         <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
-                                    label="Password"
-                                    placeholder='************'
-                                    secureTextEntry={hideEye ? true : false}
-                                />
+                                            inputContainerStyle={styles.borderdv}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            style={styles.email}
+                                            labelStyle={styles.label}
+                                            placeholderTextColor="#00000060"
+                                            label="Password"
+                                            placeholder='************'
+                                            secureTextEntry={hideEye ? false : true}
+                                        />
                                     )}
                                     name="Password"
                                     defaultValue=""
                                 />
-                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "30%", fontSize: 14, paddingLeft: 15 }}>Emter Password</Text>}
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    // name={hideEye ? 'eye-off' : 'eye'} 
+                                    name={hideEye ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
                                 />
@@ -162,16 +386,17 @@ const Login = ({ navigation, user,userLogin }) => {
                         </View>
                         <View style={styles.row}>
                             {/* <Text style={{color:"#ada097",fontWeight:"bold",fontSize:12,fontFamily:"Oswald-Regular"}}>Remember</Text> */}
-                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{ color: "#ada097", fontWeight: "bold", fontSize: 12, fontFamily: "Oswald-Regular" }}>Forgot Password?</Text>
+                            <Text onPress={() => navigation.navigate('ForgotPassword')} style={{ color: "#ada097", fontWeight: "bold", fontSize: 12, fontFamily: "Oswald-Regular", }}>Forgot Password?</Text>
                         </View>
                         <View>
                             <TouchableOpacity
-                                      style={styles.btn}
-                                      activeOpacity={0.9}
-                                      onPress={handleSubmit(onSubmit)}
-                                >
-                                    {isLoading?<ActivityIndicator size="small" color="#ffffff"></ActivityIndicator>: <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>}
-                               
+                            disabled={isLoading}
+                                style={styles.btn}
+                                activeOpacity={0.9}
+                                onPress={handleSubmit(onSubmit)}
+                            >
+                                {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Login</Text>}
+
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>
@@ -180,18 +405,27 @@ const Login = ({ navigation, user,userLogin }) => {
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <View style={styles.iconBg}>
+                            <TouchableOpacity
+                                onPress={() => onFacebookButtonPress()}
+                                style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
-                            </View>
-                            <TouchableOpacity 
-                            onPress={() => onGoogleButtonPress()}
-                            activeOpacity={0.9}
-                            style={styles.iconBg}>
+                            </TouchableOpacity>
+                            {Platform.OS ==  'ios' ? <TouchableOpacity
+                                onPress={() => onAppleButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}
+                            >
+                                <AntDesign name='apple1' size={25}  />
+                            </TouchableOpacity> : <View></View>}
+                            <TouchableOpacity
+                                onPress={() => onGoogleButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
                             </TouchableOpacity>
-                            <View style={styles.iconBg}>
+                            {/* <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
-                            </View>
+                            </View> */}
                         </View>
                         <TouchableOpacity
                             activeOpacity={0.9}
@@ -212,8 +446,8 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin }, dispatch);
- 
+    bindActionCreators({ userLogin, SocialLoginAction }, dispatch);
+
 
 const styles = StyleSheet.create({
     container: {
@@ -316,4 +550,4 @@ const styles = StyleSheet.create({
 
     }
 })
-export default connect(mapStateToProps,mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

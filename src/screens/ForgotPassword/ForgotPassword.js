@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import {
     SafeAreaView,
     View,
@@ -9,11 +9,46 @@ import {
     StyleSheet,
     ScrollView
 } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { Input } from 'react-native-elements';
-const ForgotPassword = ({ navigation, user }) => {
+import { ForgotPasswordAction } from '../../stores/actions/user.action';
+import { bindActionCreators } from 'redux';
+const ForgotPassword = ({ navigation, user,ForgotPasswordAction }) => {
     const dispatch = useDispatch()
+    const newData = useSelector((state) => state.userReducer.users)
+    const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState()
 
+    // useEffect(() => {
+    //     setEmail(newData?.email)
+    // }, [])
+    // console.log('forgotPassword',newData)
+    const onSubmit = (data) => {
+        setIsLoading(true);
+        var data1 = new FormData();
+        data1.append('email', email)
+        console.log('forgot',email)
+            ForgotPasswordAction(data1)
+            .then(res => {
+              // console.log("------------------------------")
+                    console.log("res",res)
+                    Alert.alert("O'Bannon's",'Please Valid email')
+                    // alert(res.message)
+                 setEmail('')
+          //         //  onPress={() => navigation.goBack()}
+          setIsLoading(false)
+                // console.log('error', err);
+                
+                // console.log("res", res)
+            })
+            .catch(err => {
+                
+                console.log('error', err);
+                setIsLoading(false)
+            })
+        
+      
+    }
     return (
         <>
             <View style={styles.container}>
@@ -28,13 +63,14 @@ const ForgotPassword = ({ navigation, user }) => {
                                 labelStyle={styles.label}
                                 label="Email"
                                 placeholder='edwardd@gmail.com'
-                                placeholderTextColor="#000000"
+                                placeholderTextColor="#00000060"
+                                onChangeText={(text) => setEmail(text)}
                             />
                             </View>
                 <View>
                     <TouchableOpacity
                         style={styles.btn}
-                        onPress={()=> navigation.navigate('Login')}
+                        onPress={()=> onSubmit()}
                         activeOpacity={0.9}>
                         <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Confirm</Text>
                     </TouchableOpacity>
@@ -50,6 +86,9 @@ const mapStateToProps = state => {
         user: state.userReducer.users
     }
 }
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ForgotPasswordAction}, dispatch);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -104,4 +143,4 @@ const styles = StyleSheet.create({
         color:"#85796d",
     }
 })
-export default connect(mapStateToProps, null)(ForgotPassword)
+export default connect(mapStateToProps,mapDispatchToProps)(ForgotPassword)

@@ -10,10 +10,10 @@ import {
   Linking,
   Platform,
 } from 'react-native';
-import React, {  useState, useEffect  } from 'react';
-import { userLogin } from '../stores/actions/user.action';
+import React, { useState, useEffect } from 'react';
+import { userDataWithToken, userLogin } from '../stores/actions/user.action';
 import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
+import { connect, useSelector, useDispatch } from 'react-redux';
 import Home from '../screens/Home/Home.screen'
 import Login from '../screens/Login/Login'
 import SignUp from '../screens/SignUp/SignUp'
@@ -22,19 +22,23 @@ import Notification from '../screens/Notification/Notification';
 import BeerMenu from '../screens/BeerMenu/BeerMenu'
 import QRScaner from '../screens/QRScaner/QRScaner';
 import { NavigationContainer } from '@react-navigation/native'
-import {   createDrawerNavigator,
+import {
+  createDrawerNavigator,
   DrawerContentScrollView,
   DrawerItem,
   useDrawerProgress,
-  useDrawerStatus, } from '@react-navigation/drawer'
+  useDrawerStatus,
+} from '@react-navigation/drawer'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import {CustomDrawer} from './drawer-navigator/drawer-navigator'
+import { CustomDrawer } from './drawer-navigator/drawer-navigator'
 import Icon from 'react-native-vector-icons/Ionicons'
 import 'react-native-gesture-handler'
 
 import Animated from 'react-native-reanimated';
 import MyDrawer from '../navigation/drawer-navigator/drawer-navigator';
+import { users } from '../stores/actions/user.action';
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
 const Stack = createStackNavigator()
 
 const AuthStack = createStackNavigator()
@@ -42,38 +46,40 @@ const AppStack = createStackNavigator()
 const Drawer = createDrawerNavigator();
 
 
-const Screens = ({navigation, style}) => {
-  const progress = useDrawerProgress();
-  // const scale = Animated.interpolate(progress, {
-  //   inputRange: [0, 1],
-  //   outputRange: [1, 0.9],
-  // });
-  // const borderRadius = Animated.interpolate(progress, {
-  //   inputRange: [0, 1],
-  //   outputRange: [0, 30],
-  // });
 
-  // const animatedStyle = {borderRadius, transform: [{scale}]};
-  return (
-    <Animated.View
-      // style={StyleSheet.flatten([styles.stack, animatedStyle])}
-      // style={animatedStyle}
-    >
-      <DrawerStack.Navigator
-        screenOptions={{
-          headerTransparent: true,
-          headerTitle: null,
-          headerShown: false,
-        }}
-        headerMode="none">
-    
+// const Screens = ({ navigation, style }) => {
+//   const progress = useDrawerProgress();
 
-        <DrawerStack.Screen name="Home">{props => <Home {...props} />}</DrawerStack.Screen>
-    
-      </DrawerStack.Navigator>
-    </Animated.View>
-  );
-};
+//   // const scale = Animated.interpolate(progress, {
+//   //   inputRange: [0, 1],
+//   //   outputRange: [1, 0.9],
+//   // });
+//   // const borderRadius = Animated.interpolate(progress, {
+//   //   inputRange: [0, 1],
+//   //   outputRange: [0, 30],
+//   // });
+
+//   // const animatedStyle = {borderRadius, transform: [{scale}]};
+//   return (
+//     <Animated.View
+//     // style={StyleSheet.flatten([styles.stack, animatedStyle])}
+//     // style={animatedStyle}
+//     >
+//       <DrawerStack.Navigator
+//         screenOptions={{
+//           headerTransparent: true,
+//           headerTitle: null,
+//           headerShown: false,
+//         }}
+//         headerMode="none">
+
+
+//         <DrawerStack.Screen name="Home">{props => <Home {...props} />}</DrawerStack.Screen>
+
+//       </DrawerStack.Navigator>
+//     </Animated.View>
+//   );
+// };
 
 // function MyDrawer() {
 //   return (
@@ -123,7 +129,7 @@ function AppStackNavigator() {
         headerShown: false,
       }}
       initialRouteName="Home">
-     <AppStack.Screen name="Home" component={MyDrawer} />
+      <AppStack.Screen name="Home" component={MyDrawer} />
       <AppStack.Screen name="BeerMenu" component={BeerMenu} />
       <AppStack.Screen name="QRScaner" component={QRScaner} />
       <AppStack.Screen name="Notification" component={Notification} />
@@ -148,25 +154,24 @@ function AppStackNavigator() {
 //     </NavigationContainer>
 //   )
 // }
-function MainNavigation({ user,userLogin }) {
+function MainNavigation({ user, userLogin }) {
+  const [tokenData , settokenData] = useState();
+  const [isMount , setisMount] = useState(false);
+  const dispatch = useDispatch()
   useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let token;
-
       try {
-        token = await AsyncStorage.getItem("token");
+        token = await AsyncStorageLib.getItem("token");
+        settokenData(token);
+        dispatch(userDataWithToken(token))
       } catch (e) {
         // Restoring token failed
       }
-
-      if (token !== null) {
-        setTimeout(() => {
-          userLogin(token);
-        }, 500);
-      } else {
-        
-      }
+      setTimeout(() => {
+        setisMount(true)
+      }, 1500)
     };
     bootstrapAsync();
   }, []);
@@ -175,33 +180,43 @@ function MainNavigation({ user,userLogin }) {
   //     {user.loggedin ? <Stack.Screen name="MainDrawer" component={MainDrawer} /> : <Stack.Screen name="Login" component={LoginStack} />}
   //   </Stack.Navigator>
   // );
+  // const data = useSelector(state => state.userReducer.users)
+  // console.log('Navigation ==============',data)
+
+  const newData = useSelector((state) => state.userReducer.users)
+  console.log('aaaaaa======= tokenData',tokenData, newData)
+
   return (
-        <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen
-              name="AuthStackNavigator"
-              options={{ headerShown: false }}
-              component={AuthStackNavigator}
-            />
-            <Stack.Screen
-              name="AppStackNavigator"
-              options={{ headerShown: false }}
-              component={AppStackNavigator}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      )
+    <NavigationContainer  theme={{colors: {background: '#f8ece0'}}}>
+     {isMount && <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={
+        newData   ? 'AppStackNavigator' :'AuthStackNavigator'
+}   >
+ 
+     {!newData ? 
+     <Stack.Screen
+        name="AuthStackNavigator"
+        options={{ headerShown: false }}
+        component={AuthStackNavigator}
+      />
+       :
+       <Stack.Screen
+          name="AppStackNavigator"
+          options={{ headerShown: false }}
+          component={AppStackNavigator}/>}
+      </Stack.Navigator>}
+    </NavigationContainer>
+  )
 }
 
 const mapStateToProps = state => {
   return {
-      user: state.userReducer.users
+    user: state.userReducer.users
   }
 };
 const mapDispatchToProps = dispatch =>
   bindActionCreators({ userLogin }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps) (MainNavigation);
+export default connect(mapStateToProps, mapDispatchToProps)(MainNavigation);
 
 
 const styles = StyleSheet.create({
@@ -222,5 +237,5 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     // borderWidth: 1,
   },
- 
+
 });

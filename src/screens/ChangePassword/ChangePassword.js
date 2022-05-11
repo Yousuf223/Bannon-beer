@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState,useEffect} from 'react'
 import {
     SafeAreaView,
     View,
@@ -7,14 +7,67 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
+    ScrollView,
+    ActivityIndicator,
+    Alert
 } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { Input } from 'react-native-elements';
+import { bindActionCreators } from 'redux';
 import Feather from 'react-native-vector-icons/Feather'
-const ChangePassword = ({ navigation, user }) => {
+import { ChangePasswordAction } from '../../stores/actions/user.action';
+const ChangePassword = ({ navigation, user,ChangePasswordAction }) => {
+    const newData = useSelector((state) => state.userReducer.users)
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState()
+    const [hideEye1, setHideEye1] = useState()
+    const [password,setPassword] = useState()
+    const [confirmPassword,setContirmPassword] = useState()
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        setPassword(newData?.old_password)
+        setContirmPassword(newData?.new_password);
+    }, [])
+
+    const onSubmit = (data) => {
+        setIsLoading(true);
+        var data1 = new FormData();
+        data1.append('old_password', password);
+        data1.append('new_password', confirmPassword);
+        
+        if (typeof password !== 'undefined' || typeof confirmPassword !== 'undefined'){
+            
+            ChangePasswordAction(data1)
+            .then(res => {
+              // console.log("------------------------------")
+                    console.log("res",res)
+                    navigation.navigate('AppStackNavigator', {
+                        screen: 'Home'
+                    })
+                    Alert.alert("O'Bannon's",(res.message))
+                    // alert(res.message)
+                    setContirmPassword('')
+                    setPassword('')
+          //         //  onPress={() => navigation.goBack()}
+          setIsLoading(false)
+                // console.log('error', err);
+                
+                // console.log("res", res)
+            })
+            .catch(err => {
+                
+                console.log('error', err);
+                setIsLoading(false)
+            })
+        }
+        else{
+            Alert.alert("O'Bannon's",'Please fill all fields')
+            // alert('please fill all fields')
+            setIsLoading(false)
+        }
+      
+    }
     return (
         <>
             <View style={styles.container}>
@@ -25,16 +78,18 @@ const ChangePassword = ({ navigation, user }) => {
                         inputContainerStyle={styles.borderdv}
                         //  onFocus={()=>setToggleUser4(1)}
                         //  onBlur={()=>setToggleUser4(0)}
+                        onChangeText={(text) => setPassword(text)}
                         style={styles.email}
                         labelStyle={styles.label}
-                        placeholderTextColor="#000000"
-                        label="Password"
+                        placeholderTextColor="#00000060"
+                        label="Old Password"
                         placeholder='************'
-                        secureTextEntry={hideEye ? true : false}
+                        secureTextEntry={hideEye ? false : true}
+                        value={password}
                     />
                           <Feather
                     style={styles.eyeIcon}
-                    name={hideEye ? 'eye-off' : 'eye'} 
+                    name={hideEye ? 'eye' : 'eye-off'} 
                     size={18} color={'#c8bcb0'}
                     onPress={() => setHideEye(!hideEye)}
                      />
@@ -45,26 +100,29 @@ const ChangePassword = ({ navigation, user }) => {
                         inputContainerStyle={styles.borderdv}
                         //  onFocus={()=>setToggleUser4(1)}
                         //  onBlur={()=>setToggleUser4(0)}
+                        onChangeText={(text) => setContirmPassword(text)}
                         style={styles.email}
                         labelStyle={styles.label}
-                        placeholderTextColor="#000000"
-                        label="Confirm Password"
+                        placeholderTextColor="#00000060"
+                        label="New Password"
                         placeholder='************'
-                        secureTextEntry={hideEye ? true : false}
+                        secureTextEntry={hideEye1 ? false : true}
+                        value={confirmPassword}
                     />
                     <Feather
                     style={styles.eyeIcon}
-                    name={hideEye ? 'eye-off' : 'eye'} 
+                    name={hideEye ? 'eye' : 'eye-off'} 
                     size={18} color={'#c8bcb0'}
-                    onPress={() => setHideEye(!hideEye)}
+                    onPress={() => setHideEye1(!hideEye1)}
                      />
                 </View>
                 <View>
                     <TouchableOpacity
+                    disabled={isLoading}
                         style={styles.btn}
-                        onPress={() => navigation.navigate('Login')}
+                        onPress={() => onSubmit()}
                         activeOpacity={0.9}>
-                        <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Confirm</Text>
+                       {isLoading? <ActivityIndicator size="small" color="#ffffff" />:<Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Confirm</Text>} 
                     </TouchableOpacity>
                 </View>
                 <Text style={styles.textDigit}>Set a new and strong password</Text>
@@ -78,6 +136,9 @@ const mapStateToProps = state => {
         user: state.userReducer.users
     }
 }
+const mapDispatchToProps = dispatch =>
+    bindActionCreators({ChangePasswordAction}, dispatch);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -140,4 +201,4 @@ const styles = StyleSheet.create({
       
     }
 })
-export default connect(mapStateToProps, null)(ChangePassword)
+export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword)

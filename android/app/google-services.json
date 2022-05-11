@@ -37,6 +37,13 @@
             {
               "client_id": "576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "576462266383-jjondqpvmu61k9kroahslueg90inboc9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.appstirr.BannonsBeer"
+              }
             }
           ]
         }

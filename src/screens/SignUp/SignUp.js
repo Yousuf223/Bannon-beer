@@ -7,48 +7,224 @@ import {
     TouchableOpacity,
     StyleSheet,
     ScrollView,
-    Image
+    Image,
+    ActivityIndicator,
+    Alert,
+    Platform
 } from 'react-native'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { connect, useDispatch } from 'react-redux'
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import moment from 'moment';
+import { connect, useDispatch } from 'react-redux';
 import { Input } from 'react-native-elements';
 import Feather from 'react-native-vector-icons/Feather'
 import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
-import { userLogin } from '../../stores/actions/user.action';
-const SignUp = ({ navigation, user,userLogin }) => {
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { SignUpAction, userLogin,SocialLoginAction } from '../../stores/actions/user.action';
+import DatePicker from 'react-native-date-picker'
+import messaging from '@react-native-firebase/messaging';
+import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
+import { appleAuth } from '@invertase/react-native-apple-authentication'
+const SignUp = ({ navigation, user, userLogin, SignUpAction,SocialLoginAction }) => {
     const dispatch = useDispatch()
-    const [hideEye, setHideEye] = useState()
+    const [hideEye, setHideEye] = useState();
+    const [hideEye1, setHideEye1] = useState();
     const [isLoading, setIsLoading] = useState(false);
     const { control, handleSubmit, formState: { errors } } = useForm();
+    const [date, setDate] = useState(null)
+    const [open, setOpen] = useState(false)
+
 
     const onSubmit = (data) => {
-        console.log("it works");
-        setIsLoading(true);
-        auth()
-            .createUserWithEmailAndPassword(data.Email, data.Password, data.firstName, data.LastName)
-            .then(() => {
-                console.log("it works in then")
-                setIsLoading(true);
-                Login(() => navigation.goBack())
-                //  onPress={() => navigation.goBack()}
-            })
-            .catch(error => {
-                if (error.code === 'auth/email-already-in-use') {
-                    setIsLoading(false);
-                    alert('That email address is already in use!');
-                }
+        var letters = /^[A-Za-z]+$/;
+        if (data.Email != "" || data.FirstName != "" || data.LastName != "" || data.Password != "" || data.Confirm_Password !== "") {
+            if (data.Password != data.Confirm_Password) {
+                Alert.alert("O'Bannon's", 'Password does not match')
 
-                if (error.code === 'auth/invalid-email') {
-                    setIsLoading(false);
-                    alert('That email address is invalid!');
-                }
-                setIsLoading(false);
-                console.error(error);
-            });
+                setIsLoading(false)
+            }
+            else if (!data.FirstName.match(letters) || !data.LastName.match(letters)) {
+                Alert.alert("O'Bannon's", 'Please enter a valid name')
+                setIsLoading(false)
+            }
+            else if (date == null) {
+                Alert.alert("O'Bannon's", "Please select Date Of Birth")
+            }
+            else {
+                setIsLoading(true);
+                var data1 = new FormData();
+                data1.append('email', data.Email);
+                data1.append('password', data.Password);
+                data1.append('password', data.Confirm_Password);
+                data1.append('first_name', data.FirstName);
+                data1.append('last_name', data.LastName);
+                data1.append('dob', moment(date).format('YYYY-MM-DD'))
+                SignUpAction(data1)
+                    .then(res => {
+                        saveToken(null)
+                        // console.log("------------------------------")
+                        //console.log("res", res)
+                        navigation.navigate('Login')
+                        //         //  onPress={() => navigation.goBack()}
+                        setIsLoading(false)
+                    })
+                    .catch(err => {
+
+                        if (err.response.status == 422) {
+                            Alert.alert("O'Bannon's", 'This email has already been taken')
+                        }
+                        setIsLoading(false)
+                        // console.log('error', err.response.data.errors);
+                    })
+            }
+        } else {
+            Alert.alert("O'Bannon's", 'Please fill all the fields', null, 'error')
+            setIsLoading(false)
+        }
+
+
+    };
+    const saveToken = async (token) => {
+        try {
+            await AsyncStorage.setItem("token", token);
+        } catch (e) {
+            console.log(e, "saving token failed");
+        }
     };
 
+    //Geogle Login
+    GoogleSignin.configure({
+        webClientId: '576462266383-ic93bk345jcfhbjtsrtls5k28kfk0a19.apps.googleusercontent.com',
+    });
+    async function onGoogleButtonPress() {
+        const { idToken } = await GoogleSignin.signIn();
+
+        const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+        auth().signInWithCredential(googleCredential)
+            .then(async (userCredential) => {
+                console.log('userdata from google', userCredential)
+
+                var data1 = new FormData();
+                data1.append('key', 'aaaabbbbcccc');
+                data1.append('email', userCredential.additionalUserInfo.profile.email);
+                data1.append('first_name', userCredential.additionalUserInfo.profile.given_name);
+                data1.append('last_name', userCredential.additionalUserInfo.profile.family_name);
+                data1.append('profile_picture', userCredential.additionalUserInfo.profile.picture);
+                SocialLoginAction(data1)
+                    .then(res => {
+                        saveToken(res?.data?.access_token);
+                        // navigation.navigate('AppStackNavigator', {
+                        //                 screen: 'Home',
+                        //             })
+                        console.log("res", res)
+
+                    })
+                    .catch(err => {
+                        alert(err.message)
+                        console.log('error', err);
+                    })
+                console.log('Yousuf--------------------jjjjj', data1)
+            })
+            .catch((error) => {
+                console.log('error google', error)
+            })
+    }
+    // facebook Login
+
+    async function onFacebookButtonPress() {
+        LoginManager.logInWithPermissions(["public_profile"]).then(
+            function (result) {
+                if (result.isCancelled) {
+                    console.log("Login cancelled")
+                } else {
+                    console.log('resultresultresult', result)
+
+                    Profile.getCurrentProfile().then(async function (currentProfile) {
+                        console.log('user facebook------======', currentProfile)
+                        var data1 = new FormData();
+                        data1.append('key', 'aaaabbbbcccc');
+                        // data1.append('email', currentProfile);
+                        // var data12 = new FormData();
+                        // data12.append('key', '$2a$12$Ae/ROvNF9R3e.Sbc7PwLne/yGWn1GJOY.jb7HYXZR9mwS72LwscP6');
+                        // data12.append('email', 'abcd123@gmail.com');
+
+
+                        data1.append('first_name', currentProfile.firstName);
+                        data1.append('last_name', currentProfile.lastName);
+                        data1.append('userID', currentProfile.userID);
+
+                        var email;
+                        email = currentProfile.email
+                        if (email == null) {
+                            email = currentProfile.userID
+                        }
+                        data1.append('email', email);
+
+                        data1.append('profile_picture', currentProfile.imageURL);
+                        console.log("data1data1data1---data1", currentProfile)
+                        SocialLoginAction(data1)
+                            .then(res => {
+                                console.log("res----------", res)
+                                saveToken(res?.data?.access_token);
+                            })
+                            .catch(err => {
+                                alert(err.message)
+                                console.log('error', err);
+                            })
+                    })
+                }
+            },
+            function (error) {
+                console.log("facbook error", error)
+            }
+        )
+    }
+
+
+
+    async function onAppleButtonPress() {
+        // alert('guyuyguyguyg')
+        // Start the sign-in request
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+        })
+    
+        // Ensure Apple returned a user identityToken
+        if (!appleAuthRequestResponse.identityToken) {
+          throw new Error('Apple Sign-In failed - no identify token returned')
+        }
+        // Create a Firebase credential from the response
+        const { identityToken, nonce } = appleAuthRequestResponse
+        const appleCredential = auth.AppleAuthProvider.credential(
+          identityToken,
+          nonce
+        )
+        // Sign the user in with the credential
+        return auth()
+          .signInWithCredential(appleCredential)
+          .then(e => {
+            console.log('user data from  faceBook', e)
+            console.log(e.user.email, 'email')
+            console.log(e.user.displayName, 'displayName')
+    
+            // let userData = {
+            //   email: e.user.email,
+            //   name: e.user.displayName ? e.user.displayName : '',
+            //   photo: '',
+            //   device_id: fcmToken,
+            //   provider: 'apple'
+            // }
+            console.log('userData', userData)
+            dispatch(SocialLoginAction(e?.data?.socialMediaLogin?.data))
+            console.log('e?.data?.socialMediaLogin?.data',e?.data?.socialMediaLogin?.data)
+          })
+    
+          .catch(error => {
+            console.log('error', error)
+          })
+      }
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -61,23 +237,6 @@ const SignUp = ({ navigation, user,userLogin }) => {
                             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                                 <View style={{ width: "50%" }}>
                                     <Image style={styles.inputLogo} source={require('../../assets/images/name.png')} />
-                                    {/* <Input
-                                        inputContainerStyle={styles.borderdv}
-                                        //  onFocus={()=>setToggleUser4(1)}
-                                        //  onBlur={()=>setToggleUser4(0)}
-                                        // style={styles.email}
-                                        style={{
-                                            paddingLeft: 1,
-                                            fontSize: 12,
-                                            color: "#000002",
-                                            top: 12,
-                                            fontFamily: "Oswald-Regular"
-                                        }}
-                                        labelStyle={styles.label}
-                                        label="First Name"
-                                        placeholder='Edward'
-                                        placeholderTextColor="#000000"
-                                    /> */}
                                     <Controller
                                         control={control}
                                         rules={{
@@ -85,21 +244,21 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                         }}
                                         render={({ field: { onChange, onBlur, value } }) => (
                                             <Input
-                                            inputContainerStyle={styles.borderdv}
-                                            onBlur={onBlur}
-                                            onChangeText={onChange}
-                                            style={{
-                                                paddingLeft: 1,
-                                                fontSize: 12,
-                                                color: "#000002",
-                                                top: 12,
-                                                fontFamily: "Oswald-Regular"
-                                            }}
-                                            labelStyle={styles.label}
-                                            label="First Name"
-                                            placeholder='Edward'
-                                            placeholderTextColor="#000000"
-                                        />
+                                                inputContainerStyle={styles.borderdv}
+                                                onBlur={onBlur}
+                                                onChangeText={onChange}
+                                                style={{
+                                                    paddingLeft: 1,
+                                                    fontSize: 12,
+                                                    color: "#000002",
+                                                    top: 12,
+                                                    fontFamily: "Oswald-Regular"
+                                                }}
+                                                labelStyle={styles.label}
+                                                label="First Name"
+                                                placeholder='Edward'
+                                                placeholderTextColor="#00000060"
+                                            />
                                         )}
                                         name="FirstName"
                                         defaultValue=""
@@ -124,28 +283,28 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                         placeholder='Davidson'
                                         placeholderTextColor="#000000"
                                     /> */}
-                                      <Controller
+                                    <Controller
                                         control={control}
                                         rules={{
                                             required: true,
                                         }}
                                         render={({ field: { onChange, onBlur, value } }) => (
                                             <Input
-                                            inputContainerStyle={styles.borderdv}
-                                            onBlur={onBlur}
-                                            onChangeText={onChange}
-                                            style={{
-                                                paddingLeft: 1,
-                                                fontSize: 12,
-                                                color: "#000002",
-                                                top: 12,
-                                                fontFamily: "Oswald-Regular"
-                                            }}
-                                            labelStyle={styles.label}
-                                            label="Last Name"
-                                            placeholder='Davidson'
-                                            placeholderTextColor="#000000"
-                                        />
+                                                inputContainerStyle={styles.borderdv}
+                                                onBlur={onBlur}
+                                                onChangeText={onChange}
+                                                style={{
+                                                    paddingLeft: 1,
+                                                    fontSize: 12,
+                                                    color: "#000002",
+                                                    top: 12,
+                                                    fontFamily: "Oswald-Regular"
+                                                }}
+                                                labelStyle={styles.label}
+                                                label="Last Name"
+                                                placeholder='Davidson'
+                                                placeholderTextColor="#00000060"
+                                            />
                                         )}
                                         name="LastName"
                                         defaultValue=""
@@ -153,8 +312,11 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                     {errors.LastName && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Last Name</Text>}
                                 </View>
                             </View>
-                            {/* <View>
-
+                            <TouchableOpacity
+                                hitSlop={{ top: 20, left: 20, bottom: 50, right: 20 }}
+                                activeOpacity={0.9}
+                                onPress={() => setOpen(true)}
+                            >
                                 <Image style={styles.inputLogo} source={require('../../assets/images/date.png')} />
                                 <Input
                                     inputContainerStyle={styles.borderdv}
@@ -162,11 +324,30 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                     //  onBlur={()=>setToggleUser4(0)}
                                     style={styles.email}
                                     labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
+                                    placeholderTextColor="#00000060"
+                                    onChangeText={(text) => setDate(text)}
                                     label="Date of Birth"
                                     placeholder='25 Oct, 1985'
+                                    value={date ? date?.toDateString() : new Date().toDateString()}
+                                    disabled={true}
+                                    onPressIn={() => setOpen(true)}
                                 />
-                            </View> */}
+                                <DatePicker
+                                    maximumDate={new Date()}
+                                    modal
+                                    open={open}
+                                    date={date ? date : new Date()}
+                                    // onDateChange={setDate}
+                                    mode='date'
+                                    onConfirm={(date) => {
+                                        setOpen(false)
+                                        setDate(date)
+                                    }}
+                                    onCancel={() => {
+                                        setOpen(false)
+                                    }}
+                                />
+                            </TouchableOpacity>
                             <View>
 
                                 <Image style={styles.inputLogo} source={require('../../assets/images/email.png')} />
@@ -181,12 +362,12 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                     placeholder='edwardd@gmail.com'
                                 /> */}
                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
@@ -200,54 +381,43 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                             labelStyle={styles.label}
                                             label="Email Address"
                                             placeholder='edwardd@gmail.com'
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
+                                            autoCapitalize="none"
                                         />
-                                        )}
-                                        name="Email"
-                                        defaultValue=""
-                                    />
-                                    {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Email</Text>}
+                                    )}
+                                    name="Email"
+                                    defaultValue=""
+                                />
+                                {errors.Email && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Email</Text>}
                             </View>
                             <View>
                                 <Image style={styles.inputLogo} source={require('../../assets/images/password.png')} />
-                                {/* <Input
-                                    inputContainerStyle={styles.borderdv}
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    style={styles.email}
-                                    labelStyle={styles.label}
-                                    placeholderTextColor="#000000"
-                                    label="Password"
-                                    placeholder='************'
-                                    secureTextEntry={hideEye ? true : false}
-
-                                /> */}
-                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                <Controller
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Password"
                                             placeholder='************'
-                                            secureTextEntry={hideEye ? true : false}
-        
+                                            secureTextEntry={hideEye ? false : true}
+
                                         />
-                                        )}
-                                        name="Password"
-                                        defaultValue=""
-                                    />
-                                    {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
+                                    )}
+                                    name="Password"
+                                    defaultValue=""
+                                />
+                                {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    name={hideEye ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
                                     onPress={() => setHideEye(!hideEye)}
                                 />
@@ -266,33 +436,33 @@ const SignUp = ({ navigation, user,userLogin }) => {
                                     secureTextEntry={hideEye ? true : false}
                                 /> */}
                                 <Controller
-                                        control={control}
-                                        rules={{
-                                            required: true,
-                                        }}
-                                        render={({ field: { onChange, onBlur, value } }) => (
-                                            <Input
+                                    control={control}
+                                    rules={{
+                                        required: true,
+                                    }}
+                                    render={({ field: { onChange, onBlur, value } }) => (
+                                        <Input
                                             inputContainerStyle={styles.borderdv}
                                             onBlur={onBlur}
                                             onChangeText={onChange}
                                             style={styles.email}
                                             labelStyle={styles.label}
-                                            placeholderTextColor="#000000"
+                                            placeholderTextColor="#00000060"
                                             label="Confirm Password"
                                             placeholder='************'
-                                            secureTextEntry={hideEye ? true : false}
-        
+                                            secureTextEntry={hideEye1 ? false : true}
+
                                         />
-                                        )}
-                                        name="Password"
-                                        defaultValue=""
-                                    />
-                                    {errors.Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
+                                    )}
+                                    name="Confirm_Password"
+                                    defaultValue=""
+                                />
+                                {errors.Confirm_Password && <Text style={{ color: "#d73a49", position: "relative", bottom: "20%", fontSize: 14, paddingLeft: 15 }}>Enter Confirm Password</Text>}
                                 <Feather
                                     style={styles.eyeIcon}
-                                    name={hideEye ? 'eye-off' : 'eye'}
+                                    name={hideEye1 ? 'eye' : 'eye-off'}
                                     size={18} color={'#c8bcb0'}
-                                    onPress={() => setHideEye(!hideEye)}
+                                    onPress={() => setHideEye1(!hideEye1)}
                                 />
                             </View>
                         </View>
@@ -300,31 +470,47 @@ const SignUp = ({ navigation, user,userLogin }) => {
                             <TouchableOpacity
                                 style={styles.btn}
                                 activeOpacity={0.9}
-                                onPress={handleSubmit(onSubmit) }
-                                // onPress={() => {
-                                //     navigation.navigate('AppStackNavigator', {
-                                //         screen: 'Home',
-                                //     })
-                                // }}
+                                onPress={handleSubmit(onSubmit)}
+                                disabled={isLoading}
+                            // onPress={() => {
+                            //     navigation.navigate('AppStackNavigator', {
+                            //         screen: 'Home',
+                            //     })
+                            // }}
                             >
-                                <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>
+                                {isLoading ? <ActivityIndicator size="small" color="#ffffff" /> : <Text style={{ color: "#fdf0ea", fontSize: 18, fontFamily: "Oswald-Bold" }}>Sign Up</Text>}
                             </TouchableOpacity>
                         </View>
                         <View style={styles.orLoginContainer}>
                             <View style={styles.linedv}></View>
-                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily: 'Raleway-Regular' }}>Or Sign Up with</Text>
+                            <Text style={{ paddingHorizontal: "1.5%", color: "#8895a3", fontSize: 12, fontFamily: 'Oswald-Regular' }}>Or Sign Up with</Text>
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <View style={styles.iconBg}>
+                            <TouchableOpacity
+                                onPress={() => onFacebookButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}
+                            >
                                 <AntDesign name='facebook-square' size={25} color={'#254ba0'} />
-                            </View>
-                            <View style={styles.iconBg}>
+                            </TouchableOpacity>
+                            {Platform.OS ==  'ios' ? <TouchableOpacity
+                                onPress={() => onAppleButtonPress()}
+                                activeOpacity={0.9}
+                                style={styles.iconBg}
+                            >
+                                <AntDesign name='apple1' size={25}  />
+                            </TouchableOpacity> : <View></View>}
+                      
+                            <TouchableOpacity
+                                activeOpacity={0.9}
+                                onPress={() => onGoogleButtonPress()}
+                                style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
-                            </View>
-                            <View style={styles.iconBg}>
+                            </TouchableOpacity>
+                            {/* <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
-                            </View>
+                            </View> */}
                         </View>
                         <TouchableOpacity
                             activeOpacity={0.9}
@@ -345,7 +531,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin }, dispatch);
+    bindActionCreators({ userLogin, SignUpAction,SocialLoginAction }, dispatch);
 
 
 const styles = StyleSheet.create({

@@ -4,6 +4,9 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import "RNSplashScreen.h" 
+#import <Firebase.h>
+#import <FBSDKCoreKit/FBSDKCoreKit.h> // <- Add This Import
+#import <RNGoogleSignin/RNGoogleSignin.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -26,11 +29,15 @@ static void InitializeFlipper(UIApplication *application) {
 
 @implementation AppDelegate
 
+- (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
+  return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options] || [RNGoogleSignin application:application openURL:url options:options];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 
 {
-
-
+  [FIRApp configure];
+  [FBSDKApplicationDelegate.sharedInstance initializeSDK];
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif

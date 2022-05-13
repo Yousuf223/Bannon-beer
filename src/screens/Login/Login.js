@@ -405,11 +405,11 @@ const Login = ({ navigation, userLogin, SocialLoginAction }) => {
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => onFacebookButtonPress()}
                                 style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/FB.png')} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             {Platform.OS ==  'ios' ? <TouchableOpacity
                                 onPress={() => onAppleButtonPress()}
                                 activeOpacity={0.9}

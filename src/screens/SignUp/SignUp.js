@@ -487,13 +487,13 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction,SocialLoginAction })
                             <View style={styles.linedv}></View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", }}>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => onFacebookButtonPress()}
                                 activeOpacity={0.9}
                                 style={styles.iconBg}
                             >
                                 <AntDesign name='facebook-square' size={25} color={'#254ba0'} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             {Platform.OS ==  'ios' ? <TouchableOpacity
                                 onPress={() => onAppleButtonPress()}
                                 activeOpacity={0.9}

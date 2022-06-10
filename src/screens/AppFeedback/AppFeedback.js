@@ -17,7 +17,7 @@ import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import PointCard from '../../components/PointCard/PointCard';
 import { FeedbackAction } from '../../stores/actions/user.action';
-const AppFeedback = ({ navigation, user,FeedbackAction }) => {
+const AppFeedback = ({ navigation, user, FeedbackAction }) => {
     const dispatch = useDispatch()
     const newData = useSelector((state) => state.userReducer.users)
     const [subject, setSubject] = useState(false)
@@ -30,8 +30,8 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
 
     const onSubmit = async () => {
         setIsLoading(true)
-        
-        if (feedback && subject ) {
+
+        if (feedback && subject) {
 
             var data1 = new FormData();
             data1.append('feedback', feedback);
@@ -50,13 +50,13 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
                 })
                 .catch(err => {
                     setIsLoading(false)
-                    Alert.alert("O'Bannon's",err.message)
+                    Alert.alert("O'Bannon's", err.message)
                     console.log('error', err);
                 })
-          
+
         } else {
-            
-           Alert.alert("O'Bannon's",'Please fill all the fields', null, 'error')
+
+            Alert.alert("O'Bannon's", 'Please fill all the fields', null, 'error')
             setIsLoading(false)
         }
     }
@@ -90,7 +90,6 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
                         label="Subject"
                         placeholder='edwardd@gmail.com'
                         placeholderTextColor="#00000060"
-                        placeholderTextColor="#00000060"
                         onChangeText={(text) => setSubject(text)}
                         value={subject}
                     />
@@ -102,12 +101,12 @@ const AppFeedback = ({ navigation, user,FeedbackAction }) => {
                         labelStyle={styles.label}
                         label="Message"
                         placeholderTextColor="#00000060"
-                        placeholder='Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua'
+                        placeholder='Messages'
                     />
                 </View>
                 <View style={styles.footer}>
                     <TouchableOpacity
-                    disabled={isLoading}
+                        disabled={isLoading}
                         activeOpacity={0.9}
                         onPress={() => onSubmit()}
                         style={styles.btn}>

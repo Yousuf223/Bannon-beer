@@ -109,27 +109,27 @@ const BeerMenu = ({ navigation, user }) => {
 
 
 
- const  searchFilterFunction = text => {    
-setSearch(text)
+  const searchFilterFunction = text => {
+    setSearch(text)
 
-    const newData = data.data.filter((item) => {      
+    const newData = data.data.filter((item) => {
       const itemData = `${item.name.toUpperCase()}`;
-      console.log("itemDataitemData",itemData)  
-       const textData = text.toUpperCase();
-       return itemData.indexOf(textData) > -1; 
+      console.log("itemDataitemData", itemData)
+      const textData = text.toUpperCase();
+      return itemData.indexOf(textData) > -1;
     });
     setData1(newData)
   };
 
-  console.log(data1,"data1data1data1data1data1data1data1data1data1data1")
+  console.log(data?.data, "==========1=======")
   const buyArray = data?.data?.filter((e) => e.buy)
   return (
     <View style={styles.container}>
       <StatusBar
         barStyle="dark-content"
-      
+
         // value={query}
-        autoCorrect={false}  
+        autoCorrect={false}
         backgroundColor={'#f8ece0'} />
       <View style={styles.row}>
         <View style={{ flexDirection: 'row' }}>
@@ -160,47 +160,47 @@ setSearch(text)
             borderRadius: 25,
           }}
           // onChangeText={setSearch}ssss
-        onChangeText={text => searchFilterFunction(text)
-        
-    
-        }
+          onChangeText={text => searchFilterFunction(text)
+
+
+          }
 
           value={search}
         />
       </View>
-        <View style={{ paddingHorizontal: 20,}}>
-              <FlatList
-                       keyExtractor={(item, index) => index}
-                       showsVerticalScrollIndicator={false}
-                       data={data1?.length > 0 ? data1 : data.data}
-                       renderItem={({ item }) => {
-                           return (
-                            <View style={{ paddingVertical: 6 }}>
-                            <CardDetail
-                              number={item.id}
-                              decription={item.name}
-                              image={item.image}
-                              price={item.price}
-                              alocoal={item.alcohol_percentage}
-                              onPress={() => navigation.navigate('QRScaner', {
-                                item: item
-                              })}
-                            />
-                        
-                          </View>
-                           )
-                       }}
+      <View style={{ paddingHorizontal: 20, }}>
+        <FlatList
+          keyExtractor={(item, index) => index}
+          showsVerticalScrollIndicator={false}
+          data={data1?.length > 0 ? data1 : data.data}
+          renderItem={({ item, index }) => {
+            return (
+              <View style={{ paddingVertical: 6 }}>
+                <CardDetail
+                  number={index + 1}
+                  decription={item.name}
+                  image={item.image}
+                  price={item.price}
+                  alocoal={item.alcohol_percentage}
+                  onPress={() => navigation.navigate('QRScaner', {
+                    item: item
+                  })}
                 />
-                   <View style={{height:"40%"}}></View>
-        </View>
-     
+
+              </View>
+            )
+          }}
+        />
+        <View style={{ height: "40%" }}></View>
+      </View>
+
       <View style={styles.posi}>
         <Animated.View
-          // style={{
-          //   transform: [{ translateY: pan.y }],
-          // }}
-          // {...panResponder.panHandlers}
-          >
+        // style={{
+        //   transform: [{ translateY: pan.y }],
+        // }}
+        // {...panResponder.panHandlers}
+        >
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
             activeOpacity={0.9}>
@@ -260,29 +260,29 @@ setSearch(text)
                     paddingLeft: 6,
                     fontFamily: 'Oswald-Medium',
                   }}>
-                 75-{data.data.length}
+                  75-{data.data.length}
                 </Text>
               </View>
               {/* <View >
             <Text>1</Text>
           </View> */}
-               <View style={styles.count}>
-                  {data?.data?.map((jsx, index) => {
-                    return (
-                      <TORN
-                        activeOpacity={0.8}
-                        onPress={() =>
-                          count(index)
-                        }
-                        style={styles.loop}>
-                        {jsx.buy ? <Image
-                          style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{index + 1}</Text>}
-                      </TORN>
-                    )
-                  }
+              <View style={styles.count}>
+                {data?.data?.map((jsx, index) => {
+                  return (
+                    <TORN
+                      activeOpacity={0.8}
+                      onPress={() =>
+                        count(index)
+                      }
+                      style={styles.loop}>
+                      {jsx.buy ? <Image
+                        style={styles.cross} source={require('../../assets/images/stamp.png')} /> : <Text style={styles.textNum}>{index + 1}</Text>}
+                    </TORN>
                   )
-                  }
-                </View>
+                }
+                )
+                }
+              </View>
             </ScrollView>
           </View>
         </View>

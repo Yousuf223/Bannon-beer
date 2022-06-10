@@ -1,4 +1,4 @@
-import React,{useEffect} from 'react'
+import React, { useEffect } from 'react'
 import {
     SafeAreaView,
     View,
@@ -9,7 +9,7 @@ import {
     StyleSheet,
     ScrollView
 } from 'react-native'
-import { connect, useDispatch,useSelector} from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { Input } from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import PointCard from '../../components/PointCard/PointCard';
@@ -18,7 +18,7 @@ const About = ({ navigation, user }) => {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(AboutAction())
-       }, [])
+    }, [])
     const data = useSelector(state => state.userReducer.AboutAction)
 
     return (
@@ -33,7 +33,6 @@ const About = ({ navigation, user }) => {
                 <View style={styles.card}>
                     <Text style={styles.text}>About App</Text>
                     <Text style={styles.text1}>{data?.about}</Text>
-                    <Text style={styles.text1}>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.</Text>
                 </View>
             </View>
         </>
@@ -59,31 +58,31 @@ const styles = StyleSheet.create({
     About: {
         width: "80%",
         height: "80%",
-        resizeMode:"contain"
+        resizeMode: "contain"
     },
     row: {
         alignItems: "center",
-        height:"25%"
+        height: "25%"
     },
     card: {
         backgroundColor: "#fcf4e9",
-        paddingHorizontal:10,
-        paddingVertical:10,
-        borderRadius:8
+        paddingHorizontal: 10,
+        paddingVertical: 10,
+        borderRadius: 8
     },
-    text:{
-        textAlign:"center",
-        color:"#e74a07",
-        fontSize:16,
-        fontFamily:"Oswald-Medium"
+    text: {
+        textAlign: "center",
+        color: "#e74a07",
+        fontSize: 16,
+        fontFamily: "Oswald-Medium"
 
     },
-    text1:{
-        textAlign:"center",
-        fontSize:12,
-        paddingVertical:10,
-        color:"#85796d",
-        fontFamily:"Oswald-Regular"
+    text1: {
+        textAlign: "center",
+        fontSize: 12,
+        paddingVertical: 10,
+        color: "#85796d",
+        fontFamily: "Oswald-Regular"
     }
 })
 export default connect(mapStateToProps, null)(About)

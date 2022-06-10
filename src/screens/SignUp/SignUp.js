@@ -21,12 +21,12 @@ import { useForm, Controller } from "react-hook-form";
 import { bindActionCreators } from 'redux';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { SignUpAction, userLogin,SocialLoginAction } from '../../stores/actions/user.action';
+import { SignUpAction, userLogin, SocialLoginAction } from '../../stores/actions/user.action';
 import DatePicker from 'react-native-date-picker'
 import messaging from '@react-native-firebase/messaging';
 import { LoginManager, AccessToken, Profile } from 'react-native-fbsdk-next';
 import { appleAuth } from '@invertase/react-native-apple-authentication'
-const SignUp = ({ navigation, user, userLogin, SignUpAction,SocialLoginAction }) => {
+const SignUp = ({ navigation, user, userLogin, SignUpAction, SocialLoginAction }) => {
     const dispatch = useDispatch()
     const [hideEye, setHideEye] = useState();
     const [hideEye1, setHideEye1] = useState();
@@ -184,47 +184,50 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction,SocialLoginAction })
 
 
     async function onAppleButtonPress() {
+        setIsLoading(true);
         // alert('guyuyguyguyg')
         // Start the sign-in request
         const appleAuthRequestResponse = await appleAuth.performRequest({
-          requestedOperation: appleAuth.Operation.LOGIN,
-          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
+            requestedOperation: appleAuth.Operation.LOGIN,
+            requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME]
         })
-    
+
+        return;
+
         // Ensure Apple returned a user identityToken
         if (!appleAuthRequestResponse.identityToken) {
-          throw new Error('Apple Sign-In failed - no identify token returned')
+            throw new Error('Apple Sign-In failed - no identify token returned')
         }
         // Create a Firebase credential from the response
         const { identityToken, nonce } = appleAuthRequestResponse
         const appleCredential = auth.AppleAuthProvider.credential(
-          identityToken,
-          nonce
+            identityToken,
+            nonce
         )
         // Sign the user in with the credential
         return auth()
-          .signInWithCredential(appleCredential)
-          .then(e => {
-            console.log('user data from  faceBook', e)
-            console.log(e.user.email, 'email')
-            console.log(e.user.displayName, 'displayName')
-    
-            // let userData = {
-            //   email: e.user.email,
-            //   name: e.user.displayName ? e.user.displayName : '',
-            //   photo: '',
-            //   device_id: fcmToken,
-            //   provider: 'apple'
-            // }
-            console.log('userData', userData)
-            dispatch(SocialLoginAction(e?.data?.socialMediaLogin?.data))
-            console.log('e?.data?.socialMediaLogin?.data',e?.data?.socialMediaLogin?.data)
-          })
-    
-          .catch(error => {
-            console.log('error', error)
-          })
-      }
+            .signInWithCredential(appleCredential)
+            .then(e => {
+                setIsLoading(false);
+
+
+                // let userData = {
+                //   email: e.user.email,
+                //   name: e.user.displayName ? e.user.displayName : '',
+                //   photo: '',
+                //   device_id: fcmToken,
+                //   provider: 'apple'
+                // }
+                //console.log('userData', userData)
+                dispatch(SocialLoginAction(e?.data?.socialMediaLogin?.data))
+                //console.log('e?.data?.socialMediaLogin?.data', e?.data?.socialMediaLogin?.data)
+            })
+
+            .catch(error => {
+                setIsLoading(false);
+                console.log('error', error)
+            })
+    }
     return (
         <>
             <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -494,20 +497,20 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction,SocialLoginAction })
                             >
                                 <AntDesign name='facebook-square' size={25} color={'#254ba0'} />
                             </TouchableOpacity> */}
-                            {Platform.OS ==  'ios' ? <TouchableOpacity
+                            {/* {Platform.OS == 'ios' ? <TouchableOpacity
                                 onPress={() => onAppleButtonPress()}
                                 activeOpacity={0.9}
                                 style={styles.iconBg}
                             >
-                                <AntDesign name='apple1' size={25}  />
-                            </TouchableOpacity> : <View></View>}
-                      
-                            <TouchableOpacity
+                                <AntDesign name='apple1' size={25} />
+                            </TouchableOpacity> : <View></View>} */}
+
+                            {/* <TouchableOpacity
                                 activeOpacity={0.9}
                                 onPress={() => onGoogleButtonPress()}
                                 style={styles.iconBg}>
                                 <Image style={styles.googleLogo} source={require('../../assets/images/google.png')} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                             {/* <View style={styles.iconBg}>
                                 <AntDesign name='twitter' size={25} color={'#1da1f3'} />
                             </View> */}
@@ -531,7 +534,7 @@ const mapStateToProps = state => {
     }
 };
 const mapDispatchToProps = dispatch =>
-    bindActionCreators({ userLogin, SignUpAction,SocialLoginAction }, dispatch);
+    bindActionCreators({ userLogin, SignUpAction, SocialLoginAction }, dispatch);
 
 
 const styles = StyleSheet.create({

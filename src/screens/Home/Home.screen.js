@@ -23,7 +23,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import * as Progress from 'react-native-progress';
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { IOS } from 'react-native-permissions/lib/typescript/constants';
-import { ListDataAction, FeaturedProducts,ResetApi } from '../../stores/actions/user.action';
+import { ListDataAction, FeaturedProducts, ResetApi } from '../../stores/actions/user.action';
 import { useIsFocused } from '@react-navigation/native';
 
 const Home = (props) => {
@@ -48,7 +48,7 @@ const Home = (props) => {
 
   const isFocused = useIsFocused()
   useEffect(() => {
-      dispatch(ListDataAction())
+    dispatch(ListDataAction())
 
   }, [isFocused])
   const data1 = useSelector(state => state.userReducer.FeaturedProducts)
@@ -111,10 +111,10 @@ const Home = (props) => {
 
   const buyArray = data?.data?.filter((e) => e.buy)
 
-  const resetFunc =()=>{
-   dispatch(ResetApi())
-   dispatch(ListDataAction())
-   dispatch(FeaturedProducts())
+  const resetFunc = () => {
+    dispatch(ResetApi())
+    dispatch(ListDataAction())
+    dispatch(FeaturedProducts())
   }
 
   // const [reset,setReset] = useState(data?.data?.length === buyArray?.length)
@@ -158,20 +158,26 @@ const Home = (props) => {
             <View style={{ flexDirection: "row", justifyContent: "space-around", position: "relative", zIndex: 10 }}>
               {/*                            
              <Card/> */}
-              {data1?.data?.map((item) => {
-                return (
-                  <Card
-                    image={item.image}
-                    price={item.price}
-                    decription={item.name}
-                    alcohol={item.alcohol_percentage}
-                    id={item.id}
-                    onPress={() => navigation.navigate('QRScaner',{
-                      item:item
-                    })}
-                  />
-                )
-              })}
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                {data1?.data?.map((item, index) => {
+                  return (
+                    <Card
+                      image={item.image}
+                      price={item.price}
+                      decription={item.name}
+                      alcohol={item.alcohol_percentage}
+                      id={index + 1}
+                      onPress={() => navigation.navigate('QRScaner', {
+                        item: item
+                      })}
+                    />
+                  )
+                })}
+              </ScrollView>
+
               {/* <Card 
                     onPress={()=>navigation.navigate('QRScaner')}
                     />
@@ -185,7 +191,7 @@ const Home = (props) => {
                 <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
               </View>
               <TORN
-              hitSlop={{top: 20, left: 40, bottom: 20, right: 20}}
+                hitSlop={{ top: 20, left: 40, bottom: 20, right: 20 }}
                 onPress={() => navigation.navigate('BeerMenu')}
                 activeOpacity={0.9}
                 style={styles.btn}>
@@ -193,11 +199,11 @@ const Home = (props) => {
               </TORN>
             </View>
             {
-              data?.data?.map((item) => {
+              data?.data?.map((item, index) => {
                 return (
                   <View style={{ marginVertical: 6, }}>
                     <CardDetail
-                      number={item.id}
+                      number={index + 1}
                       image={item.image}
                       decription={item.name}
                       price={item.price}
@@ -219,10 +225,10 @@ const Home = (props) => {
         <View
           style={styles.posi}>
           <Animated.View
-            // style={{
-            //   transform: [{ translateY: pan.y }]
-            // }}
-            // {...panResponder.panHandlers}
+          // style={{
+          //   transform: [{ translateY: pan.y }]
+          // }}
+          // {...panResponder.panHandlers}
           >
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
@@ -275,7 +281,7 @@ const Home = (props) => {
           </View> */}
                 <View style={styles.count}>
                   {data?.data?.map((jsx, index) => {
-                    console.log('jhdhjh======',jsx.buy )
+                    console.log('jhdhjh======', jsx.buy)
                     return (
                       <TORN
                         activeOpacity={0.8}
@@ -349,7 +355,7 @@ const styles = StyleSheet.create({
     height: "75%",
     borderRadius: 4,
     alignItems: "center",
-    marginRight:10
+    marginRight: 10
 
   },
   textView: {

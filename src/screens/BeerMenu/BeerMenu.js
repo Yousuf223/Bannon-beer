@@ -11,7 +11,8 @@ import {
   Image,
   PanResponder,
   Animated,
-  FlatList
+  FlatList,
+  RefreshControl
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { connect, useDispatch, useSelector } from 'react-redux'
@@ -25,6 +26,7 @@ import { ListDataAction } from '../../stores/actions/user.action';
 const BeerMenu = ({ navigation, user }) => {
   const [search, setSearch] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [data1, setData1] = useState([]);
   const dispatch = useDispatch()
@@ -37,36 +39,6 @@ const BeerMenu = ({ navigation, user }) => {
     }, 2000)
   }, [])
   const data = useSelector(state => state.userReducer.ListDataAction)
-  // const cardData = [
-  //   {
-  //     number: '01',
-  //   },
-  //   {
-  //     description: 'Odell 90 Shilling',
-  //     image: require('../../assets/images/wine2.png'),
-  //     number: '02',
-  //   },
-  //   {
-  //     description: 'Ayinger Brauweisse',
-  //     image: require('../../assets/images/wine2.png'),
-  //     number: '03',
-  //   },
-  //   {
-  //     description: 'Lagunitas IPA',
-  //     image: require('../../assets/images/wine6.png'),
-  //     number: '04',
-  //   },
-  //   {
-  //     description: 'Sierra Nevada Pale Ale',
-  //     image: require('../../assets/images/wine2.png'),
-  //     number: '05',
-  //   },
-  //   {
-  //     description: 'Lagunitas IPA',
-  //     image: require('../../assets/images/wine6.png'),
-  //     number: '06',
-  //   },
-  // ];
   const pan = useRef(new Animated.ValueXY()).current;
   const panResponder = useRef(
     PanResponder.create({
@@ -108,7 +80,12 @@ const BeerMenu = ({ navigation, user }) => {
   };
 
 
-
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(ListDataAction()).then(() => setRefreshing(false)).catch((err) => {
+      setRefreshing(false)
+    });
+  }, []);
   const searchFilterFunction = text => {
     setSearch(text)
 
@@ -170,6 +147,14 @@ const BeerMenu = ({ navigation, user }) => {
       </View>
       <View style={{ paddingHorizontal: 20, }}>
         <FlatList
+          refreshControl={
+            <RefreshControl
+              //refresh control used for the Pull to Refresh
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+          contentContainerStyle={{ paddingBottom: "30%" }}
           keyExtractor={(item, index) => index}
           showsVerticalScrollIndicator={false}
           data={data1?.length > 0 ? data1 : data.data}
@@ -183,7 +168,8 @@ const BeerMenu = ({ navigation, user }) => {
                   price={item.price}
                   alocoal={item.alcohol_percentage}
                   onPress={() => navigation.navigate('QRScaner', {
-                    item: item
+                    item: item,
+                    dataIndex: index
                   })}
                 />
 

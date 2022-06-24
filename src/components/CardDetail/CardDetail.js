@@ -14,9 +14,9 @@ export default function CardDetail({
         <>
             <View style={styles.card}>
                 <View style={styles.row}>
-                    <View style={{ width: 80, height: 110, backgroundColor: "#fef2e6", paddingVertical: 4, paddingHorizontal: 20, }}>
+                    <View style={{ width: 80, height: 110, backgroundColor: "#fef2e6", borderRadius: 6 }}>
                         <Image
-                            style={{ width: "100%", height: "100%" }} source={{ uri: image }} />
+                            style={{ borderRadius: 6, resizeMode: "cover", flex: 1 }} source={{ uri: image }} />
                     </View>
                     <View style={{ paddingLeft: 10, flex: 1 }}>
                         <Text style={styles.textD}><Text style={{ color: "#c5b9ab", fontWeight: "bold" }}>{number}</Text> {decription}</Text>

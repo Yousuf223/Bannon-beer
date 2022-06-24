@@ -35,7 +35,6 @@ const SignUp = ({ navigation, user, userLogin, SignUpAction, SocialLoginAction }
     const [date, setDate] = useState(null)
     const [open, setOpen] = useState(false)
 
-
     const onSubmit = (data) => {
         var letters = /^[A-Za-z]+$/;
         if (data.Email != "" || data.FirstName != "" || data.LastName != "" || data.Password != "" || data.Confirm_Password !== "") {

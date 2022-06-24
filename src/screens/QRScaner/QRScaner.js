@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -10,37 +10,26 @@ import {
   Alert,
 } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {connect, useDispatch, useSelector} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {QRCodeAction} from '../../stores/actions/user.action';
-import {RNCamera} from 'react-native-camera';
-const QRScaner = ({navigation, route, QRCodeAction}) => {
+import { connect, useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { QRCodeAction } from '../../stores/actions/user.action';
+import { RNCamera } from 'react-native-camera';
+const QRScaner = ({ navigation, route, QRCodeAction }) => {
   const [state, setstate] = useState();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const newData = useSelector(state => state.userReducer.users);
   useEffect(() => {
     setstate(newData?.state);
-    console.log('newDatanewData',newData)
   }, []);
   const onSuccess = e => {
     var data1 = new FormData();
     data1.append('barcode_id', e?.data);
     data1.append('product_id', item.id);
-    // console.log('Barcode id',item.id);
-    // Linking.openURL(e.data).catch(err =>
-    //     console.error('An error occured', err)
-    // );
-    console.log('data1data1data1',data1)
     QRCodeAction(data1)
       .then(res => {
         //
-        Alert.alert("O'Bannon's",(res.message))
-        console.log(
-          'res------------------==============',
-          res,
-          res?.success == false,
-        );
+        Alert.alert("O'Bannon's", (res.message))
         if (res?.success == false) {
           // MyPurchase
           navigation.goBack()
@@ -55,7 +44,8 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
       });
     setIsLoading(true);
   };
-  const {item} = route.params;
+  const { item, dataIndex } = route.params;
+  console.log('route.params;', route.params)
 
   return (
     <>
@@ -63,22 +53,22 @@ const QRScaner = ({navigation, route, QRCodeAction}) => {
         onRead={onSuccess}
         // onRead={onSuccess()}
         flashMode={RNCamera.Constants.FlashMode.auto}
-        
+
         bottomContent={
           <TouchableOpacity style={styles.buttonTouchable}>
-            <View style={{flexDirection: 'row', alignItems: 'center',justifyContent:'space-between'}}>
-              <View style={{width:"30%"}}>
-              <Image
-                style={{width: 30, height: 88,marginLeft:20}}
-                source={{uri: item.image}}
-              />
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: "30%" }}>
+                <Image
+                  style={{ width: 30, height: 88, marginLeft: 20 }}
+                  source={{ uri: item.image }}
+                />
               </View>
-              <View style={{width:"70%",}}>
+              <View style={{ width: "70%", }}>
                 <Text>
-                  {item.id} <Text></Text>
+                  {dataIndex + 1} <Text></Text>
                   {item.name}
                 </Text>
-                <View style={{marginVertical: 6}}>
+                <View style={{ marginVertical: 6 }}>
                   <View
                     style={{
                       backgroundColor: '#f3e7db',
@@ -119,7 +109,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({QRCodeAction}, dispatch);
+  bindActionCreators({ QRCodeAction }, dispatch);
 
 const styles = StyleSheet.create({
   centerText: {
@@ -134,7 +124,7 @@ const styles = StyleSheet.create({
     width: '80%',
     height: '50%',
     borderRadius: 10,
-    flexDirection:"row",
+    flexDirection: "row",
   },
   text1: {
     color: '#7f705d',

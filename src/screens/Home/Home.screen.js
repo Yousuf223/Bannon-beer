@@ -10,7 +10,10 @@ import {
   PanResponder,
   Platform,
   Animated,
-  ImageBackground
+  ImageBackground,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl
 } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { connect, useDispatch, useSelector } from 'react-redux'
@@ -27,6 +30,7 @@ import { ListDataAction, FeaturedProducts, ResetApi } from '../../stores/actions
 import { useIsFocused } from '@react-navigation/native';
 
 const Home = (props) => {
+  const [refreshing, setRefreshing] = useState(false);
   const { navigation } = props
   const dispatch = useDispatch()
   useEffect(() => {
@@ -52,6 +56,7 @@ const Home = (props) => {
 
   }, [isFocused])
   const data1 = useSelector(state => state.userReducer.FeaturedProducts)
+  console.log('======data1=====', data1)
 
   const data = useSelector(state => state.userReducer.ListDataAction)
   const [modalVisible, setModalVisible] = useState(false);
@@ -118,7 +123,15 @@ const Home = (props) => {
   }
 
   // const [reset,setReset] = useState(data?.data?.length === buyArray?.length)
-
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    dispatch(ListDataAction()).then(() => setRefreshing(false)).catch((err) => {
+      setRefreshing(false)
+    });
+  }, []);
   return (
     <>
       <StatusBar barStyle="dark-content" backgroundColor={'#f8ece0'} />
@@ -138,66 +151,79 @@ const Home = (props) => {
             <Image style={styles.notification} source={require('../../assets/images/notification.png')} />
           </TORN>
         </View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <View style={{ paddingHorizontal: 20 }}>
-            <View style={styles.row2}>
-              <View>
-                <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>Top Beers</Text>
-                <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
-              </View>
-              <TORN
-                onPress={() => navigation.navigate('BeerMenu')}
-                activeOpacity={0.9}
-                style={styles.btn}>
-                <Text style={styles.textView}>View All</Text>
-              </TORN>
+        {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+        <View style={{ paddingHorizontal: 20 }}>
+          <View style={styles.row2}>
+            <View>
+              <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>Top Beers</Text>
+              <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
             </View>
-            {/* <Image style={styles.beer} source={require('../../assets/images/beerCard.png')} /> */}
+            <TORN
+              onPress={() => navigation.navigate('BeerMenu')}
+              activeOpacity={0.9}
+              style={styles.btn}>
+              <Text style={styles.textView}>View All</Text>
+            </TORN>
+          </View>
+          {/* <Image style={styles.beer} source={require('../../assets/images/beerCard.png')} /> */}
 
 
-            <View style={{ flexDirection: "row", justifyContent: "space-around", position: "relative", zIndex: 10 }}>
-              {/*                            
+          <View style={{ flexDirection: "row", justifyContent: "space-around", position: "relative", zIndex: 10 }}>
+            {/*                            
              <Card/> */}
-              <ScrollView
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-              >
-                {data1?.data?.map((item, index) => {
-                  return (
-                    <Card
-                      image={item.image}
-                      price={item.price}
-                      decription={item.name}
-                      alcohol={item.alcohol_percentage}
-                      id={index + 1}
-                      onPress={() => navigation.navigate('QRScaner', {
-                        item: item
-                      })}
-                    />
-                  )
-                })}
-              </ScrollView>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              {data1?.data?.map((item, index) => {
+                return (
+                  <Card
+                    image={item.image}
+                    price={item.price}
+                    decription={item.name}
+                    alcohol={item.alcohol_percentage}
+                    id={index + 1}
+                    onPress={() => navigation.navigate('QRScaner', {
+                      item: item,
+                      dataIndex: index
+                    })}
+                  />
+                )
+              })}
+            </ScrollView>
 
-              {/* <Card 
+            {/* <Card 
                     onPress={()=>navigation.navigate('QRScaner')}
                     />
               <Card 
               onPress={()=>navigation.navigate('QRScaner')}
               /> */}
+          </View>
+          <View style={styles.row2}>
+            <View>
+              <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>All Beers</Text>
+              <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
             </View>
-            <View style={styles.row2}>
-              <View>
-                <Text style={{ fontFamily: 'Oswald-Medium', color: "#000000", fontSize: 16 }}>All Beers</Text>
-                <View style={{ width: 20, height: 1, backgroundColor: "#e74a07", marginTop: 6 }}></View>
-              </View>
-              <TORN
-                hitSlop={{ top: 20, left: 40, bottom: 20, right: 20 }}
-                onPress={() => navigation.navigate('BeerMenu')}
-                activeOpacity={0.9}
-                style={styles.btn}>
-                <Text style={styles.textView}>View All</Text>
-              </TORN>
-            </View>
+            <TORN
+              hitSlop={{ top: 20, left: 40, bottom: 20, right: 20 }}
+              onPress={() => navigation.navigate('BeerMenu')}
+              activeOpacity={0.9}
+              style={styles.btn}>
+              <Text style={styles.textView}>View All</Text>
+            </TORN>
+          </View>
+          {/* {refreshing ? <ActivityIndicator /> : null} */}
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                //refresh control used for the Pull to Refresh
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+            contentContainerStyle={{ paddingBottom: "100%" }}
+            showsVerticalScrollIndicator={false}
+          >
             {
               data?.data?.map((item, index) => {
                 return (
@@ -209,7 +235,8 @@ const Home = (props) => {
                       price={item.price}
                       alocoal={item.alcohol_percentage}
                       onPress={() => navigation.navigate('QRScaner', {
-                        item: item
+                        item: item,
+                        dataIndex: index
                       })}
                     />
                     {/* {number} */}
@@ -218,17 +245,13 @@ const Home = (props) => {
                 )
               })
             }
-
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </View>
+        {/* </ScrollView> */}
 
         <View
           style={styles.posi}>
           <Animated.View
-          // style={{
-          //   transform: [{ translateY: pan.y }]
-          // }}
-          // {...panResponder.panHandlers}
           >
             <TouchableOpacity
               onPress={() => setModalVisible(true)}
@@ -281,7 +304,6 @@ const Home = (props) => {
           </View> */}
                 <View style={styles.count}>
                   {data?.data?.map((jsx, index) => {
-                    console.log('jhdhjh======', jsx.buy)
                     return (
                       <TORN
                         activeOpacity={0.8}
@@ -344,7 +366,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginVertical: 20,
-    paddingTop: 16,
+    paddingTop: 1,
     position: "relative",
     zIndex: 10
   },

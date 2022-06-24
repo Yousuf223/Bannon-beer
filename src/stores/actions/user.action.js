@@ -1,5 +1,5 @@
-import {getApi, getUser, postApi, putApi, saveApi} from '../../api/fakeApiUser';
-import {USER_LOGIN, USER_LOGOUT} from '../constants';
+import { getApi, getUser, postApi, putApi, saveApi } from '../../api/fakeApiUser';
+import { USER_LOGIN, USER_LOGOUT } from '../constants';
 import base_url from '../../api/base_url';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
@@ -39,7 +39,7 @@ export const fetchUserFail = () => {
 export const fetchDataUser = () => async dispatch => {
   try {
     dispatch(fetchUserRequest());
-    const {data} = await getUser();
+    const { data } = await getUser();
     dispatch(fetchUserSuccess(data));
   } catch (error) {
     dispatch(fetchUserFail());
@@ -49,8 +49,8 @@ export const fetchDataUser = () => async dispatch => {
 export function userLogin(data1, id) {
   console.log("login checking")
   return async dispatch => {
-    const {data} = await postApi(`${base_url}api/login`, data1);
-    dispatch({type: USER_LOGIN, payload: data?.data});
+    const { data } = await postApi(`${base_url}api/login`, data1);
+    dispatch({ type: USER_LOGIN, payload: data?.data });
     return data;
   };
 }
@@ -58,7 +58,7 @@ export function userLogin(data1, id) {
 export function SignUpAction(objData) {
   return async dispatch => {
     const data = await postApi(`${base_url}api/signup`, objData);
-    dispatch({type: SIGNUP});
+    dispatch({ type: SIGNUP });
     return data;
   };
 }
@@ -66,7 +66,7 @@ export function SignUpAction(objData) {
 export function SocialLoginAction(data12) {
   return async dispatch => {
     const data = await postApi(`${base_url}api/loginwithemail`, data12);
-    dispatch({type: SOCIAL_LOGIN, payload: data?.data?.data});
+    dispatch({ type: SOCIAL_LOGIN, payload: data?.data?.data });
     return data;
   };
 }
@@ -80,12 +80,12 @@ export function SocialLoginAction(data12) {
 // }
 export function EditProfileAction(EditData) {
   return async dispatch => {
-    const {data} = await saveApi(
+    const { data } = await saveApi(
       `${base_url}api/users/1`,
       EditData,
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: USER_LOGIN, payload: data?.data});
+    dispatch({ type: USER_LOGIN, payload: data?.data });
     console.log(data, 'RETURN DAAATA');
     return data;
   };
@@ -93,12 +93,12 @@ export function EditProfileAction(EditData) {
 
 export function userDataWithToken(token) {
   return async dispatch => {
-    const {data} = await getApi(
+    const { data } = await getApi(
       `${base_url}api/users/1`,
       '',
       token,
     );
-    dispatch({type: USER_LOGIN, payload: data?.data});
+    dispatch({ type: USER_LOGIN, payload: data?.data });
     console.log(data, 'RETURN DAAATA');
     return data;
   };
@@ -106,38 +106,38 @@ export function userDataWithToken(token) {
 
 export function ChangePasswordAction(ChangeData) {
   return async dispatch => {
-    const {data} = await postApi(
+    const { data } = await postApi(
       `${base_url}api/changepassword`,
       ChangeData,
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: CHANGE_PASSWORD, payload: data?.data});
+    dispatch({ type: CHANGE_PASSWORD, payload: data?.data });
     return data;
   };
 }
 export function ForgotPasswordAction(ForgotData) {
-  console.log('ForgotDataForgotDataForgotDataForgotData',ForgotData)
+  console.log('ForgotDataForgotDataForgotDataForgotData', ForgotData)
   return async dispatch => {
-    const {data} = await postApi(
+    const { data } = await postApi(
       `${base_url}api/forgot-password`,
-    ForgotData,
-    console.log('datadatat',ForgotData),
+      ForgotData,
+      console.log('datadatat', ForgotData),
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: FORGOT_PASSWORD, payload: data?.data});
-   
+    dispatch({ type: FORGOT_PASSWORD, payload: data?.data });
+
     return data;
   };
 }
 export function QRCodeAction(QRData) {
   return async dispatch => {
     try {
-      const {data} = await postApi(
+      const { data } = await postApi(
         `${base_url}api/orders`,
         QRData,
         await AsyncStorage.getItem('token'),
       );
-      dispatch({type: QRCODE, payload: data?.data});
+      dispatch({ type: QRCODE, payload: data?.data });
       console.log('qweertyyuuioooo---------------uuuuuuuu', data);
       return data;
     } catch (error) {
@@ -148,24 +148,24 @@ export function QRCodeAction(QRData) {
 
 export function FeedbackAction(FeedbackData) {
   return async dispatch => {
-    const {data} = await postApi(
+    const { data } = await postApi(
       `${base_url}api/feedbacks`,
       FeedbackData,
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: FEATURED_PRODUCTS, payload: data?.data});
+    dispatch({ type: FEATURED_PRODUCTS, payload: data?.data });
     return data;
   };
 }
 
 export function Toggle_Value(toggle) {
   return async dispatch => {
-    const {data} = await postApi(
+    const { data } = await postApi(
       `${base_url}api/notificationtoggle`,
       toggle,
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: TOGGLE_VALUE, payload: data?.data});
+    dispatch({ type: TOGGLE_VALUE, payload: data?.data });
     console.log("data Toggle_Value", data)
     return data;
   };
@@ -180,7 +180,7 @@ export function ListDataAction() {
       await AsyncStorage.getItem('token'),
     );
 
-    dispatch({type: LIST_DATA, payload: data?.data});
+    dispatch({ type: LIST_DATA, payload: data?.data });
     // console.log('dddddddhhhhhhhh',data)
     return data;
   };
@@ -194,7 +194,7 @@ export function FeaturedProducts() {
       '',
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: FEATURED_PRODUCTS, payload: data?.data});
+    dispatch({ type: FEATURED_PRODUCTS, payload: data?.data });
     // console.log('dddddddhhhhhhhh',data)
     return data;
   };
@@ -206,9 +206,9 @@ export function ResetApi() {
       '',
       await AsyncStorage.getItem('token'),
     );
-    console.log('datadata====',data)
+    console.log('datadata====', data)
     // dispatch({type: RESET_API, payload: data?.data});
-    
+
     return data;
   };
 }
@@ -219,7 +219,7 @@ export function MyPurchases() {
       '',
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: My_Purchases, payload: data?.data});
+    dispatch({ type: My_Purchases, payload: data?.data });
     return data;
   };
 }
@@ -230,7 +230,7 @@ export function NotificationAction() {
       '',
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: PUSH_NOTIFICATION, payload: data?.data});
+    dispatch({ type: PUSH_NOTIFICATION, payload: data?.data });
     return data;
   };
 }
@@ -242,7 +242,7 @@ export function AboutAction() {
       '',
       await AsyncStorage.getItem('token'),
     );
-    dispatch({type: ABOUT, payload: data?.data});
+    dispatch({ type: ABOUT, payload: data?.data });
     console.log('dddddddhhhhhhhh', data);
     return data;
   };
@@ -250,7 +250,7 @@ export function AboutAction() {
 
 export function userLogout(navigation) {
   return dispatch => {
-    dispatch({type: USER_LOGOUT,});
+    dispatch({ type: USER_LOGOUT, });
     // navigation.navigate('AuthStackNavigator')
   };
 }
